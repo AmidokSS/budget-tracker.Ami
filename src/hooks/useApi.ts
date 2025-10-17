@@ -271,6 +271,7 @@ export const useCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: api.getCategories,
+    refetchInterval: 15000, // Обновлять каждые 15 секунд (категории реже изменяются)
   })
 }
 
@@ -317,6 +318,7 @@ export const useOperations = (params?: {
   return useQuery({
     queryKey: ['operations', params],
     queryFn: () => api.getOperations(params),
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -352,6 +354,7 @@ export const useGoals = () => {
   return useQuery({
     queryKey: ['goals'],
     queryFn: api.getGoals,
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -400,6 +403,7 @@ export const useLimits = () => {
   return useQuery({
     queryKey: ['limits'],
     queryFn: api.getLimits,
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -441,6 +445,7 @@ export const useStatistics = (period: string = 'month') => {
   return useQuery({
     queryKey: ['statistics', period],
     queryFn: () => api.getStatistics(period),
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -449,6 +454,7 @@ export const useUsers = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: api.getUsers,
+    refetchInterval: 15000, // Обновлять каждые 15 секунд (пользователи редко изменяются)
   })
 }
 
@@ -457,6 +463,7 @@ export const useSummary = () => {
   return useQuery({
     queryKey: ['summary'],
     queryFn: api.getSummary,
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -465,6 +472,7 @@ export const useAnalytics = (userId?: string, period?: string) => {
   return useQuery({
     queryKey: ['analytics', userId, period],
     queryFn: () => api.getAnalytics(userId, period),
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }
 
@@ -473,5 +481,6 @@ export const useUsersStatistics = () => {
   return useQuery({
     queryKey: ['usersStatistics'],
     queryFn: api.getUsersStatistics,
+    refetchInterval: 5000, // Обновлять каждые 5 секунд
   })
 }

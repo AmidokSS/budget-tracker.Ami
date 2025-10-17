@@ -15,7 +15,12 @@ export function Providers({ children }: ProvidersProps) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000, // 1 minute
+            staleTime: 0, // Данные сразу считаются устаревшими
+            refetchOnWindowFocus: true, // Обновлять при фокусе на окне
+            refetchOnReconnect: true, // Обновлять при восстановлении соединения
+            refetchIntervalInBackground: false, // Не обновлять в фоне
+            retry: 3, // Повторять неудачные запросы 3 раза
+            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Экспоненциальная задержка
           },
         },
       })
