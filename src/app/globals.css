@@ -1,0 +1,353 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 220.9 39.3% 11%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 216 12.2% 83.9%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-slate-950 text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glassmorphism {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Универсальные стили для карточек */
+  .card-base {
+    @apply rounded-2xl border border-slate-700/50 bg-slate-900/80 shadow-xl backdrop-blur-xl;
+  }
+
+  .card-hover {
+    @apply transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl;
+  }
+
+  /* Консистентные отступы */
+  .section-padding {
+    @apply px-4 py-6 md:px-6 md:py-8;
+  }
+
+  .container-spacing {
+    @apply space-y-6 md:space-y-8;
+  }
+
+  /* Адаптивные контейнеры */
+  .responsive-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Адаптивная сетка */
+  .responsive-grid {
+    @apply grid gap-4 sm:gap-6 lg:gap-8;
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .responsive-grid-2 {
+    @apply grid gap-4 sm:gap-6 lg:gap-8;
+    @apply grid-cols-1 lg:grid-cols-2;
+  }
+
+  /* Адаптивная типографика */
+  .responsive-heading {
+    @apply text-2xl font-bold sm:text-3xl lg:text-4xl;
+  }
+
+  .responsive-text {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+
+  /* Стандартные кнопки */
+  .btn-primary {
+    @apply rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-3 font-medium text-white;
+    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply rounded-xl border border-slate-600/50 bg-slate-800/50 px-6 py-3 font-medium text-slate-200;
+    @apply transition-all duration-200 hover:scale-105 hover:bg-slate-700/50;
+  }
+
+  /* Улучшенные hover эффекты */
+  .enhanced-hover {
+    @apply transition-all duration-200;
+    @apply hover:scale-[1.02] hover:shadow-xl;
+  }
+
+  .enhanced-tap {
+    @apply active:scale-[0.98] active:transition-transform active:duration-75;
+  }
+
+  /* Плавные анимации для всех интерактивных элементов */
+  button,
+  .btn-primary,
+  .btn-secondary,
+  [role='button'] {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  button:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  [role='button']:hover {
+    @apply scale-105 transform;
+  }
+
+  button:active,
+  .btn-primary:active,
+  .btn-secondary:active,
+  [role='button']:active {
+    @apply scale-95 transform transition-transform duration-75;
+  }
+
+  /* Улучшенные focus стили */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    @apply outline-none ring-2 ring-indigo-500/50 ring-offset-2 ring-offset-slate-900;
+  }
+}
+
+/* Настройки размера шрифта */
+[data-font-size='small'] {
+  font-size: 14px;
+}
+
+[data-font-size='small'] h1 {
+  font-size: 1.8rem;
+}
+
+[data-font-size='small'] h2 {
+  font-size: 1.4rem;
+}
+
+[data-font-size='small'] h3 {
+  font-size: 1.2rem;
+}
+
+[data-font-size='medium'] {
+  font-size: 16px;
+}
+
+[data-font-size='large'] {
+  font-size: 18px;
+}
+
+[data-font-size='large'] h1 {
+  font-size: 2.2rem;
+}
+
+[data-font-size='large'] h2 {
+  font-size: 1.8rem;
+}
+
+[data-font-size='large'] h3 {
+  font-size: 1.5rem;
+}
+
+/* Настройки анимаций */
+[data-animations='disabled'] * {
+  animation-duration: 0.01s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.01s !important;
+  transition-delay: 0s !important;
+}
+
+[data-animations='fast'] * {
+  animation-duration: 0.15s !important;
+  transition-duration: 0.15s !important;
+}
+
+[data-animations='full'] {
+  /* Нормальные анимации - по умолчанию */
+}
+
+/* Адаптивные стили для критических размеров экранов */
+/* Galaxy S (320px) */
+@media (max-width: 320px) {
+  .section-padding {
+    @apply px-3 py-4;
+  }
+
+  .responsive-heading {
+    @apply text-xl;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    @apply px-4 py-2 text-sm;
+  }
+}
+
+/* iPhone SE (375px) */
+@media (max-width: 375px) {
+  .responsive-grid {
+    @apply gap-3;
+  }
+
+  .container-spacing {
+    @apply space-y-4;
+  }
+}
+
+/* iPad (768px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .responsive-container {
+    @apply px-6;
+  }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .section-padding {
+    @apply px-8 py-10;
+  }
+
+  .container-spacing {
+    @apply space-y-10;
+  }
+}
+
+/* Large Desktop (1440px+) */
+@media (min-width: 1440px) {
+  .responsive-container {
+    @apply max-w-screen-2xl px-12;
+  }
+}
+
+/* Скрытие скроллбара для мобильной навигации */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE и Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Плавная прокрутка для мобильной навигации */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Индикатор прокручиваемости для навигации */
+.nav-scroll-indicator::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to left, rgba(15, 23, 42, 0.8), transparent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.nav-scroll-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.8), transparent);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Мобильная навигация с точным центрированием */
+@media (max-width: 768px) {
+  .mobile-nav-item {
+    min-width: 80px;
+    min-height: 60px;
+    flex-shrink: 0; /* Предотвращает сжатие элементов */
+  }
+
+  /* Стили для лучшего UX прокрутки */
+  .mobile-nav-container {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    position: relative;
+    /* Убираем проблемные fade-эффекты */
+  }
+
+  .mobile-nav-item {
+    scroll-snap-align: center;
+  }
+
+  /* Убираем все fade-эффекты и разделители */
+  .mobile-nav-container::before,
+  .mobile-nav-container::after {
+    display: none;
+  }
+
+  /* Адаптивные карточки операций */
+  .operation-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden;
+  }
+
+  .operation-card .operation-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .operation-card .operation-meta {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .operation-card .operation-meta > div {
+    min-width: auto;
+    flex-shrink: 1;
+  }
+
+  .operation-card .truncate {
+    max-width: calc(100vw - 120px);
+  }
+}

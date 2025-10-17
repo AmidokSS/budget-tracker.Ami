@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Модель пользователя
+model User {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  operations Operation[]
+  createdAt  DateTime    @default(now())
+}
+
+// Модель категории (доходы/расходы)
+model Category {
+  id         String      @id @default(cuid())
+  name       String
+  type       String // 'income' | 'expense'
+  emoji      String
+  limits     Limit[]
+  operations Operation[]
+  createdAt  DateTime    @default(now())
+}
+
+// Модель финансовых целей
+model Goal {
+  id            String    @id @default(cuid())
+  title         String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  deadline      DateTime?
+  emoji         String    @default("💰")
+  archived      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+}
+
+// Модель лимитов по категориям
+model Limit {
+  id            String   @id @default(cuid())
+  categoryId    String
+  limitAmount   Float
+  currentAmount Float    @default(0)
+  active        Boolean  @default(true)
+  isAutoCreated Boolean  @default(false)
+  category      Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+}
+
+// Модель операций (доходы/расходы)
+model Operation {
+  id         String   @id @default(cuid())
+  userId     String
+  categoryId String
+  type       String // 'income' | 'expense'
+  amount     Float
+  note       String?
+  date       DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([date])
+  @@index([type])
+}
