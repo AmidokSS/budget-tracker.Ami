@@ -8,17 +8,40 @@ import { DynamicGradientWrapper } from '@/components/DynamicGradientWrapper'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Бюджет-трекер | Управление финансами',
+  title: 'Budget Tracker | Управление финансами',
   description:
-    'Современное приложение для управления личными финансами, категориями расходов, целями и лимитами',
-  keywords: 'бюджет, финансы, трекер расходов, управление деньгами',
+    'Современное PWA приложение для управления личными финансами, категориями расходов, целями и лимитами. Работает офлайн.',
+  keywords: 'бюджет, финансы, трекер расходов, управление деньгами, PWA, офлайн',
   authors: [{ name: 'Budget Tracker Team' }],
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Budget Tracker',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Budget Tracker',
+    title: 'Budget Tracker | Управление финансами',
+    description: 'Современное PWA приложение для управления личными финансами',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Budget Tracker | Управление финансами',
+    description: 'Современное PWA приложение для управления личными финансами',
+  },
 }
 
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#1a1a2e',
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#3b82f6',
+  colorScheme: 'dark light',
 }
 
 export default function RootLayout({
@@ -28,6 +51,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru" className="dark">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="msapplication-TileColor" content="#3b82f6" />
+        <meta name="msapplication-tap-highlight" content="no" />
+      </head>
       <body
         className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
       >
