@@ -216,7 +216,7 @@ export function Navbar() {
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/30 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-slate-900/95 backdrop-blur-xl border-t border-slate-700/30 shadow-2xl safe-area-bottom"
       >
         <div 
           ref={mobileNavRef}

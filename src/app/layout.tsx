@@ -16,8 +16,9 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Budget Tracker',
+    startupImage: '/icon-72x72.svg',
   },
   formatDetection: {
     telephone: false,
@@ -40,8 +41,8 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#3b82f6',
-  colorScheme: 'dark light',
+  themeColor: '#0f172a',
+  colorScheme: 'dark',
 }
 
 export default function RootLayout({
@@ -53,13 +54,15 @@ export default function RootLayout({
     <html lang="ru" className="dark">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <link rel="apple-touch-icon" href="/icon-72x72.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#3b82f6" />
+        <meta name="msapplication-TileColor" content="#0f172a" />
         <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="theme-color" content="#0f172a" />
+        <meta name="background-color" content="#0f172a" />
       </head>
       <body
         className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
