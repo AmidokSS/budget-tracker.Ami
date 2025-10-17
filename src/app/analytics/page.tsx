@@ -7,11 +7,13 @@ import { useCurrency } from '@/hooks/useCurrency'
 import { useIsMobile } from '@/hooks/useMediaQuery'
 import { GradientPage } from '@/components/GradientPage'
 import { AnalyticsCard } from '@/components/AnalyticsCard'
-import { CategoryChart } from '@/components/CategoryChart'
-import { TimelineChart } from '@/components/TimelineChart'
-import { LimitsSection } from '@/components/LimitsSection'
-import { GoalsSection } from '@/components/GoalsSection'
 import { InsightCard } from '@/components/InsightCard'
+import { 
+  LazyCategoryChart,
+  LazyTimelineChart,
+  LazyLimitsSection,
+  LazyGoalsSection
+} from '@/components/LazyComponents'
 
 const PERIOD_OPTIONS = [
   { value: 'last_7_days', label: 'Неделя' },
@@ -198,7 +200,7 @@ export default function AnalyticsPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <CategoryChart data={analytics.categoryDistribution} />
+            <LazyCategoryChart data={analytics.categoryDistribution} />
           </motion.div>
 
           {/* Линейный график динамики */}
@@ -207,7 +209,7 @@ export default function AnalyticsPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <TimelineChart data={analytics.timeline} />
+            <LazyTimelineChart data={analytics.timeline} />
           </motion.div>
         </div>
 
@@ -219,7 +221,7 @@ export default function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <LimitsSection limits={analytics.limits} />
+            <LazyLimitsSection limits={analytics.limits} />
           </motion.div>
 
           {/* Цели */}
@@ -228,7 +230,7 @@ export default function AnalyticsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <GoalsSection goals={analytics.goals} insights={analytics.insights} />
+            <LazyGoalsSection goals={analytics.goals} insights={analytics.insights} />
           </motion.div>
         </div>
 

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Category, Operation, Goal, Limit, Statistics, User, UsersStatistics } from '@/types'
+import { useSmartQueryOptions } from './useSmartRefetch'
 
 // Тип для суммарной статистики
 export interface SummaryStats {
@@ -268,10 +269,17 @@ const api = {
 
 // Хуки для категорий
 export const useCategories = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 15000, // Категории изменяются реже
+    activeInterval: 10000,
+    inactiveInterval: 30000,
+    backgroundInterval: 120000, // 2 минуты в фоне
+  })
+
   return useQuery({
     queryKey: ['categories'],
     queryFn: api.getCategories,
-    refetchInterval: 15000, // Обновлять каждые 15 секунд (категории реже изменяются)
+    ...smartOptions,
   })
 }
 
@@ -315,10 +323,17 @@ export const useOperations = (params?: {
   userId?: string;
   period?: string;
 }) => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 10000, // Операции обновляются чаще
+    activeInterval: 5000,
+    inactiveInterval: 30000,
+    backgroundInterval: 60000, // 1 минута в фоне
+  })
+
   return useQuery({
     queryKey: ['operations', params],
     queryFn: () => api.getOperations(params),
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
@@ -351,10 +366,17 @@ export const useDeleteOperation = () => {
 
 // Хуки для целей
 export const useGoals = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 12000, // Цели обновляются умеренно
+    activeInterval: 8000,
+    inactiveInterval: 30000,
+    backgroundInterval: 120000, // 2 минуты в фоне
+  })
+
   return useQuery({
     queryKey: ['goals'],
     queryFn: api.getGoals,
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
@@ -400,10 +422,17 @@ export const useDeleteGoal = () => {
 
 // Хуки для лимитов
 export const useLimits = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 15000, // Лимиты обновляются реже
+    activeInterval: 10000,
+    inactiveInterval: 30000,
+    backgroundInterval: 120000, // 2 минуты в фоне
+  })
+
   return useQuery({
     queryKey: ['limits'],
     queryFn: api.getLimits,
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
@@ -442,45 +471,80 @@ export const useDeleteLimit = () => {
 
 // Хуки для статистики
 export const useStatistics = (period: string = 'month') => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 30000, // Статистика обновляется редко
+    activeInterval: 20000,
+    inactiveInterval: 60000,
+    backgroundInterval: 300000, // 5 минут в фоне
+  })
+
   return useQuery({
     queryKey: ['statistics', period],
     queryFn: () => api.getStatistics(period),
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
 // Хуки для пользователей
 export const useUsers = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 60000, // Пользователи обновляются очень редко
+    activeInterval: 30000,
+    inactiveInterval: 120000,
+    backgroundInterval: 600000, // 10 минут в фоне
+  })
+
   return useQuery({
     queryKey: ['users'],
     queryFn: api.getUsers,
-    refetchInterval: 15000, // Обновлять каждые 15 секунд (пользователи редко изменяются)
+    ...smartOptions,
   })
 }
 
 // Хук для суммарной статистики
 export const useSummary = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 10000, // Суммарная статистика обновляется часто
+    activeInterval: 5000,
+    inactiveInterval: 20000,
+    backgroundInterval: 120000, // 2 минуты в фоне
+  })
+
   return useQuery({
     queryKey: ['summary'],
     queryFn: api.getSummary,
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
 // Хук для аналитики
 export const useAnalytics = (userId?: string, period?: string) => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 15000, // Аналитика обновляется умеренно
+    activeInterval: 10000,
+    inactiveInterval: 30000,
+    backgroundInterval: 180000, // 3 минуты в фоне
+  })
+
   return useQuery({
     queryKey: ['analytics', userId, period],
     queryFn: () => api.getAnalytics(userId, period),
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }
 
 // Хук для статистики всех пользователей
 export const useUsersStatistics = () => {
+  const smartOptions = useSmartQueryOptions({
+    baseInterval: 30000, // Статистика пользователей обновляется редко
+    activeInterval: 20000,
+    inactiveInterval: 60000,
+    backgroundInterval: 300000, // 5 минут в фоне
+  })
+
   return useQuery({
     queryKey: ['usersStatistics'],
     queryFn: api.getUsersStatistics,
-    refetchInterval: 5000, // Обновлять каждые 5 секунд
+    ...smartOptions,
   })
 }

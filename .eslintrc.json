@@ -3,7 +3,7 @@
   "rules": {
     "prefer-const": "error",
     "no-var": "error",
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
     "@next/next/no-img-element": "off"
   },
   "ignorePatterns": ["node_modules/", ".next/", "out/"]

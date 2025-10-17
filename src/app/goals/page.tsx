@@ -1,20 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { useGoals, useUpdateGoal } from '@/hooks/useApi'
+import { useGoals, useUpdateGoal, useDeleteGoal } from '@/hooks/useApi'
 import { formatCurrency } from '@/lib/utils'
 import { GradientPage } from '@/components/GradientPage'
 import GoalSidebar from '@/components/GoalSidebar'
+import GoalCard from '@/components/GoalCard'
+import { LazyVirtualizedGoalList } from '@/components/LazyComponents'
 
 import { 
   Target, 
   Clock, 
   CheckCircle, 
-  Calendar, 
   TrendingUp,
   Edit3,
-  DollarSign,
   Archive,
   ArchiveRestore
 } from 'lucide-react'
@@ -23,6 +23,7 @@ import { Goal } from '@/types'
 export default function GoalsPage() {
   const { data: goals, isLoading, error } = useGoals()
   const updateGoal = useUpdateGoal()
+  const deleteGoal = useDeleteGoal()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null)
   const [sidebarMode, setSidebarMode] = useState<'create' | 'edit' | 'fund'>('create')
@@ -33,17 +34,25 @@ export default function GoalsPage() {
     setIsSidebarOpen(true)
   }
 
-  const openEditGoal = (goal: Goal) => {
+  const openEditGoal = useCallback((goal: Goal) => {
     setSelectedGoal(goal)
     setSidebarMode('edit')
     setIsSidebarOpen(true)
-  }
+  }, [])
 
   const openFundGoal = (goal: Goal) => {
     setSelectedGoal(goal)
     setSidebarMode('fund')
     setIsSidebarOpen(true)
   }
+
+  const handleDeleteGoal = useCallback(async (goalId: string) => {
+    try {
+      await deleteGoal.mutateAsync(goalId)
+    } catch (error) {
+      console.error('Error deleting goal:', error)
+    }
+  }, [deleteGoal])
 
   const handleUnarchiveGoal = async (goal: Goal) => {
     try {
@@ -169,112 +178,53 @@ export default function GoalsPage() {
               <span>Активные цели</span>
             </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeGoals.map((goal, index) => {
-                  const progress = (goal.currentAmount / goal.targetAmount) * 100
-                  const remaining = goal.targetAmount - goal.currentAmount
-                  
-                  return (
-                    <motion.div
+              {activeGoals.length > 6 ? (
+                <LazyVirtualizedGoalList
+                  goals={activeGoals}
+                  onEdit={openEditGoal}
+                  onDelete={handleDeleteGoal}
+                  height={600}
+                  itemHeight={120}
+                />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {activeGoals.map((goal, index) => (
+                    <GoalCard
                       key={goal.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 + index * 0.05 }}
-                      className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 group"
-                    >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="text-2xl">{goal.emoji}</div>
-                          <div>
-                            <h3 className="text-white font-semibold text-lg">{goal.title}</h3>
-                          </div>
-                        </div>
-                        
-                        {/* Действия */}
-                        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => openFundGoal(goal)}
-                            className="p-2 bg-green-500/20 hover:bg-green-500/30 rounded-lg border border-green-500/30 transition-colors"
-                            title="Пополнить"
-                          >
-                            <DollarSign className="h-4 w-4 text-green-400" />
-                          </button>
-                          <button
-                            onClick={() => openEditGoal(goal)}
-                            className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg border border-blue-500/30 transition-colors"
-                            title="Редактировать"
-                          >
-                            <Edit3 className="h-4 w-4 text-blue-400" />
-                          </button>
-                        </div>
+                      goal={goal}
+                      index={index}
+                      onEdit={openEditGoal}
+                      onDelete={handleDeleteGoal}
+                      onFund={openFundGoal}
+                    />
+                  ))}
+
+                  {/* Карточка добавления новой цели - всегда последняя */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 + activeGoals.length * 0.05 }}
+                    onClick={openCreateGoal}
+                    className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border-2 border-dashed border-white/30 hover:border-purple-400/60 hover:bg-white/10 transition-all duration-300 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
+                  >
+                    <div className="text-center space-y-4">
+                      <div className="mx-auto w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                        <Target className="h-8 w-8 text-purple-400" />
                       </div>
-
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Прогресс:</span>
-                            <span className="text-white font-medium">{Math.round(progress)}%</span>
-                          </div>
-                          <div className="w-full bg-gray-700/50 rounded-full h-3">
-                            <div
-                              className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
-                              style={{ width: `${Math.min(progress, 100)}%` }}
-                            ></div>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="text-gray-400 mb-1">Цель</p>
-                            <p className="text-white font-semibold">{formatCurrency(goal.targetAmount)}</p>
-                          </div>
-                          <div>
-                            <p className="text-gray-400 mb-1">Накоплено</p>
-                            <p className="text-green-400 font-semibold">{formatCurrency(goal.currentAmount)}</p>
-                          </div>
-                        </div>
-
-                        <div className="pt-2 border-t border-white/10">
-                          <p className="text-xs text-gray-400 mb-1">Осталось накопить</p>
-                          <p className="text-orange-400 font-semibold">{formatCurrency(remaining)}</p>
-                        </div>
-
-                        {goal.deadline && (
-                          <div className="flex items-center space-x-2 text-xs text-gray-400">
-                            <Calendar className="h-4 w-4" />
-                            <span>до {new Date(goal.deadline).toLocaleDateString('ru-RU')}</span>
-                          </div>
-                        )}
+                      <div>
+                        <h3 className="text-white font-semibold text-lg mb-2">Добавить цель</h3>
+                        <p className="text-gray-400 text-sm">
+                          Создайте новую финансовую цель и начните копить
+                        </p>
                       </div>
-                    </motion.div>
-                  )
-                })}
-
-                {/* Карточка добавления новой цели - всегда последняя */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 + activeGoals.length * 0.05 }}
-                  onClick={openCreateGoal}
-                  className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border-2 border-dashed border-white/30 hover:border-purple-400/60 hover:bg-white/10 transition-all duration-300 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
-                >
-                  <div className="text-center space-y-4">
-                    <div className="mx-auto w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
-                      <Target className="h-8 w-8 text-purple-400" />
+                      <div className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-500/30 text-purple-300 text-sm group-hover:from-purple-500/30 group-hover:to-pink-500/30 transition-all">
+                        Нажмите для создания
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-white font-semibold text-lg mb-2">Добавить цель</h3>
-                      <p className="text-gray-400 text-sm">
-                        Создайте новую финансовую цель и начните копить
-                      </p>
-                    </div>
-                    <div className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-500/30 text-purple-300 text-sm group-hover:from-purple-500/30 group-hover:to-pink-500/30 transition-all">
-                      Нажмите для создания
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+                  </motion.div>
+                </div>
+              )}
+          </motion.div>
 
           {/* Завершённые цели */}
           {completedGoals.length > 0 && (

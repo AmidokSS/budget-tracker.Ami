@@ -409,3 +409,115 @@ body {
     overscroll-behavior: none;
   }
 }
+
+/* Адаптивные анимации для производительности */
+@layer utilities {
+  /* Настройки для уменьшенного движения */
+  .reduce-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Настройки для низкопроизводительных устройств */
+  .low-performance * {
+    animation-duration: calc(var(--animation-duration, 0.3s) * 0.5);
+    transition-duration: calc(var(--animation-duration, 0.3s) * 0.5);
+    animation-timing-function: var(--animation-easing, ease);
+    transition-timing-function: var(--animation-easing, ease);
+  }
+
+  /* Оптимизированные анимации */
+  .performance-optimized {
+    transform: translateZ(0); /* Принудительное использование GPU */
+    will-change: transform, opacity;
+    animation-fill-mode: both;
+  }
+
+  /* Умные градиенты для производительности */
+  .smart-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--gradient-from, #667eea) 0%,
+      var(--gradient-to, #764ba2) 100%
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .smart-gradient {
+      background: var(--gradient-fallback, #667eea);
+    }
+  }
+
+  /* Адаптивные hover эффекты */
+  .adaptive-hover {
+    transition: all var(--animation-duration, 0.3s)
+      var(--animation-easing, ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .adaptive-hover:hover {
+      transform: var(--hover-transform, translateY(-2px));
+      box-shadow: var(--hover-shadow, 0 10px 25px rgba(0, 0, 0, 0.2));
+    }
+  }
+
+  /* Умные тени для производительности */
+  .smart-shadow {
+    box-shadow: var(--shadow-default, 0 4px 6px rgba(0, 0, 0, 0.1));
+  }
+
+  .low-performance .smart-shadow {
+    box-shadow: var(--shadow-simple, 0 2px 4px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Оптимизированные скролл анимации */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .reduce-motion .scroll-smooth {
+    scroll-behavior: auto;
+  }
+}
+
+/* CSS переменные для адаптивной производительности */
+:root {
+  --animation-duration: 0.3s;
+  --animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-delay: 0.05s;
+  --hover-transform: translateY(-2px);
+  --hover-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  --shadow-default: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-simple: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --gradient-from: #667eea;
+  --gradient-to: #764ba2;
+  --gradient-fallback: #667eea;
+}
+
+/* Медиа запросы для автоматической оптимизации */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration: 0.01ms;
+    --animation-delay: 0s;
+    --hover-transform: none;
+    --hover-shadow: none;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --animation-duration: 0.2s;
+    --animation-delay: 0.02s;
+  }
+}
+
+/* Оптимизация для медленных соединений */
+@media (connection: slow-2g), (connection: 2g) {
+  :root {
+    --animation-duration: 0.1s;
+    --animation-delay: 0s;
+    --shadow-default: var(--shadow-simple);
+  }
+}

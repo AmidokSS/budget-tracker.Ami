@@ -4,6 +4,7 @@ import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Providers } from '@/components/providers'
 import { DynamicGradientWrapper } from '@/components/DynamicGradientWrapper'
+import { PerformanceProvider } from '@/hooks/usePerformance'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -75,12 +76,14 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
       >
         <Providers>
-          <DynamicGradientWrapper>
-            <div className="relative flex min-h-screen flex-col">
-              <Navbar />
-              <main className="flex-1 pb-20 md:pb-0">{children}</main>
-            </div>
-          </DynamicGradientWrapper>
+          <PerformanceProvider>
+            <DynamicGradientWrapper>
+              <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1 pb-20 md:pb-0">{children}</main>
+              </div>
+            </DynamicGradientWrapper>
+          </PerformanceProvider>
         </Providers>
       </body>
     </html>

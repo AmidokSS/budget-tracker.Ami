@@ -1,22 +1,18 @@
 ﻿'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOperations, useUsers, useCategories, useDeleteOperation } from '@/hooks/useApi'
 import { useCurrency } from '@/hooks/useCurrency'
 import { GradientPage } from '@/components/GradientPage'
 import { EmptyState } from '@/components/EmptyState'
+import { LazyVirtualizedOperationList } from '@/components/LazyComponents'
 import { 
-  Calendar, 
-  ArrowUpCircle, 
-  ArrowDownCircle, 
   Filter, 
   Trash2, 
-  User, 
   TrendingUp, 
   TrendingDown, 
   BarChart3,
-  Clock,
   X,
   CreditCard
 } from 'lucide-react'
@@ -42,6 +38,11 @@ export default function OperationsPage() {
   const { data: categories } = useCategories()
   const deleteOperation = useDeleteOperation()
   const { formatAmount } = useCurrency()
+
+  // Мемоизированные обработчики
+  const handleDeleteOperation = useCallback(async (id: string) => {
+    setDeleteConfirm({ show: true, operationId: id })
+  }, [])
 
   if (operationsLoading) {
     return (
@@ -86,10 +87,6 @@ export default function OperationsPage() {
   const totalExpense = expenseOperations.reduce((sum, op) => sum + op.amount, 0)
   const balance = totalIncome - totalExpense
 
-  const handleDeleteOperation = async (id: string) => {
-    setDeleteConfirm({ show: true, operationId: id })
-  }
-
   const confirmDelete = async () => {
     if (deleteConfirm.operationId) {
       try {
@@ -103,30 +100,6 @@ export default function OperationsPage() {
 
   const cancelDelete = () => {
     setDeleteConfirm({ show: false, operationId: null })
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const isToday = date.toDateString() === now.toDateString()
-    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-    const isYesterday = date.toDateString() === yesterday.toDateString()
-    
-    if (isToday) return 'Сегодня'
-    if (isYesterday) return 'Вчера'
-    
-    return date.toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: 'short',
-      year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
-    })
-  }
-
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
   }
 
   const periodLabels: Record<Period, string> = {
@@ -340,108 +313,13 @@ export default function OperationsPage() {
                 />
               </div>
             ) : (
-              <div className="space-y-2 p-4">
-                {filteredOperations.map((operation, index) => (
-                  <motion.div
-                    key={operation.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="group relative w-full bg-white/5 hover:bg-white/10 rounded-lg transition-all border border-transparent hover:border-white/20 shadow-lg hover:shadow-xl overflow-hidden"
-                  >
-                    <div className="p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                      {/* Иконка и основная информация */}
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className={`p-2 rounded-lg flex-shrink-0 ${
-                          operation.type === 'income' ? 'bg-green-500/20' : 'bg-red-500/20'
-                        }`}>
-                          {operation.type === 'income' ? (
-                            <ArrowUpCircle className="w-5 h-5 text-green-400" />
-                          ) : (
-                            <ArrowDownCircle className="w-5 h-5 text-red-400" />
-                          )}
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
-                            {/* Название и категория */}
-                            <div className="flex flex-col gap-1">
-                              {operation.note && (
-                                <span className="text-white font-medium truncate">
-                                  {operation.note}
-                                </span>
-                              )}
-                              <span className="text-sm px-2 py-1 bg-white/10 rounded text-white/70 w-fit">
-                                {operation.category?.emoji} {operation.category?.name}
-                              </span>
-                            </div>
-                            
-                            {/* Сумма - на мобильных отдельно */}
-                            <div className="sm:hidden">
-                              <p className={`text-lg font-semibold ${
-                                operation.type === 'income' ? 'text-green-400' : 'text-red-400'
-                              }`}>
-                                {operation.type === 'income' ? '+' : '-'}{formatAmount(operation.amount)}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          {/* Метаинформация */}
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-white/60">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3 flex-shrink-0" />
-                              <span className="truncate">{formatDate(operation.createdAt)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 flex-shrink-0" />
-                              <span>{formatTime(operation.createdAt)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <User className="w-3 h-3 flex-shrink-0" />
-                              <span className="truncate">
-                                {users?.find(u => u.id === operation.userId)?.name || 'Пользователь'}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Сумма и действия - только на больших экранах */}
-                      <div className="hidden sm:flex items-center gap-3 flex-shrink-0">
-                        <div className="text-right">
-                          <p className={`text-lg font-semibold ${
-                            operation.type === 'income' ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            {operation.type === 'income' ? '+' : '-'}{formatAmount(operation.amount)}
-                          </p>
-                        </div>
-                        
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleDeleteOperation(operation.id)}
-                          className="opacity-0 group-hover:opacity-100 p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all"
-                          disabled={deleteOperation.isPending}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-400" />
-                        </motion.button>
-                      </div>
-                      
-                      {/* Кнопка удаления для мобильных */}
-                      <div className="sm:hidden absolute top-2 right-2">
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() => handleDeleteOperation(operation.id)}
-                          className="opacity-70 p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-all"
-                          disabled={deleteOperation.isPending}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-400" />
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="p-4">
+                <LazyVirtualizedOperationList
+                  operations={filteredOperations}
+                  onDelete={handleDeleteOperation}
+                  height={600}
+                  itemHeight={120}
+                />
               </div>
             )}
           </div>
