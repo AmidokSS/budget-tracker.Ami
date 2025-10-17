@@ -7,12 +7,6 @@ const nextConfig = {
   eslint: {
     dirs: ['src'],
   },
-  // Оптимизация для Vercel
-  output: 'standalone',
-  experimental: {
-    // Включаем App Router
-    appDir: true,
-  },
   // Настройки для работы с базой данных
   serverExternalPackages: ['@prisma/client', 'prisma'],
   webpack: (config, { isServer }) => {
