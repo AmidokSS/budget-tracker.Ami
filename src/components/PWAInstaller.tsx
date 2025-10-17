@@ -89,6 +89,8 @@ export function PWAInstaller() {
         <motion.button
           onClick={handleInstall}
           disabled={!canInstall || isInstalling}
+          role="button"
+          aria-label={canInstall ? 'Установить приложение' : 'Установка недоступна'}
           className={`
             w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-medium
             transition-all duration-300 transform hover:scale-105

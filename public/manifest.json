@@ -19,44 +19,6 @@
       "purpose": "maskable any"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "/screenshot-desktop.png", 
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Add Operation",
-      "short_name": "Add",
-      "description": "Quickly add a new operation",
-      "url": "/operations?new=true",
-      "icons": [
-        {
-          "src": "/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Analytics",
-      "short_name": "Stats",
-      "description": "View financial analytics",
-      "url": "/analytics",
-      "icons": [
-        {
-          "src": "/icon-192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ]
+  "shortcuts": [],
+  "screenshots": []
 }

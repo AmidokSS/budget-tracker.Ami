@@ -55,6 +55,13 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon-72x72.svg" />
+        <meta property="og:title" content="Budget Tracker | Управление финансами" />
+        <meta property="og:description" content="Современное PWA приложение для управления личными финансами" />
+        <meta property="og:image" content="/icon-72x72.svg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Budget Tracker | Управление финансами" />
+        <meta name="twitter:description" content="Современное PWA приложение для управления личными финансами" />
+        <meta name="twitter:image" content="/icon-72x72.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
