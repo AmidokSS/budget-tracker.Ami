@@ -1,7 +1,4 @@
-'use client'
-
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
@@ -12,192 +9,104 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
 }
 
-interface PWAState {
-  // Состояние установки
-  isInstallable: boolean
-  isInstalled: boolean
+interface PWAStore {
   deferredPrompt: BeforeInstallPromptEvent | null
-  
-  // Состояние service worker
-  isOnline: boolean
-  swRegistration: ServiceWorkerRegistration | null
-  updateAvailable: boolean
-  
-  // Действия
-  setInstallable: (installable: boolean) => void // eslint-disable-line
-  setInstalled: (installed: boolean) => void // eslint-disable-line
+  isInstalled: boolean
+  canInstall: boolean
+  isStandalone: boolean
   setDeferredPrompt: (prompt: BeforeInstallPromptEvent | null) => void // eslint-disable-line
-  setOnline: (online: boolean) => void // eslint-disable-line
-  setSwRegistration: (registration: ServiceWorkerRegistration | null) => void // eslint-disable-line
-  setUpdateAvailable: (available: boolean) => void // eslint-disable-line
-  
-  // Методы установки
-  installApp: () => Promise<boolean>
-  updateApp: () => Promise<void>
-  checkInstallation: () => void
+  setInstalled: (installed: boolean) => void // eslint-disable-line
+  setCanInstall: (canInstall: boolean) => void // eslint-disable-line
+  setStandalone: (standalone: boolean) => void // eslint-disable-line
+  install: () => Promise<boolean>
+  initializePWA: () => () => void
 }
 
-export const usePWAStore = create<PWAState>()(
-  persist(
-    (set, get) => ({
-      // Начальное состояние
-      isInstallable: false,
-      isInstalled: false,
-      deferredPrompt: null,
-      isOnline: typeof window !== 'undefined' ? navigator.onLine : true,
-      swRegistration: null,
-      updateAvailable: false,
-      
-      // Сеттеры
-      setInstallable: (installable) => set({ isInstallable: installable }),
-      setInstalled: (installed) => set({ isInstalled: installed }),
-      setDeferredPrompt: (prompt) => set({ deferredPrompt: prompt }),
-      setOnline: (online) => set({ isOnline: online }),
-      setSwRegistration: (registration) => set({ swRegistration: registration }),
-      setUpdateAvailable: (available) => set({ updateAvailable: available }),
-      
-      // Установка приложения
-      installApp: async () => {
-        const { deferredPrompt } = get()
-        
-        if (!deferredPrompt) {
-          console.log('No deferred prompt available')
-          return false
-        }
-        
-        try {
-          // Показываем диалог установки
-          await deferredPrompt.prompt()
-          
-          // Ждем выбор пользователя
-          const { outcome } = await deferredPrompt.userChoice
-          
-          if (outcome === 'accepted') {
-            console.log('User accepted the install prompt')
-            set({ 
-              isInstalled: true, 
-              isInstallable: false,
-              deferredPrompt: null 
-            })
-            return true
-          } else {
-            console.log('User dismissed the install prompt')
-            set({ deferredPrompt: null })
-            return false
-          }
-        } catch (error) {
-          console.error('Error during installation:', error)
-          return false
-        }
-      },
-      
-      // Обновление приложения
-      updateApp: async () => {
-        const { swRegistration } = get()
-        
-        if (swRegistration?.waiting) {
-          // Сообщаем waiting SW что нужно активироваться
-          swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' })
-          
-          // Перезагружаем страницу после активации
-          swRegistration.addEventListener('controlling', () => {
-            window.location.reload()
-          })
-        }
-      },
-      
-      // Проверка состояния установки
-      checkInstallation: () => {
-        if (typeof window === 'undefined') return
-        
-        // Проверяем, запущено ли приложение в standalone режиме
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                            (window.navigator as any).standalone ||
-                            document.referrer.includes('android-app://')
-        
-        if (isStandalone) {
-          set({ isInstalled: true, isInstallable: false })
-        }
-      }
-    }),
-    {
-      name: 'pwa-store',
-      partialize: (state) => ({
-        isInstalled: state.isInstalled,
-        // Не сохраняем deferredPrompt и swRegistration в localStorage
-      }),
+export const usePWAStore = create<PWAStore>((set, get) => ({
+  deferredPrompt: null,
+  isInstalled: false,
+  canInstall: false,
+  isStandalone: false,
+
+  setDeferredPrompt: (prompt) => {
+    set({ deferredPrompt: prompt, canInstall: !!prompt })
+    console.log('PWA: Deferred prompt set:', !!prompt)
+  },
+
+  setInstalled: (installed) => set({ isInstalled: installed }),
+  setCanInstall: (canInstall) => set({ canInstall }),
+  setStandalone: (standalone) => set({ isStandalone: standalone }),
+
+  install: async () => {
+    const { deferredPrompt } = get()
+    if (!deferredPrompt) {
+      console.log('PWA: No deferred prompt available')
+      return false
     }
-  )
-)
 
-// Хук для инициализации PWA событий
-export const usePWAEvents = () => {
-  const {
-    setInstallable,
-    setDeferredPrompt,
-    setOnline,
-    setSwRegistration,
-    setUpdateAvailable,
-    checkInstallation
-  } = usePWAStore()
-  
-  if (typeof window === 'undefined') return
-  
-  // Обработчик beforeinstallprompt
-  const handleBeforeInstallPrompt = (e: Event) => {
-    console.log('beforeinstallprompt event fired')
-    e.preventDefault()
-    
-    const beforeInstallPromptEvent = e as BeforeInstallPromptEvent
-    setDeferredPrompt(beforeInstallPromptEvent)
-    setInstallable(true)
-  }
-  
-  // Обработчик appinstalled
-  const handleAppInstalled = () => {
-    console.log('PWA was installed')
-    setInstallable(false)
-    setDeferredPrompt(null)
-  }
-  
-  // Обработчики онлайн/оффлайн
-  const handleOnline = () => setOnline(true)
-  const handleOffline = () => setOnline(false)
-  
-  // Подписываемся на события
-  window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-  window.addEventListener('appinstalled', handleAppInstalled)
-  window.addEventListener('online', handleOnline)
-  window.addEventListener('offline', handleOffline)
-  
-  // Проверяем текущее состояние
-  checkInstallation()
-  
-  // Service Worker события
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then((registration) => {
-      setSwRegistration(registration)
+    try {
+      console.log('PWA: Triggering install prompt')
+      await deferredPrompt.prompt()
+      const choiceResult = await deferredPrompt.userChoice
+      console.log('PWA: User choice:', choiceResult.outcome)
       
-      // Проверяем обновления
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing
-        
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              setUpdateAvailable(true)
-            }
-          })
+      if (choiceResult.outcome === 'accepted') {
+        set({ deferredPrompt: null, canInstall: false, isInstalled: true })
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('PWA: Install error:', error)
+      return false
+    }
+  },
+
+  initializePWA: () => {
+    const store = get()
+    
+    // Проверяем standalone режим
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                        (window.navigator as any).standalone === true
+    store.setStandalone(isStandalone)
+    console.log('PWA: Standalone mode:', isStandalone)
+
+    // Проверяем установку через standalone или URL
+    const isInstalled = isStandalone || 
+                       window.location.search.includes('standalone=true')
+    store.setInstalled(isInstalled)
+    console.log('PWA: App installed:', isInstalled)
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      console.log('PWA: beforeinstallprompt event fired')
+      e.preventDefault()
+      store.setDeferredPrompt(e as BeforeInstallPromptEvent)
+    }
+
+    const handleAppInstalled = () => {
+      console.log('PWA: appinstalled event fired')
+      store.setInstalled(true)
+      store.setDeferredPrompt(null)
+      store.setCanInstall(false)
+    }
+
+    // Добавляем слушатели
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    window.addEventListener('appinstalled', handleAppInstalled)
+
+    // Для разработки - симулируем событие через 3 секунды
+    if (process.env.NODE_ENV === 'development') {
+      setTimeout(() => {
+        if (!get().deferredPrompt && !isInstalled) {
+          console.log('PWA: Development mode - simulating install prompt')
+          store.setCanInstall(true)
         }
-      })
-    })
+      }, 3000)
+    }
+
+    // Cleanup функция
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      window.removeEventListener('appinstalled', handleAppInstalled)
+    }
   }
-  
-  // Очистка при размонтировании
-  return () => {
-    window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    window.removeEventListener('appinstalled', handleAppInstalled)
-    window.removeEventListener('online', handleOnline)
-    window.removeEventListener('offline', handleOffline)
-  }
-}
+}))

@@ -4,20 +4,11 @@ import { motion } from 'framer-motion'
 import { GradientPage } from '@/components/GradientPage'
 import { useSettings } from '@/hooks/useSettings'
 import CurrencySelector from '@/components/CurrencySelector'
-import { InstallButton, PWAStatus } from '@/components/InstallButton'
-import { usePWAEvents } from '@/stores/pwaStore'
+import { PWAInstaller } from '@/components/PWAInstaller'
 import { Type, Zap, Smartphone } from 'lucide-react'
-import { useEffect } from 'react'
 
 export default function SettingsPage() {
   const { settings, isLoading, updateSetting } = useSettings()
-
-  // Инициализируем PWA события
-  const cleanup = usePWAEvents()
-  
-  useEffect(() => {
-    return cleanup
-  }, [cleanup])
 
   const fontSizeOptions: Array<{value: 'small' | 'medium' | 'large', label: string, class: string}> = [
     { value: 'small', label: 'Маленький', class: 'text-sm' },
@@ -107,8 +98,7 @@ export default function SettingsPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <InstallButton />
-              <PWAStatus />
+              <PWAInstaller />
             </div>
             
             <div className="space-y-2 text-xs text-white/50">
