@@ -167,7 +167,7 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
-    console.log(`💰 Операция удалена: ${operation.type} ${operation.amount} руб. (${operation.category?.name})`)
+    console.log(`💰 Операция удалена: ${operation.type} ${operation.amount} PLN (${operation.category?.name})`)
 
     return NextResponse.json({ 
       message: 'Operation deleted successfully',

@@ -245,8 +245,8 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                           />
                         </div>
                         <div className="flex justify-between text-sm text-white/60">
-                          <span>{goal.currentAmount.toLocaleString('ru-RU')} ₽</span>
-                          <span>{goal.targetAmount.toLocaleString('ru-RU')} ₽</span>
+                          <span>{goal.currentAmount.toLocaleString('pl-PL')} zł</span>
+                          <span>{goal.targetAmount.toLocaleString('pl-PL')} zł</span>
                         </div>
                       </div>
                     </div>
@@ -343,7 +343,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                                   {title || 'Название цели'}
                                 </div>
                                 <div className="text-sm text-white/60">
-                                  Цель: {targetAmount || '0'} ₽
+                                  Цель: {targetAmount || '0'} zł
                                 </div>
                                 {deadline && (
                                   <div className="text-sm text-blue-400">
@@ -379,7 +379,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                         {goal && fundAmount && (
                           <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
                             <div className="text-sm text-green-300">
-                              После пополнения: {(goal.currentAmount + parseFloat(fundAmount || '0')).toLocaleString('ru-RU')} ₽
+                              После пополнения: {(goal.currentAmount + parseFloat(fundAmount || '0')).toLocaleString('pl-PL')} zł
                             </div>
                             <div className="text-xs text-green-400">
                               Прогресс: {Math.round(((goal.currentAmount + parseFloat(fundAmount || '0')) / goal.targetAmount) * 100)}%
