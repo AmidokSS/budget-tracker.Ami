@@ -1,32 +1,51 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { 
+  formatCurrencyPrecise, 
+  formatCurrencyWhole as formatCurrencyWholeUtil, 
+  type CurrencyCode 
+} from './currencyUtils'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('pl-PL', {
-    style: 'currency',
-    currency: 'PLN',
-  }).format(amount)
+// Обновленные функции с точными вычислениями
+export function formatCurrency(
+  amount: number, 
+  currencyCode: CurrencyCode = 'PLN'
+): string {
+  return formatCurrencyPrecise(amount, currencyCode, { showSymbol: true })
 }
 
-export function formatCurrencyCompact(amount: number, isCompact: boolean = false): string {
+export function formatCurrencyCompact(
+  amount: number, 
+  isCompact: boolean = false,
+  currencyCode: CurrencyCode = 'PLN'
+): string {
   if (!isCompact) {
-    return formatCurrency(amount)
+    return formatCurrency(amount, currencyCode)
   }
 
-  const absAmount = Math.abs(amount)
-  const sign = amount < 0 ? '-' : ''
-  
-  if (absAmount >= 1000000) {
-    return `${sign}${(absAmount / 1000000).toFixed(1)}M zł`
-  } else if (absAmount >= 1000) {
-    return `${sign}${(absAmount / 1000).toFixed(1)}K zł`
-  } else {
-    return `${sign}${absAmount.toFixed(0)} zł`
-  }
+  return formatCurrencyPrecise(amount, currencyCode, { 
+    showSymbol: true, 
+    compact: true 
+  })
+}
+
+// Дополнительные утилиты форматирования
+export function formatCurrencyWithoutSymbol(
+  amount: number,
+  currencyCode: CurrencyCode = 'PLN'
+): string {
+  return formatCurrencyPrecise(amount, currencyCode, { showSymbol: false })
+}
+
+export function formatCurrencyWhole(
+  amount: number,
+  currencyCode: CurrencyCode = 'PLN'
+): string {
+  return formatCurrencyWholeUtil(amount, currencyCode, true)
 }
 
 export function getPageGradient(pathname: string): string {

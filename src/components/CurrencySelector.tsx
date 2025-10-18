@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Check, RefreshCw } from 'lucide-react'
 import { useCurrency } from '@/hooks/useCurrency'
 import { CURRENCIES } from '@/stores/currencyStore'
+import { formatRelativeTime } from '@/lib/dateUtils'
 import type { Currency } from '@/types'
 
 export default function CurrencySelector() {
@@ -30,16 +31,7 @@ export default function CurrencySelector() {
 
   const formatLastUpdated = () => {
     if (!lastUpdated) return 'Никогда'
-    
-    const date = new Date(lastUpdated)
-    const now = new Date()
-    const diffHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-    
-    if (diffHours < 1) return 'Только что'
-    if (diffHours < 24) return `${diffHours} ч. назад`
-    
-    const diffDays = Math.floor(diffHours / 24)
-    return `${diffDays} дн. назад`
+    return formatRelativeTime(lastUpdated)
   }
 
   return (

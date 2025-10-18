@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getDateRanges } from '@/lib/dateUtils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,25 +26,15 @@ export async function GET(request: NextRequest) {
 
     // Фильтр по периоду
     if (period && period !== 'all') {
-      const now = new Date()
+      const { startDate, endDate } = getDateRanges(period)
       
-      switch (period) {
-        case 'current_month':
-          const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-          where.date = { gte: currentMonthStart }
-          break
-        case 'last_month':
-          const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-          const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0)
-          where.date = {
-            gte: lastMonthStart,
-            lte: lastMonthEnd
-          }
-          break
-        case 'last_7_days':
-          const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-          where.date = { gte: sevenDaysAgo }
-          break
+      if (startDate && endDate) {
+        where.date = {
+          gte: startDate,
+          lte: endDate
+        }
+      } else if (startDate) {
+        where.date = { gte: startDate }
       }
     }
 
@@ -166,10 +157,13 @@ export async function DELETE(request: NextRequest) {
       })
 
       if (limit) {
+        const { subtractAmounts } = await import('@/lib/currencyUtils')
+        const newAmount = subtractAmounts(limit.currentAmount, operation.amount)
+        
         await prisma.limit.update({
           where: { id: limit.id },
           data: {
-            currentAmount: Math.max(0, limit.currentAmount - operation.amount),
+            currentAmount: Math.max(0, newAmount.value),
           },
         })
       }

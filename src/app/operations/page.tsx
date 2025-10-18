@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOperations, useUsers, useCategories, useDeleteOperation } from '@/hooks/useApi'
 import { useCurrency } from '@/hooks/useCurrency'
+import { useOperationSearch } from '@/hooks/useSearch'
 import { GradientPage } from '@/components/GradientPage'
 import { EmptyState } from '@/components/EmptyState'
 import { LazyVirtualizedOperationList } from '@/components/LazyComponents'
+import SearchInput from '@/components/SearchInput'
 import { 
   Filter, 
   Trash2, 
@@ -18,7 +20,8 @@ import {
   Calendar,
   User,
   Tag,
-  RotateCcw
+  RotateCcw,
+  Search
 } from 'lucide-react'
 
 type Period = 'all' | 'current_month' | 'last_month' | 'last_7_days'
@@ -42,6 +45,25 @@ export default function OperationsPage() {
   const { data: categories } = useCategories()
   const deleteOperation = useDeleteOperation()
   const { formatAmount } = useCurrency()
+
+  // Поиск по операциям
+  const { results: searchResults, search, clearSearch, isSearching, resultCount } = useOperationSearch(operations || [])
+
+  // Фильтрованные операции (сначала поиск, потом фильтры)
+  const filteredOperations = useMemo(() => {
+    let filtered = isSearching ? searchResults : (operations || [])
+    
+    // Применяем фильтры только после поиска
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(op => op.type === selectedType)
+    }
+    
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(op => op.categoryId === selectedCategory)
+    }
+    
+    return filtered
+  }, [searchResults, operations, isSearching, selectedType, selectedCategory])
 
   // Мемоизированные обработчики
   const handleDeleteOperation = useCallback(async (id: string) => {
@@ -78,12 +100,6 @@ export default function OperationsPage() {
       </GradientPage>
     )
   }
-
-  const filteredOperations = operations?.filter(operation => {
-    const typeMatch = selectedType === 'all' || operation.type === selectedType
-    const categoryMatch = selectedCategory === 'all' || operation.categoryId === selectedCategory
-    return typeMatch && categoryMatch
-  }) || []
 
   const incomeOperations = filteredOperations.filter(op => op.type === 'income')
   const expenseOperations = filteredOperations.filter(op => op.type === 'expense')
@@ -134,7 +150,14 @@ export default function OperationsPage() {
             <h1 className="text-3xl font-bold heading-gold mb-2 drop-shadow-lg">
               <span className="emoji-color">💳</span> Журнал операций
             </h1>
-            <p className="text-cyan-100/80 drop-shadow-sm">Интерактивный обзор всех ваших транзакций</p>
+            <p className="text-cyan-100/80 drop-shadow-sm">
+              Интерактивный обзор всех ваших транзакций
+              {isSearching && (
+                <span className="ml-2 text-amber-300">
+                  • Найдено: {resultCount}
+                </span>
+              )}
+            </p>
           </div>
           
           <div className="flex items-center gap-3">
@@ -162,6 +185,21 @@ export default function OperationsPage() {
               Фильтры
             </motion.button>
           </div>
+        </motion.div>
+
+        {/* Поиск по операциям */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="my-8"
+        >
+          <SearchInput
+            placeholder="Поиск по операциям (описание, категория, сумма)..."
+            onSearch={search}
+            onClear={clearSearch}
+            className="max-w-2xl"
+          />
         </motion.div>
 
         {/* Премиальная статистика операций */}

@@ -4,6 +4,7 @@ import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
+import { formatChartDate } from '@/lib/dateUtils'
 
 interface TimelineData {
   date: string
@@ -18,10 +19,7 @@ interface TimelineChartProps {
 const TimelineChart = memo(({ data }: TimelineChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const date = new Date(label).toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'short'
-      })
+      const date = formatChartDate(label)
       
       return (
         <motion.div
@@ -65,11 +63,7 @@ const TimelineChart = memo(({ data }: TimelineChartProps) => {
   }
 
   const formatXAxis = (tickItem: string) => {
-    const date = new Date(tickItem)
-    return date.toLocaleDateString('ru-RU', {
-      day: 'numeric',
-      month: 'short'
-    })
+    return formatChartDate(tickItem)
   }
 
   if (!data || data.length === 0) {

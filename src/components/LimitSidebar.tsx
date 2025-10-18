@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, Trash2 } from 'lucide-react'
 import { useUpdateLimit, useDeleteLimit } from '@/hooks/useApi'
 import { Limit } from '@/types'
+import { isPositiveAmount } from '@/lib/currencyUtils'
 
 interface LimitSidebarProps {
   isOpen: boolean
@@ -58,9 +59,14 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!limit || !limitAmount) return
+    
+    // Проверяем сумму лимита с точной валютной арифметикой
+    const parsedLimitAmount = parseFloat(limitAmount.replace(',', '.'))
+    if (isNaN(parsedLimitAmount) || !isPositiveAmount(parsedLimitAmount)) return
+    
     setIsSubmitting(true)
     try {
-      await updateLimit.mutateAsync({ id: limit.id, limitAmount: parseFloat(limitAmount) })
+      await updateLimit.mutateAsync({ id: limit.id, limitAmount: parsedLimitAmount })
       onSuccess?.(); onClose()
     } catch (err) { 
       // Failed to update limit

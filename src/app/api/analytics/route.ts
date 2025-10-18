@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getDateRanges } from '@/lib/dateUtils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,36 +9,17 @@ export async function GET(request: NextRequest) {
     const period = searchParams.get('period') || 'current_month'
 
     // Определяем диапазон дат
-    const now = new Date()
-    let startDate: Date
-    let endDate = now
-
-    switch (period) {
-      case 'current_month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-        break
-      case 'last_month':
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-        startDate = lastMonth
-        endDate = new Date(now.getFullYear(), now.getMonth(), 0)
-        break
-      case 'last_7_days':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-        break
-      case 'current_year':
-        startDate = new Date(now.getFullYear(), 0, 1)
-        break
-      case 'all':
-      default:
-        startDate = new Date(2020, 0, 1) // Достаточно старая дата
-        break
-    }
+    const { startDate, endDate } = getDateRanges(period)
+    
+    // Для случая 'all' используем очень старую дату
+    const finalStartDate = startDate || new Date(2020, 0, 1)
+    const finalEndDate = endDate || new Date()
 
     // Базовые условия запроса
     const whereCondition: any = {
       createdAt: {
-        gte: startDate,
-        lte: endDate
+        gte: finalStartDate,
+        lte: finalEndDate
       }
     }
 
@@ -106,7 +88,7 @@ export async function GET(request: NextRequest) {
     )
 
     // 4. Средний расход в день
-    const daysCount = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)))
+    const daysCount = Math.max(1, Math.ceil((finalEndDate.getTime() - finalStartDate.getTime()) / (1000 * 60 * 60 * 24)))
     const avgDailyExpense = totalExpense / daysCount
 
     // 5. Лимиты

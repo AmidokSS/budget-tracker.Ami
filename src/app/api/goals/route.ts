@@ -77,11 +77,13 @@ export async function PUT(request: NextRequest) {
     if (currentAmount !== undefined) updateData.currentAmount = parseFloat(currentAmount)
     if (archived !== undefined) updateData.archived = archived
 
-    // Пополнение цели
+    // Пополнение цели с точной арифметикой
     if (addAmount !== undefined) {
+      const { addAmounts } = await import('@/lib/currencyUtils')
       const currentGoal = await prisma.goal.findUnique({ where: { id } })
       if (currentGoal) {
-        updateData.currentAmount = currentGoal.currentAmount + parseFloat(addAmount)
+        const newAmount = addAmounts(currentGoal.currentAmount, parseFloat(addAmount))
+        updateData.currentAmount = newAmount.value
       }
     }
 

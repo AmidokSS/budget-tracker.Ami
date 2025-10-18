@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, Trash2 } from 'lucide-react'
 import { useCreateGoal, useUpdateGoal, useAddToGoal, useDeleteGoal } from '@/hooks/useApi'
 import { Goal } from '@/types'
+import { createCurrency, isPositiveAmount } from '@/lib/currencyUtils'
 
 interface GoalSidebarProps {
   isOpen: boolean
@@ -89,10 +90,15 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
     if (isSubmitting) return
 
     if (isFunding) {
-      if (!fundAmount || parseFloat(fundAmount) <= 0 || !goal) return
+      if (!fundAmount || !goal) return
+      
+      // Проверяем сумму с точной валютной арифметикой
+      const parsedAmount = parseFloat(fundAmount.replace(',', '.'))
+      if (isNaN(parsedAmount) || !isPositiveAmount(parsedAmount)) return
+      
       setIsSubmitting(true)
       try {
-        await addToGoal.mutateAsync({ id: goal.id, addAmount: parseFloat(fundAmount) })
+        await addToGoal.mutateAsync({ id: goal.id, addAmount: parsedAmount })
         onSuccess?.(); onClose()
       } catch (err) {
         // Failed to fund goal
@@ -100,13 +106,18 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
       return
     }
 
-    if (!title.trim() || !targetAmount || parseFloat(targetAmount) <= 0) return
+    if (!title.trim() || !targetAmount) return
+    
+    // Проверяем целевую сумму с точной валютной арифметикой
+    const parsedTargetAmount = parseFloat(targetAmount.replace(',', '.'))
+    if (isNaN(parsedTargetAmount) || !isPositiveAmount(parsedTargetAmount)) return
+    
     setIsSubmitting(true)
     try {
       if (isEditing && goal) {
-        await updateGoal.mutateAsync({ id: goal.id, title: title.trim(), targetAmount: parseFloat(targetAmount), deadline: deadline || undefined, emoji })
+        await updateGoal.mutateAsync({ id: goal.id, title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji })
       } else {
-        await createGoal.mutateAsync({ title: title.trim(), targetAmount: parseFloat(targetAmount), deadline: deadline || undefined, emoji })
+        await createGoal.mutateAsync({ title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji })
       }
       onSuccess?.(); onClose()
     } catch (err) {

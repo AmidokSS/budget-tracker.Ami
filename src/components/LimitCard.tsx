@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Limit } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
 import { useAnimationConfig, useConditionalAnimation } from '@/hooks/usePerformance'
+import { subtractAmounts, calculatePercentage } from '@/lib/currencyUtils'
 
 interface LimitCardProps {
   limit: Limit
@@ -16,9 +17,9 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
   const { formatAmountWhole } = useCurrency()
   const { fadeIn, hover } = useAnimationConfig()
 
-  // Мемоизируем вычисления прогресса
+  // Мемоизируем вычисления прогресса с точными операциями
   const progress = useMemo(() => {
-    return limit.limitAmount > 0 ? (limit.currentAmount / limit.limitAmount) * 100 : 0
+    return limit.limitAmount > 0 ? calculatePercentage(limit.currentAmount, limit.limitAmount) : 0
   }, [limit.currentAmount, limit.limitAmount])
 
   // Мемоизируем форматированные суммы
@@ -32,9 +33,9 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
     [limit.limitAmount, formatAmountWhole]
   )
 
-  // Мемоизируем оставшуюся сумму
+  // Мемоизируем оставшуюся сумму с точными вычислениями
   const remaining = useMemo(() => {
-    const remainingAmount = limit.limitAmount - limit.currentAmount
+    const remainingAmount = subtractAmounts(limit.limitAmount, limit.currentAmount).value
     return formatAmountWhole(Math.max(0, remainingAmount))
   }, [limit.limitAmount, limit.currentAmount, formatAmountWhole])
 

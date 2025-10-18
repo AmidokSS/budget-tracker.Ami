@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { Goal } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
 import { useAnimationConfig, useConditionalAnimation } from '@/hooks/usePerformance'
+import { formatDeadline } from '@/lib/dateUtils'
+import { subtractAmounts, calculatePercentage } from '@/lib/currencyUtils'
 
 interface GoalCardProps {
   goal: Goal
@@ -17,9 +19,9 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
   const { formatAmountWhole } = useCurrency()
   const { fadeIn, hover } = useAnimationConfig()
 
-  // Мемоизируем вычисления прогресса
+  // Мемоизируем вычисления прогресса с точными операциями
   const progress = useMemo(() => {
-    return goal.targetAmount > 0 ? (goal.currentAmount / goal.targetAmount) * 100 : 0
+    return goal.targetAmount > 0 ? calculatePercentage(goal.currentAmount, goal.targetAmount) : 0
   }, [goal.currentAmount, goal.targetAmount])
 
   // Мемоизируем форматированные суммы
@@ -35,19 +37,7 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
 
   // Мемоизируем дату дедлайна
   const deadlineText = useMemo(() => {
-    if (!goal.deadline) return 'Без срока'
-    
-    const deadline = new Date(goal.deadline)
-    const now = new Date()
-    const diffTime = deadline.getTime() - now.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
-    if (diffDays < 0) return 'Просрочено'
-    if (diffDays === 0) return 'Сегодня'
-    if (diffDays === 1) return 'Завтра'
-    if (diffDays < 7) return `${diffDays} дн.`
-    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} нед.`
-    return `${Math.ceil(diffDays / 30)} мес.`
+    return formatDeadline(goal.deadline || null)
   }, [goal.deadline])
 
   // Мемоизируем цвет прогресса

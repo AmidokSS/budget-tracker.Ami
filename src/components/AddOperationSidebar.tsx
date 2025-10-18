@@ -26,9 +26,16 @@ export default function AddOperationSidebar({ isOpen, onClose, selectedUser }: S
     e.preventDefault()
     if (!selectedUser || !amount || !categoryId) return
 
+    // Валидация и парсинг суммы с проверкой
+    const parsedAmount = parseFloat(amount.replace(',', '.'))
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      alert('Введите корректную сумму')
+      return
+    }
+
     try {
       await createOperation.mutateAsync({
-        amount: parseFloat(amount),
+        amount: parsedAmount,
         categoryId,
         type: operationType,
         note,
