@@ -99,7 +99,7 @@ const api = {
   },
   // Категории
   getCategories: async (): Promise<Category[]> => {
-    const response = await fetch('/api/categories')
+    const response = await fetch('/api/categories', { cache: 'no-store', headers: { 'cache-control': 'no-store', 'pragma': 'no-cache' } })
     if (!response.ok) throw new Error('Failed to fetch categories')
     return response.json()
   },
