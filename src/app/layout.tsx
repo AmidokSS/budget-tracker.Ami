@@ -3,6 +3,7 @@ import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Providers } from '@/components/providers'
 import { DynamicGradientWrapper } from '@/components/DynamicGradientWrapper'
+import StarryBackground from '@/components/StarryBackground'
 import { PerformanceProvider } from '@/hooks/usePerformance'
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0f172a',
+  themeColor: '#0e0e10',
   colorScheme: 'dark',
 }
 
@@ -66,7 +67,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#0f172a" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#0f172a" />
+<meta name="theme-color" content="#0e0e10" />
         <meta name="background-color" content="#0f172a" />
       </head>
       <body
@@ -75,6 +76,7 @@ export default function RootLayout({
         <Providers>
           <PerformanceProvider>
             <DynamicGradientWrapper>
+              <StarryBackground />
               <div className="relative flex min-h-screen flex-col">
                 <Navbar />
                 <main className="flex-1 pb-20 md:pb-0">{children}</main>
@@ -86,3 +88,4 @@ export default function RootLayout({
     </html>
   )
 }
+

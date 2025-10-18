@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
- { useCurrency } from '@/hooks/useCurrency'
+import { useCurrency } from '@/hooks/useCurrency'
 import { useGoals, useUpdateGoal, useDeleteGoal } from '@/hooks/useApi'
 import { GradientPage } from '@/components/GradientPage'
 import GoalSidebar from '@/components/GoalSidebar'
@@ -19,7 +19,8 @@ import {
 } from 'lucide-react'
 import { Goal } from '@/types'
 
-export default function GoalsPage() {\n  const { formatAmountWhole } = useCurrency()
+export default function GoalsPage() {
+  const { formatAmountWhole } = useCurrency()
   const { data: goals, isLoading, error } = useGoals()
   const updateGoal = useUpdateGoal()
   const deleteGoal = useDeleteGoal()
@@ -649,6 +650,7 @@ export default function GoalsPage() {\n  const { formatAmountWhole } = useCurren
     </>
   )
 }
+
 
 
 
