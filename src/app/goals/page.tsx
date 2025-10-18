@@ -1,9 +1,8 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { motion } from 'framer-motion'
+ { useCurrency } from '@/hooks/useCurrency'
 import { useGoals, useUpdateGoal, useDeleteGoal } from '@/hooks/useApi'
-import { formatCurrency } from '@/lib/utils'
 import { GradientPage } from '@/components/GradientPage'
 import GoalSidebar from '@/components/GoalSidebar'
 import GoalCard from '@/components/GoalCard'
@@ -20,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Goal } from '@/types'
 
-export default function GoalsPage() {
+export default function GoalsPage() {\n  const { formatAmountWhole } = useCurrency()
   const { data: goals, isLoading, error } = useGoals()
   const updateGoal = useUpdateGoal()
   const deleteGoal = useDeleteGoal()
@@ -522,7 +521,7 @@ export default function GoalsPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Достигнуто:</span>
-                        <span className="text-green-400 font-semibold">{formatCurrency(goal.targetAmount)}</span>
+                        <span className="text-green-400 font-semibold">{formatAmountWhole(goal.targetAmount)}</span>
                       </div>
                       <div className="w-full bg-green-900/30 rounded-full h-2">
                         <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full w-full"></div>
@@ -650,6 +649,7 @@ export default function GoalsPage() {
     </>
   )
 }
+
 
 
 

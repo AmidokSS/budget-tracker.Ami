@@ -13,7 +13,7 @@ interface GoalCardProps {
 }
 
 const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalCardProps) => {
-  const { formatAmount } = useCurrency()
+  const { formatAmountWhole } = useCurrency()
 
   // Мемоизируем вычисления прогресса
   const progress = useMemo(() => {
@@ -22,13 +22,13 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
 
   // Мемоизируем форматированные суммы
   const formattedCurrent = useMemo(() => 
-    formatAmount(goal.currentAmount), 
-    [goal.currentAmount, formatAmount]
+    formatAmountWhole(goal.currentAmount), 
+    [goal.currentAmount, formatAmountWhole]
   )
   
   const formattedTarget = useMemo(() => 
-    formatAmount(goal.targetAmount), 
-    [goal.targetAmount, formatAmount]
+    formatAmountWhole(goal.targetAmount), 
+    [goal.targetAmount, formatAmountWhole]
   )
 
   // Мемоизируем дату дедлайна
@@ -197,14 +197,14 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
           <div className="grid grid-cols-2 gap-6">
             <div>
               <span className="premium-subtitle text-sm block mb-1">Накоплено</span>
-              <div className="premium-value text-2xl font-bold text-emerald-300" data-value={formatAmount(goal.currentAmount)}>
-                {formatAmount(goal.currentAmount)}
+              <div className="premium-value text-2xl font-bold text-emerald-300" data-value={formatAmountWhole(goal.currentAmount)}>
+                {formatAmountWhole(goal.currentAmount)}
               </div>
             </div>
             <div>
               <span className="premium-subtitle text-sm block mb-1">Цель</span>
-              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formatAmount(goal.targetAmount)}>
-                {formatAmount(goal.targetAmount)}
+              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formatAmountWhole(goal.targetAmount)}>
+                {formatAmountWhole(goal.targetAmount)}
               </div>
             </div>
           </div>
@@ -229,3 +229,4 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
 GoalCard.displayName = 'GoalCard'
 
 export default GoalCard
+
