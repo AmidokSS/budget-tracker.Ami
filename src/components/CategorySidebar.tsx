@@ -20,32 +20,36 @@ const emojiOptions = [
   '🎨', '🏋️', '🎯', '🌟', '💡', '🔧'
 ]
 
-export default function CategorySidebar({ isOpen, onClose, category, onSuccess }: CategorySidebarProps) {
-  const [name, setName] = useState('')
-  const [type, setType] = useState<'income' | 'expense'>('expense')
-  const [emoji, setEmoji] = useState('💰')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-
-  const createCategory = useCreateCategory()
-  const updateCategory = useUpdateCategory()
-  const deleteCategory = useDeleteCategory()
-
-  const isEditing = !!category
-
   useEffect(() => {
-    if (category) {
-      setName(category.name)
-      setType(category.type as 'income' | 'expense')
-      setEmoji(category.emoji)
-    } else {
-      setName('')
-      setType('expense')
-      setEmoji('💰')
-    }
-    setShowDeleteConfirm(false)
-  }, [category, isOpen])
+    if (!isOpen) return;
+    const root = document.documentElement as HTMLElement;
+    const body = document.body as HTMLBodyElement;
+    const count = Number(root.dataset.sidebarCount || '0') + 1;
+    root.dataset.sidebarCount = String(count);
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevTouch = (body.style as any).touchAction || '';
 
+    root.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    (body.style as any).touchAction = 'none';
+    (body.style as any).overscrollBehavior = 'contain';
+    root.classList.add('sidebar-open');
+    body.classList.add('sidebar-open');
+
+    return () => {
+      const current = Number(root.dataset.sidebarCount || '1') - 1;
+      root.dataset.sidebarCount = String(Math.max(0, current));
+      if (current <= 0) {
+        root.style.overflow = prevRootOverflow;
+        body.style.overflow = prevBodyOverflow;
+        (body.style as any).touchAction = prevTouch;
+        (body.style as any).overscrollBehavior = '';
+        root.classList.remove('sidebar-open');
+        body.classList.remove('sidebar-open');
+      }
+    };
+  }, [isOpen]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || isSubmitting) return

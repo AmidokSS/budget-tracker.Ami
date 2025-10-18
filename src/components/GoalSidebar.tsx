@@ -21,39 +21,36 @@ const emojiOptions = [
   '🌟', '💡', '🔧', '🎵', '🏆', '💖'
 ]
 
-export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', onSuccess }: GoalSidebarProps) {
-  const [title, setTitle] = useState('')
-  const [targetAmount, setTargetAmount] = useState('')
-  const [deadline, setDeadline] = useState('')
-  const [emoji, setEmoji] = useState('💰')
-  const [fundAmount, setFundAmount] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-
-  const createGoal = useCreateGoal()
-  const updateGoal = useUpdateGoal()
-  const addToGoal = useAddToGoal()
-  const deleteGoal = useDeleteGoal()
-
-  const isEditing = mode === 'edit'
-  const isFunding = mode === 'fund'
-
   useEffect(() => {
-    if (goal && (isEditing || isFunding)) {
-      setTitle(goal.title)
-      setTargetAmount(goal.targetAmount.toString())
-      setDeadline(goal.deadline ? new Date(goal.deadline).toISOString().split('T')[0] : '')
-      setEmoji(goal.emoji)
-    } else {
-      setTitle('')
-      setTargetAmount('')
-      setDeadline('')
-      setEmoji('💰')
-    }
-    setFundAmount('')
-    setShowDeleteConfirm(false)
-  }, [goal, mode, isOpen, isEditing, isFunding])
+    if (!isOpen) return;
+    const root = document.documentElement as HTMLElement;
+    const body = document.body as HTMLBodyElement;
+    const count = Number(root.dataset.sidebarCount || '0') + 1;
+    root.dataset.sidebarCount = String(count);
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevTouch = (body.style as any).touchAction || '';
 
+    root.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    (body.style as any).touchAction = 'none';
+    (body.style as any).overscrollBehavior = 'contain';
+    root.classList.add('sidebar-open');
+    body.classList.add('sidebar-open');
+
+    return () => {
+      const current = Number(root.dataset.sidebarCount || '1') - 1;
+      root.dataset.sidebarCount = String(Math.max(0, current));
+      if (current <= 0) {
+        root.style.overflow = prevRootOverflow;
+        body.style.overflow = prevBodyOverflow;
+        (body.style as any).touchAction = prevTouch;
+        (body.style as any).overscrollBehavior = '';
+        root.classList.remove('sidebar-open');
+        body.classList.remove('sidebar-open');
+      }
+    };
+  }, [isOpen]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (isSubmitting) return

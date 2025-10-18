@@ -13,23 +13,36 @@ interface LimitSidebarProps {
   onSuccess?: () => void
 }
 
-export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: LimitSidebarProps) {
-  const [limitAmount, setLimitAmount] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
-
-  const updateLimit = useUpdateLimit()
-  const deleteLimit = useDeleteLimit()
-
   useEffect(() => {
-    if (limit) {
-      setLimitAmount(limit.limitAmount.toString())
-    } else {
-      setLimitAmount('')
-    }
-    setShowDeleteConfirm(false)
-  }, [limit])
+    if (!isOpen) return;
+    const root = document.documentElement as HTMLElement;
+    const body = document.body as HTMLBodyElement;
+    const count = Number(root.dataset.sidebarCount || '0') + 1;
+    root.dataset.sidebarCount = String(count);
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevTouch = (body.style as any).touchAction || '';
 
+    root.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    (body.style as any).touchAction = 'none';
+    (body.style as any).overscrollBehavior = 'contain';
+    root.classList.add('sidebar-open');
+    body.classList.add('sidebar-open');
+
+    return () => {
+      const current = Number(root.dataset.sidebarCount || '1') - 1;
+      root.dataset.sidebarCount = String(Math.max(0, current));
+      if (current <= 0) {
+        root.style.overflow = prevRootOverflow;
+        body.style.overflow = prevBodyOverflow;
+        (body.style as any).touchAction = prevTouch;
+        (body.style as any).overscrollBehavior = '';
+        root.classList.remove('sidebar-open');
+        body.classList.remove('sidebar-open');
+      }
+    };
+  }, [isOpen]);
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!limit || !limitAmount) return
