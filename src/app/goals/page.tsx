@@ -1,5 +1,7 @@
 'use client'
 
+import { motion } from 'framer-motion'
+
 import { useState, useCallback } from 'react'
 import { useCurrency } from '@/hooks/useCurrency'
 import { useGoals, useUpdateGoal, useDeleteGoal } from '@/hooks/useApi'
@@ -650,6 +652,7 @@ export default function GoalsPage() {
     </>
   )
 }
+
 
 
 
