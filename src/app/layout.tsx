@@ -65,10 +65,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#0f172a" />
+        <meta name="msapplication-TileColor" content="#0e0e10" />
         <meta name="msapplication-tap-highlight" content="no" />
 <meta name="theme-color" content="#0e0e10" />
-        <meta name="background-color" content="#0f172a" />
+        <meta name="background-color" content="#0e0e10" />
       </head>
       <body
         className="min-h-screen bg-background text-foreground antialiased"
@@ -88,4 +88,5 @@ export default function RootLayout({
     </html>
   )
 }
+
 
