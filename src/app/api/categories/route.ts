@@ -13,7 +13,7 @@ async function createAutoLimitForCategory(categoryId: string, categoryName: stri
     })
 
     if (existingLimit) {
-      console.log(`📊 Лимит для категории "${categoryName}" уже существует`)
+      // Limit already exists for this category
       return existingLimit
     }
 
@@ -28,7 +28,7 @@ async function createAutoLimitForCategory(categoryId: string, categoryName: stri
       }
     })
 
-    console.log(`📊 Автоматический лимит создан для категории: ${categoryName}`)
+    // Auto limit created successfully
     return newLimit
   } catch (error) {
     console.error(`Ошибка создания автоматического лимита для категории "${categoryName}":`, error)
@@ -44,7 +44,7 @@ async function deleteAutoLimitForCategory(categoryId: string, categoryName: stri
     })
 
     if (deletedLimit.count > 0) {
-      console.log(`🗑️ Автоматический лимит удален для категории: ${categoryName}`)
+      // Auto limit deleted successfully
     }
     return deletedLimit
   } catch (error) {

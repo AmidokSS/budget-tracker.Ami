@@ -41,7 +41,7 @@ export default function AddOperationSidebar({ isOpen, onClose, selectedUser }: S
       setNote('')
       onClose()
     } catch (error) {
-      console.error('Ошибка создания операции:', error)
+      // Failed to create operation
     }
   }
 

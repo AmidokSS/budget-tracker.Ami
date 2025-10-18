@@ -95,7 +95,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
         await addToGoal.mutateAsync({ id: goal.id, addAmount: parseFloat(fundAmount) })
         onSuccess?.(); onClose()
       } catch (err) {
-        console.error('Error funding goal:', err)
+        // Failed to fund goal
       } finally { setIsSubmitting(false) }
       return
     }
@@ -110,7 +110,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
       }
       onSuccess?.(); onClose()
     } catch (err) {
-      console.error('Error saving goal:', err)
+      // Failed to save goal
     } finally { setIsSubmitting(false) }
   }
 
@@ -121,7 +121,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
       await deleteGoal.mutateAsync(goal.id)
       onSuccess?.(); onClose()
     } catch (err) {
-      console.error('Error deleting goal:', err)
+      // Failed to delete goal
     } finally { setIsSubmitting(false); setShowDeleteConfirm(false) }
   }
 

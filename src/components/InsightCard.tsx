@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 
 interface InsightCardProps {
@@ -10,7 +11,7 @@ interface InsightCardProps {
   description?: string
 }
 
-export const InsightCard = ({ title, value, icon, trend, description }: InsightCardProps) => {
+const InsightCard = memo(({ title, value, icon, trend, description }: InsightCardProps) => {
   const getTrendColor = () => {
     switch (trend) {
       case 'up':
@@ -110,4 +111,8 @@ export const InsightCard = ({ title, value, icon, trend, description }: InsightC
 
     </motion.div>
   )
-}
+})
+
+InsightCard.displayName = 'InsightCard'
+
+export { InsightCard }

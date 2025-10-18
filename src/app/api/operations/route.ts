@@ -10,7 +10,15 @@ export async function GET(request: NextRequest) {
     const period = searchParams.get('period')
     const limit = parseInt(searchParams.get('limit') || '100')
 
-    const where: any = {}
+    const where: {
+      categoryId?: string
+      type?: string
+      userId?: string
+      date?: {
+        gte?: Date
+        lte?: Date
+      }
+    } = {}
     if (categoryId) where.categoryId = categoryId
     if (type) where.type = type
     if (userId) where.userId = userId
@@ -167,7 +175,7 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
-    console.log(`💰 Операция удалена: ${operation.type} ${operation.amount} PLN (${operation.category?.name})`)
+    // Operation deleted successfully
 
     return NextResponse.json({ 
       message: 'Operation deleted successfully',

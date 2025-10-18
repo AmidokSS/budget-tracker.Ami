@@ -35,55 +35,8 @@ export function PWAInstaller() {
     }
   }
 
-  // Информация для отладки
-  const debugInfo = {
-    installable: canInstall,
-    installed: isInstalled,
-    hasPrompt: !!usePWAStore.getState().deferredPrompt,
-    standalone: isStandalone,
-    userAgent: typeof window !== 'undefined' ? 
-      (navigator.userAgent.includes('Chrome') ? 'Chrome' : 
-       navigator.userAgent.includes('Firefox') ? 'Firefox' : 
-       navigator.userAgent.includes('Safari') ? 'Safari' : 'Other') : 'Unknown'
-  }
-
   return (
     <div className="space-y-4">
-      {/* Debug Info */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-        <h4 className="text-sm font-medium text-gray-300 mb-2">PWA Debug Info:</h4>
-        <div className="space-y-1 text-xs">
-          <div className="flex justify-between">
-            <span>Installable:</span>
-            <span className={debugInfo.installable ? 'text-green-400' : 'text-red-400'}>
-              {debugInfo.installable ? '✅' : '❌'}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>Installed:</span>
-            <span className={debugInfo.installed ? 'text-green-400' : 'text-red-400'}>
-              {debugInfo.installed ? '✅' : '❌'}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>Has Prompt:</span>
-            <span className={debugInfo.hasPrompt ? 'text-green-400' : 'text-red-400'}>
-              {debugInfo.hasPrompt ? '✅' : '❌'}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>Standalone:</span>
-            <span className={debugInfo.standalone ? 'text-green-400' : 'text-red-400'}>
-              {debugInfo.standalone ? '✅' : '❌'}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span>User Agent:</span>
-            <span className="text-blue-400">{debugInfo.userAgent} ✅</span>
-          </div>
-        </div>
-      </div>
-
       {/* Install Button */}
       {!isInstalled && (
         <motion.button

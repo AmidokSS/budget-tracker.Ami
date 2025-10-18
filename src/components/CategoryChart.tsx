@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
@@ -21,7 +22,7 @@ const COLORS = [
   '#EC4899', '#84CC16', '#F97316', '#6366F1', '#14B8A6'
 ]
 
-export const CategoryChart = ({ data }: CategoryChartProps) => {
+const CategoryChart = memo(({ data }: CategoryChartProps) => {
   const chartData = data.map((item, index) => ({
     ...item,
     fill: COLORS[index % COLORS.length],
@@ -171,4 +172,8 @@ export const CategoryChart = ({ data }: CategoryChartProps) => {
       </div>
     </motion.div>
   )
-}
+})
+
+CategoryChart.displayName = 'CategoryChart'
+
+export { CategoryChart }

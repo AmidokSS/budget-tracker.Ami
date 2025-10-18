@@ -30,7 +30,7 @@ export const usePWAStore = create<PWAStore>((set, get) => ({
 
   setDeferredPrompt: (prompt) => {
     set({ deferredPrompt: prompt, canInstall: !!prompt })
-    console.log('PWA: Deferred prompt set:', !!prompt)
+    // PWA prompt is ready
   },
 
   setInstalled: (installed) => set({ isInstalled: installed }),
@@ -40,15 +40,15 @@ export const usePWAStore = create<PWAStore>((set, get) => ({
   install: async () => {
     const { deferredPrompt } = get()
     if (!deferredPrompt) {
-      console.log('PWA: No deferred prompt available')
+      // No install prompt available
       return false
     }
 
     try {
-      console.log('PWA: Triggering install prompt')
+      // Triggering PWA install
       await deferredPrompt.prompt()
       const choiceResult = await deferredPrompt.userChoice
-      console.log('PWA: User choice:', choiceResult.outcome)
+      // User responded to install prompt
       
       if (choiceResult.outcome === 'accepted') {
         set({ deferredPrompt: null, canInstall: false, isInstalled: true })
@@ -56,7 +56,7 @@ export const usePWAStore = create<PWAStore>((set, get) => ({
       }
       return false
     } catch (error) {
-      console.error('PWA: Install error:', error)
+      // PWA install failed
       return false
     }
   },
@@ -68,22 +68,22 @@ export const usePWAStore = create<PWAStore>((set, get) => ({
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                         (window.navigator as any).standalone === true
     store.setStandalone(isStandalone)
-    console.log('PWA: Standalone mode:', isStandalone)
+    // PWA standalone mode detected
 
     // Проверяем установку через standalone или URL
     const isInstalled = isStandalone || 
                        window.location.search.includes('standalone=true')
     store.setInstalled(isInstalled)
-    console.log('PWA: App installed:', isInstalled)
+    // PWA installation status updated
 
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('PWA: beforeinstallprompt event fired')
+      // PWA install prompt available
       e.preventDefault()
       store.setDeferredPrompt(e as BeforeInstallPromptEvent)
     }
 
     const handleAppInstalled = () => {
-      console.log('PWA: appinstalled event fired')
+      // PWA successfully installed
       store.setInstalled(true)
       store.setDeferredPrompt(null)
       store.setCanInstall(false)
@@ -97,7 +97,7 @@ export const usePWAStore = create<PWAStore>((set, get) => ({
     if (process.env.NODE_ENV === 'development') {
       setTimeout(() => {
         if (!get().deferredPrompt && !isInstalled) {
-          console.log('PWA: Development mode - simulating install prompt')
+          // Development: simulating install prompt
           store.setCanInstall(true)
         }
       }, 3000)

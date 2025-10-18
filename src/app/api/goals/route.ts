@@ -60,7 +60,14 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const updateData: any = {}
+    const updateData: {
+      title?: string
+      targetAmount?: number
+      deadline?: Date | null
+      emoji?: string
+      currentAmount?: number
+      archived?: boolean
+    } = {}
 
     // Обновление основных полей
     if (title !== undefined) updateData.title = title

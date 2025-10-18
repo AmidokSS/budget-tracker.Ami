@@ -62,7 +62,9 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
     try {
       await updateLimit.mutateAsync({ id: limit.id, limitAmount: parseFloat(limitAmount) })
       onSuccess?.(); onClose()
-    } catch (err) { console.error('Error updating limit:', err) } finally { setIsSubmitting(false) }
+    } catch (err) { 
+      // Failed to update limit
+    } finally { setIsSubmitting(false) }
   }
 
   const handleDelete = async () => {
@@ -71,7 +73,9 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
     try {
       await deleteLimit.mutateAsync(limit.id)
       onSuccess?.(); onClose()
-    } catch (err) { console.error('Error deleting limit:', err) } finally { setIsSubmitting(false); setShowDeleteConfirm(false) }
+    } catch (err) { 
+      // Failed to delete limit
+    } finally { setIsSubmitting(false); setShowDeleteConfirm(false) }
   }
 
   const handleClose = () => { if (!isSubmitting) { setShowDeleteConfirm(false); onClose() } }

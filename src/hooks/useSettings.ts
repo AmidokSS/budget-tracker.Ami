@@ -41,7 +41,7 @@ export const useSettings = () => {
         setSettings({ ...DEFAULT_SETTINGS, ...parsedSettings })
       }
     } catch (error) {
-      console.error('Ошибка загрузки настроек:', error)
+      // Failed to load settings, using defaults
     } finally {
       setIsLoading(false)
     }
@@ -82,7 +82,7 @@ export const useSettings = () => {
       
       return { success: false }
     } catch (error) {
-      console.error('Ошибка обновления курсов:', error)
+      // Failed to update exchange rates
       return { success: false }
     }
   }

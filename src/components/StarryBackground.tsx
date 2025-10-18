@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useState, useEffect } from 'react'
 
 interface Star {
   id: number
@@ -59,11 +59,22 @@ function generateClusteredStars(startId: number, clusters = 4, perCluster = 18):
 }
 
 export const StarryBackground = memo(function StarryBackground() {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   const stars = useMemo(() => {
+    if (!isClient) return []
     const base = generateBaseStars(180)
     const clusters = generateClusteredStars(base.length, 5, 16)
     return [...base, ...clusters]
-  }, [])
+  }, [isClient])
+
+  if (!isClient) {
+    return <div className="fixed inset-0 pointer-events-none" />
+  }
 
   return (
     <div className="fixed inset-0 pointer-events-none">

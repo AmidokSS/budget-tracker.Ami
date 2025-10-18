@@ -91,22 +91,14 @@ const config: Config = {
         ring: "hsl(var(--ring))",
       },
       boxShadow: {
-        'premium': '0 0 40px rgba(0, 198, 255, 0.15)',
-        'premium-lg': '0 0 60px rgba(0, 198, 255, 0.2)',
         'glass': '0 8px 32px rgba(14, 14, 16, 0.4)',
         'glass-lg': '0 16px 64px rgba(14, 14, 16, 0.6)',
         'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        'glow-primary': '0 0 20px rgba(0, 198, 255, 0.5)',
-        'glow-success': '0 0 20px rgba(16, 185, 129, 0.5)',
-        'glow-warning': '0 0 20px rgba(245, 158, 11, 0.5)',
-        'glow-danger': '0 0 20px rgba(239, 68, 68, 0.5)',
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        'premium': '16px',
-        'glass': '20px',
       },
       animation: {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite alternate',

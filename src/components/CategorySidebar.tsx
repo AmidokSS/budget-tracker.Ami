@@ -88,7 +88,7 @@ export default function CategorySidebar({ isOpen, onClose, category, onSuccess }
       }
       onSuccess?.(); onClose()
     } catch (err) {
-      console.error('Error saving category:', err)
+      // Failed to save category
     } finally { setIsSubmitting(false) }
   }
 
@@ -99,7 +99,7 @@ export default function CategorySidebar({ isOpen, onClose, category, onSuccess }
       await deleteCategory.mutateAsync(category.id)
       onSuccess?.(); onClose()
     } catch (err) {
-      console.error('Error deleting category:', err)
+      // Failed to delete category
     } finally { setIsSubmitting(false); setShowDeleteConfirm(false) }
   }
 

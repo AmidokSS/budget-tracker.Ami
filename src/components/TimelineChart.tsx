@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import { motion } from 'framer-motion'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
@@ -14,7 +15,7 @@ interface TimelineChartProps {
   data: TimelineData[]
 }
 
-export const TimelineChart = ({ data }: TimelineChartProps) => {
+const TimelineChart = memo(({ data }: TimelineChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const date = new Date(label).toLocaleDateString('ru-RU', {
@@ -192,4 +193,8 @@ export const TimelineChart = ({ data }: TimelineChartProps) => {
       </div>
     </motion.div>
   )
-}
+})
+
+TimelineChart.displayName = 'TimelineChart'
+
+export { TimelineChart }

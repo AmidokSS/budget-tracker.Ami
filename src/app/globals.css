@@ -41,9 +41,19 @@
 
   body {
     @apply bg-secondary text-foreground antialiased;
-    background: linear-gradient(135deg, #0e0e10 0%, #111217 100%);
+    background: linear-gradient(135deg, #0e0e10 0%, #0f0f12 40%, #111217 100%);
     min-height: 100vh;
-    font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI Symbol', emoji, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      'Segoe UI',
+      'Roboto',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Noto Color Emoji',
+      'Segoe UI Symbol',
+      emoji,
+      sans-serif;
   }
 
   html {
@@ -353,31 +363,10 @@
     @apply space-y-6 md:space-y-8;
   }
 
-  /* Премиальные кнопки */
-  .btn-premium {
-    @apply glass-card transition-all duration-300 hover:shadow-glow-primary;
-    @apply rounded-2xl px-6 py-3 font-medium text-white;
-    @apply hover:scale-105 active:scale-95;
-  }
-
-  .btn-premium-primary {
-    @apply btn-premium bg-gradient-primary shadow-premium;
-  }
-
   /* Базовые карточки */
   .card-base {
-    @apply premium-card p-6 transition-all duration-300 hover:shadow-glow-primary;
+    @apply premium-card hover:shadow-glow-primary p-6 transition-all duration-300;
     @apply hover:-translate-y-1 hover:scale-[1.02];
-  }
-
-  /* Карточки операций */
-  .operation-card {
-    @apply card-base;
-  }
-
-  /* Hover эффекты для карточек */
-  .card-hover {
-    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-glow-primary;
   }
 
   /* Shimmer анимация */
@@ -724,12 +713,11 @@
   }
 }
 
-
-
-
 /* Utility to force colored emoji inside gradient text */
 .emoji-color {
-  font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji','Segoe UI Symbol',emoji,system-ui,sans-serif;
+  font-family:
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+    'Segoe UI Symbol', emoji, system-ui, sans-serif;
   -webkit-text-fill-color: initial !important;
   background: none !important;
   -webkit-background-clip: border-box !important;
@@ -737,21 +725,30 @@
   color: inherit !important;
 }
 
-
 /* Gold/Copper gradient heading */
 .heading-gold {
-  background: linear-gradient(135deg, #FFD27A 0%, #FFB74D 35%, #FFC980 70%, #FFDCA8 100%);
+  background: linear-gradient(
+    135deg,
+    #ffd27a 0%,
+    #ffb74d 35%,
+    #ffc980 70%,
+    #ffdca8 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-
 /* Interface scale driven by settings */
-html[data-font-size='small'] { font-size: 14px; }
-html[data-font-size='medium'] { font-size: 16px; }
-html[data-font-size='large'] { font-size: 18px; }
-
+html[data-font-size='small'] {
+  font-size: 14px;
+}
+html[data-font-size='medium'] {
+  font-size: 16px;
+}
+html[data-font-size='large'] {
+  font-size: 18px;
+}
 
 /* Animation controls driven by settings */
 html[data-animations='disabled'] * {
@@ -764,17 +761,48 @@ html[data-animations='fast'] * {
   transition-duration: 150ms !important;
 }
 
-
-@keyframes starry-twinkle { 0%, 100% { opacity: 0.2 } 50% { opacity: 0.9 } }
-.animate-starry-twinkle { animation-name: starry-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+@keyframes starry-twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+.animate-starry-twinkle {
+  animation-name: starry-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
 
 /* Sidebar perf tuning */
-.premium-sidebar { will-change: transform; transform: translateZ(0); backface-visibility: hidden; }
-html[data-animations='fast'] .premium-sidebar { backdrop-filter: blur(12px) saturate(120%); box-shadow: -8px 0 24px rgba(0,0,0,0.35), inset 1px 0 0 rgba(255,183,77,0.06); }
-html[data-animations='disabled'] .premium-sidebar { backdrop-filter: none; box-shadow: -4px 0 12px rgba(0,0,0,0.25); }
-html, body { background-color: #0e0e10; min-height: 100%; height: 100%; }
-
+.premium-sidebar {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+html[data-animations='fast'] .premium-sidebar {
+  backdrop-filter: blur(12px) saturate(120%);
+  box-shadow:
+    -8px 0 24px rgba(0, 0, 0, 0.35),
+    inset 1px 0 0 rgba(255, 183, 77, 0.06);
+}
+html[data-animations='disabled'] .premium-sidebar {
+  backdrop-filter: none;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.25);
+}
+html,
+body {
+  background-color: #0e0e10;
+  min-height: 100%;
+  height: 100%;
+}
 
 /* Prevent background scroll while sidebar is open */
-html.sidebar-open, body.sidebar-open { overflow: hidden !important; touch-action: none !important; overscroll-behavior: contain !important; }
-
+html.sidebar-open,
+body.sidebar-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
