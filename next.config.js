@@ -7,7 +7,99 @@ const withPWA = require('@ducanh2912/next-pwa').default({
   disable: process.env.NODE_ENV === 'development',
   workboxOptions: {
     disableDevLogs: true,
+    runtimeCaching: [
+      // API кеширование с Network First стратегией
+      {
+        urlPattern: /^https?.*\/api\/operations/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-operations',
+          networkTimeoutSeconds: 5,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 5 * 60, // 5 минут
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\/api\/goals/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-goals',
+          networkTimeoutSeconds: 5,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 10 * 60, // 10 минут
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\/api\/limits/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'api-limits',
+          networkTimeoutSeconds: 5,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 10 * 60, // 10 минут
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\/api\/categories/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'api-categories',
+          expiration: {
+            maxEntries: 20,
+            maxAgeSeconds: 60 * 60, // 1 час
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: /^https?.*\/api\/exchange/,
+        handler: 'StaleWhileRevalidate',
+        options: {
+          cacheName: 'api-exchange',
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 30 * 60, // 30 минут
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      // Статические ресурсы
+      {
+        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'images',
+          expiration: {
+            maxEntries: 100,
+            maxAgeSeconds: 30 * 24 * 60 * 60, // 30 дней
+          },
+        },
+      },
+    ],
   },
+})
+
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 })
 
 /** @type {import('next').NextConfig} */
@@ -15,6 +107,10 @@ const nextConfig = {
   typedRoutes: true,
   images: {
     domains: [],
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
   },
   eslint: {
     dirs: ['src'],
@@ -30,4 +126,4 @@ const nextConfig = {
   },
 }
 
-module.exports = withPWA(nextConfig)
+module.exports = withBundleAnalyzer(withPWA(nextConfig))

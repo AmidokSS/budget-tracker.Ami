@@ -32,6 +32,29 @@
   --input: 55, 65, 81;
   --ring: 0, 198, 255;
   --radius: 16px;
+
+  /* 🚀 Performance-адаптивные анимации */
+  --animation-duration-instant: 0.1s;
+  --animation-duration-fast: 0.2s;
+  --animation-duration-normal: 0.3s;
+  --animation-duration-slow: 0.5s;
+  --animation-duration-page: 0.8s;
+
+  --animation-easing-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-easing-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --animation-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animation-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --transform-hover: translateY(-2px);
+  --transform-press: translateY(0px) scale(0.98);
+  --transform-float: translateY(-1px);
+
+  --blur-glass: 12px;
+  --blur-heavy: 24px;
+
+  --scale-hover: 1.02;
+  --scale-press: 0.98;
+  --scale-focus: 1.05;
 }
 
 @layer base {
@@ -58,6 +81,77 @@
 
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* 🎯 Адаптивные анимации для производительности */
+
+/* Accessibility: пользователи с ограниченными возможностями */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animation-duration-instant: 0.01ms;
+    --animation-duration-fast: 0.01ms;
+    --animation-duration-normal: 0.01ms;
+    --animation-duration-slow: 0.01ms;
+    --animation-duration-page: 0.01ms;
+
+    --transform-hover: none;
+    --transform-press: none;
+    --transform-float: none;
+
+    --scale-hover: 1;
+    --scale-press: 1;
+    --scale-focus: 1;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Мобильные устройства: быстрые анимации */
+@media (max-width: 768px) {
+  :root {
+    --animation-duration-fast: 0.15s;
+    --animation-duration-normal: 0.2s;
+    --animation-duration-slow: 0.3s;
+    --animation-duration-page: 0.5s;
+
+    --blur-glass: 8px;
+    --blur-heavy: 16px;
+
+    --scale-hover: 1.01;
+    --transform-hover: translateY(-1px);
+  }
+}
+
+/* Слабые устройства: упрощенные анимации */
+@media (max-width: 480px), (max-height: 640px) {
+  :root {
+    --animation-easing-ease: ease-out;
+    --animation-easing-smooth: ease-out;
+    --animation-easing-bounce: ease-out;
+    --animation-easing-spring: ease-out;
+
+    --blur-glass: 4px;
+    --blur-heavy: 8px;
+  }
+}
+
+/* Медленное соединение: минимальные анимации */
+@media (prefers-reduced-data: reduce) {
+  :root {
+    --animation-duration-normal: 0.1s;
+    --animation-duration-slow: 0.2s;
+    --animation-duration-page: 0.3s;
+
+    --blur-glass: 0px;
+    --blur-heavy: 0px;
   }
 }
 

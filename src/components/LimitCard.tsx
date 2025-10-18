@@ -3,6 +3,7 @@ import { Shield, Edit, Trash2, Edit3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Limit } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
+import { useAnimationConfig, useConditionalAnimation } from '@/hooks/usePerformance'
 
 interface LimitCardProps {
   limit: Limit
@@ -13,6 +14,7 @@ interface LimitCardProps {
 
 const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
   const { formatAmountWhole } = useCurrency()
+  const { fadeIn, hover } = useAnimationConfig()
 
   // Мемоизируем вычисления прогресса
   const progress = useMemo(() => {
@@ -53,6 +55,20 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
     return { text: 'В норме', color: 'text-green-600' }
   }, [progress])
 
+  // Мемоизируем адаптивные анимации
+  const cardAnimation = useConditionalAnimation({
+    initial: { opacity: 0, y: 20, scale: 0.95 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    transition: { 
+      delay: index * 0.1,
+      type: "spring",
+      stiffness: 400,
+      damping: 30
+    }
+  })
+
+  const hoverAnimation = useConditionalAnimation(hover)
+
   // Мемоизируем обработчики событий
   const handleEdit = useCallback(() => {
     onEdit(limit)
@@ -64,23 +80,12 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ 
-        delay: index * 0.1,
-        type: "spring",
-        stiffness: 400,
-        damping: 30
-      }}
-      whileHover={{ 
-        scale: 0.999,
-        y: 1
-      }}
-      whileTap={{ 
-        scale: 0.998,
-        y: 2
-      }}
+      {...cardAnimation}
+      {...hoverAnimation}
       className="ultra-premium-card p-8 cursor-pointer group h-full min-h-[280px]"
+      style={{
+        transition: `all var(--animation-duration-normal) var(--animation-easing-ease)`
+      }}
     >
       {/* Premium content glow */}
       <div className="premium-content-glow h-full flex flex-col">
@@ -89,7 +94,10 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
         <div className="flex items-start justify-between mb-6">
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ 
+              duration: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--animation-duration-fast') || '0.2s'),
+              ease: "easeOut" 
+            }}
             className={`p-4 rounded-2xl border backdrop-blur-sm ${
               progress >= 100 
                 ? 'bg-gradient-to-br from-rose-500/15 to-red-500/10 border-rose-400/20' 
