@@ -752,3 +752,15 @@ html[data-font-size='small'] { font-size: 14px; }
 html[data-font-size='medium'] { font-size: 16px; }
 html[data-font-size='large'] { font-size: 18px; }
 
+
+/* Animation controls driven by settings */
+html[data-animations='disabled'] * {
+  animation: none !important;
+  transition: none !important;
+}
+
+html[data-animations='fast'] * {
+  animation-duration: 300ms !important;
+  transition-duration: 150ms !important;
+}
+
