@@ -12,7 +12,7 @@ interface LimitCardProps {
 }
 
 const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
-  const { formatAmount } = useCurrency()
+  const { formatAmountWhole } = useCurrency()
 
   // Мемоизируем вычисления прогресса
   const progress = useMemo(() => {
@@ -21,20 +21,20 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
 
   // Мемоизируем форматированные суммы
   const formattedCurrent = useMemo(() => 
-    formatAmount(limit.currentAmount), 
-    [limit.currentAmount, formatAmount]
+    formatAmountWhole(limit.currentAmount), 
+    [limit.currentAmount, formatAmountWhole]
   )
   
   const formattedLimit = useMemo(() => 
-    formatAmount(limit.limitAmount), 
-    [limit.limitAmount, formatAmount]
+    formatAmountWhole(limit.limitAmount), 
+    [limit.limitAmount, formatAmountWhole]
   )
 
   // Мемоизируем оставшуюся сумму
   const remaining = useMemo(() => {
     const remainingAmount = limit.limitAmount - limit.currentAmount
-    return formatAmount(Math.max(0, remainingAmount))
-  }, [limit.limitAmount, limit.currentAmount, formatAmount])
+    return formatAmountWhole(Math.max(0, remainingAmount))
+  }, [limit.limitAmount, limit.currentAmount, formatAmountWhole])
 
   // Мемоизируем цвет прогресса
   const progressColor = useMemo(() => {
@@ -186,14 +186,14 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
               <span className="premium-subtitle text-sm block mb-1">Потрачено</span>
               <div className={`premium-value text-2xl font-bold ${
                 progress >= 100 ? 'text-rose-300' : progress >= 80 ? 'text-orange-300' : 'text-emerald-300'
-              }`} data-value={formatAmount(limit.currentAmount)}>
-                {formatAmount(limit.currentAmount)}
+              }`} data-value={formattedCurrent}>
+                {formattedCurrent}
               </div>
             </div>
             <div>
               <span className="premium-subtitle text-sm block mb-1">Лимит</span>
-              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formatAmount(limit.limitAmount)}>
-                {formatAmount(limit.limitAmount)}
+              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formattedLimit}>
+                {formattedLimit}
               </div>
             </div>
           </div>
