@@ -23,31 +23,27 @@ export function GlassMorphismCard({
       transition={{ 
         delay, 
         type: "spring", 
-        stiffness: 100, 
-        damping: 15,
+        stiffness: 400, 
+        damping: 30,
         duration: 0.6
       }}
       whileHover={{ 
         scale: 1.02,
-        transition: { type: "spring", stiffness: 300, damping: 30 }
+        y: -4,
+        transition: { type: "spring", stiffness: 400, damping: 30 }
       }}
       className={`
-        bg-gradient-to-br ${gradient}
-        backdrop-blur-xl
-        border border-white/20
-        rounded-2xl
-        shadow-xl
-        hover:shadow-2xl
-        hover:border-white/30
+        premium-card
+        hover:shadow-glow-primary
         transition-all duration-300
         relative overflow-hidden
         group
         ${className}
       `}
     >
-      {/* Градиентное свечение при ховере */}
+      {/* Премиальное градиентное свечение при ховере */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-10 transition-opacity duration-500"
         initial={false}
       />
       

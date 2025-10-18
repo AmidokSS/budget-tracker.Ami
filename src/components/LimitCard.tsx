@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from 'react'
-import { Shield, Edit, Trash2 } from 'lucide-react'
+import { Shield, Edit, Trash2, Edit3 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Limit } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
@@ -64,72 +64,157 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-shadow"
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        delay: index * 0.1,
+        type: "spring",
+        stiffness: 400,
+        damping: 30
+      }}
+      whileHover={{ 
+        scale: 0.999,
+        y: 1
+      }}
+      whileTap={{ 
+        scale: 0.998,
+        y: 2
+      }}
+      className="ultra-premium-card p-8 cursor-pointer group h-full min-h-[280px]"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
-            <Shield className="w-5 h-5 text-white" />
+      {/* Premium content glow */}
+      <div className="premium-content-glow h-full flex flex-col">
+        
+        {/* Header with warning styling */}
+        <div className="flex items-start justify-between mb-6">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className={`p-4 rounded-2xl border backdrop-blur-sm ${
+              progress >= 100 
+                ? 'bg-gradient-to-br from-rose-500/15 to-red-500/10 border-rose-400/20' 
+                : progress >= 80 
+                ? 'bg-gradient-to-br from-orange-500/15 to-amber-500/10 border-orange-400/20'
+                : 'bg-gradient-to-br from-emerald-500/15 to-green-500/10 border-emerald-400/20'
+            }`}
+          >
+            <Shield className={`w-7 h-7 premium-icon ${
+              progress >= 100 ? 'text-rose-400' : progress >= 80 ? 'text-orange-400' : 'text-emerald-400'
+            }`} />
+          </motion.div>
+          
+          {/* Action buttons */}
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleEdit}
+              className="p-2 rounded-xl ultra-premium-card border border-amber-400/20"
+            >
+              <Edit3 className="w-4 h-4 premium-icon" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleDelete}
+              className="p-2 rounded-xl ultra-premium-card border border-rose-400/20"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" />
+            </motion.button>
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-800">
-              {limit.category?.name || 'Общий лимит'}
-            </h3>
-            <p className={`text-sm font-medium ${limitStatus.color}`}>
+        </div>
+
+        {/* Category and status */}
+        <div className="mb-6">
+          <h3 className="premium-title text-2xl font-bold mb-3 leading-tight">
+            {limit.category?.emoji} {limit.category?.name || 'Общий лимит'}
+          </h3>
+          
+          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ultra-premium-card border ${
+            progress >= 100 ? 'border-rose-400/20' : progress >= 80 ? 'border-orange-400/20' : 'border-emerald-400/20'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${
+              progress >= 100 ? 'bg-rose-400' : progress >= 80 ? 'bg-orange-400' : 'bg-emerald-400'
+            }`} />
+            <span className={`premium-subtitle text-sm ${limitStatus.color}`}>
               {limitStatus.text}
-            </p>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={handleEdit}
-            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleDelete}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Потрачено</span>
-          <span className="font-medium">{Math.round(progress)}%</span>
-        </div>
-        
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full bg-gradient-to-r ${progressColor} transition-all duration-300`}
-            style={{ width: `${Math.min(progress, 100)}%` }}
-          />
-        </div>
-        
-        <div className="flex justify-between items-center">
-          <span className="text-lg font-bold text-gray-800">
-            {formattedCurrent}
-          </span>
-          <span className="text-sm text-gray-600">
-            из {formattedLimit}
-          </span>
-        </div>
-
-        <div className="pt-2 border-t border-gray-200">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Осталось:</span>
-            <span className={`text-sm font-medium ${progress >= 100 ? 'text-red-600' : 'text-green-600'}`}>
-              {progress >= 100 ? `Превышено на ${formatAmount(limit.currentAmount - limit.limitAmount)}` : remaining}
             </span>
           </div>
         </div>
+
+        {/* Premium progress section */}
+        <div className="flex-1 flex flex-col justify-end">
+          
+          {/* Progress bar with warning colors */}
+          <div className="mb-6">
+            <div className="flex justify-between items-end mb-3">
+              <span className="premium-subtitle text-sm">Использовано</span>
+              <span className={`text-lg font-bold ${
+                progress >= 100 ? 'text-rose-300' : progress >= 80 ? 'text-orange-300' : 'text-emerald-300'
+              }`}>
+                {progress.toFixed(0)}%
+              </span>
+            </div>
+            
+            <div className="relative h-3 bg-black/30 rounded-full overflow-hidden border border-amber-400/20">
+              <motion.div
+                className={`absolute inset-y-0 left-0 bg-gradient-to-r ${progressColor} rounded-full shadow-lg`}
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progress, 100)}%` }}
+                transition={{ 
+                  duration: 1.5, 
+                  delay: index * 0.2,
+                  ease: "easeOut" 
+                }}
+              >
+                {/* Warning pulse effect for exceeded limits */}
+                {progress >= 100 && (
+                  <motion.div
+                    className="absolute inset-0 bg-rose-400/30 rounded-full"
+                    animate={{ opacity: [0.3, 0.8, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  />
+                )}
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Amount display with emboss effect */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <span className="premium-subtitle text-sm block mb-1">Потрачено</span>
+              <div className={`premium-value text-2xl font-bold ${
+                progress >= 100 ? 'text-rose-300' : progress >= 80 ? 'text-orange-300' : 'text-emerald-300'
+              }`} data-value={formatAmount(limit.currentAmount)}>
+                {formatAmount(limit.currentAmount)}
+              </div>
+            </div>
+            <div>
+              <span className="premium-subtitle text-sm block mb-1">Лимит</span>
+              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formatAmount(limit.limitAmount)}>
+                {formatAmount(limit.limitAmount)}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* Warning ambient lighting */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className={`absolute top-6 right-6 w-32 h-32 rounded-full blur-2xl ${
+          progress >= 100 
+            ? 'bg-gradient-to-br from-rose-400/8 to-transparent' 
+            : progress >= 80 
+            ? 'bg-gradient-to-br from-orange-400/8 to-transparent'
+            : 'bg-gradient-to-br from-emerald-400/8 to-transparent'
+        }`} />
+      </motion.div>
     </motion.div>
   )
 })

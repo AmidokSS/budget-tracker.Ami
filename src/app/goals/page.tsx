@@ -101,70 +101,279 @@ export default function GoalsPage() {
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent mb-4"
+              className="text-4xl md:text-5xl font-bold heading-gold mb-4 drop-shadow-2xl"
             >
-              Финансовые цели
+              <span className="emoji-color">🎯</span> Финансовые цели
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg text-gray-300"
+              className="text-lg text-cyan-100/80 drop-shadow-lg"
             >
-              Планируйте и достигайте финансовых целей
+              Планируйте и достигайте финансовых целей с премиальным подходом
             </motion.p>
           </div>
 
-          {/* Общая статистика */}
+          {/* Премиальная статистика целей */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20"
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ 
+              delay: 0.2,
+              type: "spring",
+              stiffness: 400,
+              damping: 30
+            }}
+            whileHover={{ 
+              scale: 0.999,
+              y: 1
+            }}
+            className="ultra-premium-card p-8 relative overflow-hidden group"
           >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="p-3 bg-purple-500/20 rounded-full border border-purple-500/30">
-                    <Target className="h-6 w-6 text-purple-400" />
+            {/* Premium content glow */}
+            <div className="premium-content-glow">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                
+                {/* Всего целей - с фиолетовым акцентом */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="text-center group relative"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: 15 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="flex items-center justify-center mb-4"
+                  >
+                    <div className="p-4 rounded-3xl bg-gradient-to-br from-purple-500/20 to-indigo-500/15 border border-purple-400/25 backdrop-blur-sm relative">
+                      <Target className="w-8 h-8 premium-icon text-purple-300" />
+                      {/* Вращающееся свечение */}
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-0 bg-gradient-to-br from-purple-400/15 via-transparent to-indigo-400/10 rounded-3xl blur-sm" 
+                      />
+                    </div>
+                  </motion.div>
+                  <p className="premium-subtitle text-sm mb-2">Всего целей</p>
+                  <div className="premium-value text-3xl font-bold text-purple-300" data-value={goals?.length || 0}>
+                    {goals?.length || 0}
                   </div>
-                </div>
-                <p className="text-sm text-gray-400 mb-1">Всего целей</p>
-                <p className="text-2xl font-bold text-purple-400">{goals?.length || 0}</p>
-              </div>
+                  
+                  {/* Анимированная точка */}
+                  <motion.div 
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [0.5, 1, 0.5]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="mx-auto mt-3 w-2 h-2 bg-purple-400 rounded-full"
+                  />
+                </motion.div>
 
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="p-3 bg-orange-500/20 rounded-full border border-orange-500/30">
-                    <Clock className="h-6 w-6 text-orange-400" />
+                {/* Активные цели - с оранжевым акцентом */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="text-center group relative"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: -15 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="flex items-center justify-center mb-4"
+                  >
+                    <div className="p-4 rounded-3xl bg-gradient-to-br from-orange-500/20 to-amber-500/15 border border-orange-400/25 backdrop-blur-sm relative">
+                      <Clock className="w-8 h-8 premium-icon text-orange-300" />
+                      {/* Пульсирующее кольцо */}
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.3, 1],
+                          opacity: [0.3, 0, 0.3]
+                        }}
+                        transition={{ 
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeOut"
+                        }}
+                        className="absolute inset-0 border-2 border-orange-400/30 rounded-3xl" 
+                      />
+                    </div>
+                  </motion.div>
+                  <p className="premium-subtitle text-sm mb-2">Активных</p>
+                  <div className="premium-value text-3xl font-bold text-orange-300" data-value={activeGoals.length}>
+                    {activeGoals.length}
                   </div>
-                </div>
-                <p className="text-sm text-gray-400 mb-1">Активных</p>
-                <p className="text-2xl font-bold text-orange-400">{activeGoals.length}</p>
-              </div>
+                  
+                  {/* Мигающая линия */}
+                  <motion.div 
+                    animate={{ 
+                      scaleX: [0, 1, 0],
+                      opacity: [0, 1, 0]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="mx-auto mt-3 h-0.5 w-12 bg-orange-400"
+                  />
+                </motion.div>
 
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="p-3 bg-green-500/20 rounded-full border border-green-500/30">
-                    <CheckCircle className="h-6 w-6 text-green-400" />
+                {/* Завершённые цели - с зелёным акцентом */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="text-center group relative"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: 10 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="flex items-center justify-center mb-4"
+                  >
+                    <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-500/20 to-green-500/15 border border-emerald-400/25 backdrop-blur-sm relative">
+                      <CheckCircle className="w-8 h-8 premium-icon text-emerald-300" />
+                      {/* Волны успеха */}
+                      {completedGoals.length > 0 && (
+                        <motion.div 
+                          animate={{ 
+                            scale: [1, 1.5, 2],
+                            opacity: [0.6, 0.3, 0]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeOut"
+                          }}
+                          className="absolute inset-0 bg-emerald-400/20 rounded-3xl blur-sm" 
+                        />
+                      )}
+                    </div>
+                  </motion.div>
+                  <p className="premium-subtitle text-sm mb-2">Завершённых</p>
+                  <div className="premium-value text-3xl font-bold text-emerald-300" data-value={completedGoals.length}>
+                    {completedGoals.length}
                   </div>
-                </div>
-                <p className="text-sm text-gray-400 mb-1">Завершённых</p>
-                <p className="text-2xl font-bold text-green-400">{completedGoals.length}</p>
-              </div>
+                  
+                  {/* Звёздочки успеха */}
+                  {completedGoals.length > 0 && (
+                    <motion.div 
+                      animate={{ 
+                        rotate: [0, 360],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{ 
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="mx-auto mt-3 text-emerald-400 text-lg"
+                    >
+                      ✨
+                    </motion.div>
+                  )}
+                </motion.div>
 
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-3">
-                  <div className="p-3 bg-pink-500/20 rounded-full border border-pink-500/30">
-                    <TrendingUp className="h-6 w-6 text-pink-400" />
+                {/* Общий прогресс - с розовым акцентом */}
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="text-center group relative"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.1, rotate: -10 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    className="flex items-center justify-center mb-4"
+                  >
+                    <div className="p-4 rounded-3xl bg-gradient-to-br from-pink-500/20 to-rose-500/15 border border-pink-400/25 backdrop-blur-sm relative">
+                      <TrendingUp className="w-8 h-8 premium-icon text-pink-300" />
+                      {/* Прогресс-волна */}
+                      <motion.div 
+                        animate={{ 
+                          x: [-20, 20, -20],
+                          opacity: [0.3, 0.6, 0.3]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-pink-400/15 to-transparent rounded-3xl blur-sm" 
+                      />
+                    </div>
+                  </motion.div>
+                  <p className="premium-subtitle text-sm mb-2">Общий прогресс</p>
+                  <div className="premium-value text-3xl font-bold text-pink-300" data-value={`${totalTargetAmount > 0 ? Math.round((totalCurrentAmount / totalTargetAmount) * 100) : 0}%`}>
+                    {totalTargetAmount > 0 ? Math.round((totalCurrentAmount / totalTargetAmount) * 100) : 0}%
                   </div>
-                </div>
-                <p className="text-sm text-gray-400 mb-1">Общий прогресс</p>
-                <p className="text-2xl font-bold text-pink-400">
-                  {totalTargetAmount > 0 ? Math.round((totalCurrentAmount / totalTargetAmount) * 100) : 0}%
-                </p>
+                  
+                  {/* Прогресс-бар */}
+                  <div className="mx-auto mt-3 w-16 h-1 bg-black/30 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${totalTargetAmount > 0 ? Math.round((totalCurrentAmount / totalTargetAmount) * 100) : 0}%`
+                      }}
+                      transition={{ 
+                        duration: 1.5,
+                        ease: "easeOut"
+                      }}
+                      className="h-full bg-gradient-to-r from-pink-400 to-rose-400 rounded-full"
+                    />
+                  </div>
+                </motion.div>
               </div>
             </div>
+
+            {/* Динамичное ambient освещение для целей */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileHover={{ opacity: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="absolute inset-0 pointer-events-none"
+            >
+              <motion.div 
+                animate={{ 
+                  x: [0, 100, 0],
+                  y: [0, 50, 0]
+                }}
+                transition={{ 
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="absolute top-8 left-1/4 w-24 h-24 bg-gradient-to-br from-purple-400/8 to-transparent rounded-full blur-2xl" 
+              />
+              <motion.div 
+                animate={{ 
+                  x: [0, -80, 0],
+                  y: [0, 30, 0]
+                }}
+                transition={{ 
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="absolute bottom-8 right-1/4 w-32 h-32 bg-gradient-to-bl from-emerald-400/6 to-transparent rounded-full blur-2xl" 
+              />
+              <motion.div 
+                animate={{ 
+                  scale: [1, 1.5, 1],
+                  opacity: [0.3, 0.1, 0.3]
+                }}
+                transition={{ 
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-gradient-to-r from-pink-400/4 to-orange-400/4 rounded-full blur-3xl" 
+              />
+            </motion.div>
+
           </motion.div>
 
           {/* Активные цели */}
@@ -201,26 +410,69 @@ export default function GoalsPage() {
 
                   {/* Карточка добавления новой цели - всегда последняя */}
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 + activeGoals.length * 0.05 }}
+                    transition={{ 
+                      delay: 0.1 + activeGoals.length * 0.05,
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 30
+                    }}
+                    whileHover={{ 
+                      scale: 0.999,
+                      y: 1
+                    }}
+                    whileTap={{ 
+                      scale: 0.998,
+                      y: 2
+                    }}
                     onClick={openCreateGoal}
-                    className="bg-white/5 backdrop-blur-md rounded-2xl p-6 border-2 border-dashed border-white/30 hover:border-purple-400/60 hover:bg-white/10 transition-all duration-300 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
+                    className="ultra-premium-card p-8 cursor-pointer group h-full min-h-[280px] border-2 border-dashed border-amber-400/30 hover:border-purple-400/50"
                   >
-                    <div className="text-center space-y-4">
-                      <div className="mx-auto w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
-                        <Target className="h-8 w-8 text-purple-400" />
-                      </div>
-                      <div>
-                        <h3 className="text-white font-semibold text-lg mb-2">Добавить цель</h3>
-                        <p className="text-gray-400 text-sm">
+                    {/* Premium content glow */}
+                    <div className="premium-content-glow h-full flex flex-col items-center justify-center text-center">
+                      
+                      {/* Premium target icon */}
+                      <motion.div 
+                        whileHover={{ scale: 1.1, rotate: 10 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="mb-6 p-6 rounded-3xl bg-gradient-to-br from-purple-500/15 to-pink-500/10 border border-purple-400/20 backdrop-blur-sm"
+                      >
+                        <Target className="w-8 h-8 premium-icon text-purple-400" />
+                      </motion.div>
+                      
+                      <div className="space-y-4">
+                        <h3 className="premium-title text-xl font-bold">
+                          Добавить цель
+                        </h3>
+                        <p className="premium-subtitle text-sm max-w-[200px]">
                           Создайте новую финансовую цель и начните копить
                         </p>
-                      </div>
-                      <div className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full border border-purple-500/30 text-purple-300 text-sm group-hover:from-purple-500/30 group-hover:to-pink-500/30 transition-all">
-                        Нажмите для создания
+                        
+                        {/* Premium call-to-action badge */}
+                        <motion.div 
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.2, ease: "easeOut" }}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl ultra-premium-card border border-purple-400/20 bg-gradient-to-r from-purple-500/10 to-pink-500/5"
+                        >
+                          <span className="premium-subtitle text-sm text-purple-300">
+                            Нажмите для создания
+                          </span>
+                        </motion.div>
                       </div>
                     </div>
+
+                    {/* Luxury ambient lighting for add goal card */}
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      className="absolute inset-0 pointer-events-none"
+                    >
+                      <div className="absolute top-6 right-6 w-32 h-32 bg-gradient-to-br from-purple-400/8 to-transparent rounded-full blur-2xl" />
+                      <div className="absolute bottom-6 left-6 w-24 h-24 bg-gradient-to-tl from-pink-400/6 to-transparent rounded-full blur-xl" />
+                    </motion.div>
+
                   </motion.div>
                 </div>
               )}
@@ -398,3 +650,6 @@ export default function GoalsPage() {
     </>
   )
 }
+
+
+

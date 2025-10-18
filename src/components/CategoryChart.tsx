@@ -80,10 +80,20 @@ export const CategoryChart = ({ data }: CategoryChartProps) => {
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6">
-        <h3 className="text-xl font-semibold text-white mb-4">📊 Распределение расходов</h3>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-white/70">Нет данных для отображения</div>
+      <div className="ultra-premium-card p-6 relative overflow-hidden">
+        <div className="premium-content-glow">
+          <div className="flex items-center gap-3 mb-4">
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: 8 }}
+              className="p-2 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/15 border border-indigo-400/25 backdrop-blur-sm"
+            >
+              <span className="text-lg">📊</span>
+            </motion.div>
+            <h3 className="premium-title text-lg font-bold">Распределение расходов</h3>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="premium-subtitle">Нет данных для отображения</div>
+          </div>
         </div>
       </div>
     )
@@ -93,9 +103,18 @@ export const CategoryChart = ({ data }: CategoryChartProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6"
+      className="ultra-premium-card p-6 relative overflow-hidden"
     >
-      <h3 className="text-xl font-semibold text-white mb-4">📊 Распределение расходов</h3>
+      <div className="premium-content-glow">
+        <div className="flex items-center gap-3 mb-4">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 8 }}
+            className="p-2 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/15 border border-indigo-400/25 backdrop-blur-sm"
+          >
+            <span className="text-lg">📊</span>
+          </motion.div>
+          <h3 className="premium-title text-lg font-bold">Распределение расходов</h3>
+        </div>
       
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
@@ -126,28 +145,29 @@ export const CategoryChart = ({ data }: CategoryChartProps) => {
         </ResponsiveContainer>
       </div>
 
-      {/* Легенда */}
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        {chartData.slice(0, 6).map((item, index) => (
-          <motion.div
-            key={item.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 
-                       transition-colors duration-200"
-          >
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: item.fill }}
-            />
-            <span className="text-sm">{item.emoji}</span>
-            <span className="text-sm text-white/70 truncate">{item.name}</span>
-            <span className="text-sm text-white ml-auto">
-              {item.percentage.toFixed(0)}%
-            </span>
-          </motion.div>
-        ))}
+        {/* Легенда */}
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {chartData.slice(0, 6).map((item, index) => (
+            <motion.div
+              key={item.name}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="flex items-center gap-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 
+                         transition-colors duration-200"
+            >
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: item.fill }}
+              />
+              <span className="text-sm">{item.emoji}</span>
+              <span className="text-sm text-white/70 truncate">{item.name}</span>
+              <span className="text-sm text-white ml-auto">
+                {item.percentage.toFixed(0)}%
+              </span>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </motion.div>
   )

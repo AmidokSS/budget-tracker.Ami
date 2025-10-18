@@ -190,34 +190,41 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-gradient-to-br from-black/60 via-slate-900/50 to-black/60 backdrop-blur-md premium-sidebar-overlay"
             onClick={handleClose}
           />
 
           {/* Sidebar */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50"
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ 
+              type: 'spring', 
+              damping: 20, 
+              stiffness: 300,
+              opacity: { duration: 0.2 }
+            }}
+            className="premium-sidebar overflow-hidden fixed right-0 top-0 h-full w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Flex контейнер на всю высоту */}
-            <div className="flex flex-col h-full">
+            <div className="premium-sidebar-content flex flex-col h-full">
               {/* Header - фиксированный вверху */}
-              <div className="flex-shrink-0 border-b border-white/10 bg-white/5">
+              <div className="premium-sidebar-header flex-shrink-0">
                 <div className="flex items-center justify-between p-6">
-                  <h2 className="text-xl font-semibold text-white">
+                  <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-100 to-orange-100 bg-clip-text text-transparent drop-shadow-sm">
                     {getTitle()}
                   </h2>
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05, rotate: 90 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={handleClose}
                     disabled={isSubmitting}
-                    className="p-2 hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50"
+                    className="p-2 hover:bg-gradient-to-r hover:from-yellow-500/10 hover:to-orange-500/10 rounded-xl transition-all duration-300 disabled:opacity-50 group"
                   >
-                    <X className="w-5 h-5 text-white" />
-                  </button>
+                    <X className="w-5 h-5 text-yellow-100 group-hover:text-white drop-shadow-sm" />
+                  </motion.button>
                 </div>
               </div>
 
@@ -252,87 +259,92 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                     </div>
                   )}
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={handleSubmit} className="p-6 space-y-6">
                     {!isFunding && (
                       <>
                         {/* Title */}
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                        <div className="premium-form-group">
+                          <label className="premium-form-label flex items-center gap-2">
                             <Target className="w-4 h-4" />
                             Название цели
                           </label>
-                          <input
+                          <motion.input
+                            whileFocus={{ scale: 1.02 }}
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Например, Отпуск в Японии..."
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                            className="premium-form-input"
                             disabled={isSubmitting}
                             required
                           />
                         </div>
 
                         {/* Target Amount */}
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                        <div className="premium-form-group">
+                          <label className="premium-form-label flex items-center gap-2">
                             <DollarSign className="w-4 h-4" />
                             Целевая сумма
                           </label>
-                          <input
+                          <motion.input
+                            whileFocus={{ scale: 1.02 }}
                             type="number"
                             value={targetAmount}
                             onChange={(e) => setTargetAmount(e.target.value)}
                             placeholder="100000"
                             min="1"
                             step="1"
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                            className="premium-form-input"
                             disabled={isSubmitting}
                             required
                           />
                         </div>
 
                         {/* Deadline */}
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                        <div className="premium-form-group">
+                          <label className="premium-form-label flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
                             Дедлайн (необязательно)
                           </label>
-                          <input
+                          <motion.input
+                            whileFocus={{ scale: 1.02 }}
                             type="date"
                             value={deadline}
                             onChange={(e) => setDeadline(e.target.value)}
-                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                            className="premium-form-input"
                             disabled={isSubmitting}
                           />
                         </div>
 
                         {/* Emoji */}
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-white/90">
+                        <div className="premium-form-group">
+                          <label className="premium-form-label">
                             Выберите эмодзи
                           </label>
                           <div className="grid grid-cols-4 gap-3">
                             {emojiOptions.map((emojiOption) => (
-                              <button
+                              <motion.button
                                 key={emojiOption}
+                                whileHover={{ scale: 1.1, y: -2 }}
+                                whileTap={{ scale: 0.95 }}
                                 type="button"
                                 onClick={() => setEmoji(emojiOption)}
                                 disabled={isSubmitting}
-                                className={`p-4 rounded-xl border-2 transition-all hover:scale-105 text-2xl ${
+                                className={`p-4 rounded-xl border-2 transition-all duration-300 text-2xl backdrop-blur-sm ${
                                   emoji === emojiOption
-                                    ? 'border-blue-400 bg-blue-500/20 shadow-lg'
-                                    : 'border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10'
+                                    ? 'border-yellow-400/60 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 shadow-glow-primary'
+                                    : 'border-yellow-500/20 hover:border-yellow-400/40 bg-gradient-to-r from-white/5 to-yellow-500/5 hover:from-white/10 hover:to-yellow-500/10'
                                 }`}
                               >
                                 {emojiOption}
-                              </button>
+                              </motion.button>
                             ))}
                           </div>
                         </div>
 
                         {/* Preview */}
-                        <div className="space-y-3">
-                          <label className="text-sm font-medium text-white/90">
+                        <div className="premium-form-group">
+                          <label className="premium-form-label">
                             Предпросмотр
                           </label>
                           <div className="p-4 bg-white/10 rounded-xl border border-white/20">
@@ -359,8 +371,8 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
 
                     {/* Fund amount for funding mode */}
                     {isFunding && (
-                      <div className="space-y-3">
-                        <label className="text-sm font-medium text-white/90 flex items-center gap-2">
+                      <div className="premium-form-group">
+                        <label className="premium-form-label flex items-center gap-2">
                           <Plus className="w-4 h-4" />
                           Сумма пополнения
                         </label>
@@ -371,7 +383,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                           placeholder="Введите сумму..."
                           min="1"
                           step="1"
-                          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-transparent transition-all"
+                          className="premium-form-input"
                           disabled={isSubmitting}
                           required
                         />
@@ -402,58 +414,58 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                     <div className="space-y-3">
                       {/* Дополнительные кнопки для редактирования */}
                       {isEditing && (
-                        <div className="flex gap-3">
+                        <div className="premium-sidebar-buttons">
                           {goal?.archived ? (
                             <button
                               type="button"
                               onClick={handleUnarchive}
                               disabled={isSubmitting}
-                              className="flex-1 px-4 py-3 bg-green-600/80 hover:bg-green-600 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                              className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2"
                             >
-                              📤 Разархивировать
+                              📤 Разархивировать цель
                             </button>
                           ) : (
                             <button
                               type="button"
                               onClick={handleArchive}
                               disabled={isSubmitting}
-                              className="flex-1 px-4 py-3 bg-yellow-600/80 hover:bg-yellow-600 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                              className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2"
                             >
-                              📦 Архивировать
+                              📦 Архивировать цель
                             </button>
                           )}
                           <button
                             type="button"
                             onClick={() => setShowDeleteConfirm(true)}
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-3 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                            className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2"
                           >
                             <Trash2 className="w-4 h-4" />
-                            Удалить
+                            Удалить цель
                           </button>
                         </div>
                       )}
                       
                       {/* Основные кнопки */}
-                      <div className="flex gap-3">
+                      <div className="premium-sidebar-button-row">
                         <button
                           type="button"
                           onClick={handleClose}
                           disabled={isSubmitting}
-                          className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 font-medium"
+                          className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
                         >
                           Отмена
                         </button>
                         <button
                           onClick={handleSubmit}
                           disabled={isSubmitting || (isFunding ? !fundAmount || parseFloat(fundAmount) <= 0 : !title.trim() || !targetAmount || parseFloat(targetAmount) <= 0)}
-                          className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                          className="premium-sidebar-button premium-sidebar-button-primary premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
                         >
                           {isSubmitting ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           ) : (
                             <>
-                              <Save className="w-4 h-4" />
+                              <Save className="w-3 h-3" />
                               {isFunding ? 'Пополнить' : isEditing ? 'Сохранить' : 'Создать'}
                             </>
                           )}
@@ -468,24 +480,24 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                           Цель &ldquo;{goal?.title}&rdquo; будет удалена без возможности восстановления
                         </p>
                       </div>
-                      <div className="flex gap-3">
+                      <div className="premium-sidebar-button-row">
                         <button
                           onClick={() => setShowDeleteConfirm(false)}
                           disabled={isSubmitting}
-                          className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 font-medium"
+                          className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
                         >
                           Нет
                         </button>
                         <button
                           onClick={handleDelete}
                           disabled={isSubmitting}
-                          className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                          className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
                         >
                           {isSubmitting ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           ) : (
                             <>
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-3 h-3" />
                               Да, удалить
                             </>
                           )}

@@ -24,23 +24,12 @@ export const AnalyticsCard = ({
 }: AnalyticsCardProps) => {
   const isMobile = useIsMobile()
   
-  const getTypeColors = () => {
-    switch (type) {
-      case 'positive':
-        return 'from-green-500/20 to-emerald-500/20 border-green-500/30'
-      case 'negative':
-        return 'from-red-500/20 to-rose-500/20 border-red-500/30'
-      default:
-        return 'from-blue-500/20 to-cyan-500/20 border-blue-500/30'
-    }
-  }
-
   const getValueColors = () => {
     switch (type) {
       case 'positive':
-        return 'text-green-400'
+        return 'text-emerald-300'
       case 'negative':
-        return 'text-red-400'
+        return 'text-rose-300'
       default:
         return 'text-white'
     }
@@ -56,71 +45,109 @@ export const AnalyticsCard = ({
     return val.toLocaleString()
   }
 
+  const getIconGradient = () => {
+    switch (type) {
+      case 'positive':
+        return 'from-emerald-400 to-green-300'
+      case 'negative':
+        return 'from-rose-400 to-red-300'
+      default:
+        return 'from-amber-400 to-orange-300'
+    }
+  }
+
   return (
     <motion.div
       whileHover={{ 
-        scale: 1.05,
-        rotateY: 5,
-        rotateX: 5,
+        scale: 0.999,
+        y: 1
       }}
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ 
+        scale: 0.998,
+        y: 2
+      }}
       title={isCurrency && isMobile ? formatCurrency(value) : undefined}
-      className={`
-        relative p-6 rounded-2xl bg-gradient-to-br ${getTypeColors()}
-        backdrop-blur-sm border transition-all duration-300
-        hover:shadow-xl hover:shadow-white/10
-        transform-gpu perspective-1000 cursor-help
-      `}
+      className="ultra-premium-card h-full min-h-[180px] p-8 cursor-pointer group"
     >
-      {/* Светящийся эффект */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent 
-                      opacity-0 hover:opacity-100 transition-opacity duration-300" />
-      
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-2xl">{icon}</span>
-          <div className={`w-2 h-2 rounded-full ${
-            type === 'positive' ? 'bg-green-400' : 
-            type === 'negative' ? 'bg-red-400' : 'bg-blue-400'
-          } animate-pulse`} />
+      {/* Ambient content glow */}
+      <div className="premium-content-glow h-full flex flex-col justify-between relative z-10">
+        
+        {/* Header с иконкой и статус-индикатором */}
+        <div className="flex items-start justify-between mb-6">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className={`text-4xl p-4 rounded-2xl bg-gradient-to-br ${
+              type === 'positive' ? 'from-emerald-500/15 to-green-500/10' :
+              type === 'negative' ? 'from-rose-500/15 to-red-500/10' :
+              'from-amber-500/15 to-orange-500/10'
+            } border border-amber-400/20 backdrop-blur-sm`}
+          >
+            <span className="premium-icon text-3xl">{icon}</span>
+          </motion.div>
+          
+          {/* Статус-индикатор с pulse эффектом */}
+          <motion.div 
+            className={`w-3 h-3 rounded-full ${
+              type === 'positive' ? 'bg-emerald-400' : 
+              type === 'negative' ? 'bg-rose-400' : 
+              'bg-amber-400'
+            } shadow-lg`}
+            animate={{ 
+              boxShadow: [
+                `0 0 0 0 ${type === 'positive' ? 'rgba(52, 211, 153, 0.4)' : 
+                          type === 'negative' ? 'rgba(251, 113, 133, 0.4)' : 
+                          'rgba(251, 191, 36, 0.4)'}`,
+                `0 0 0 8px ${type === 'positive' ? 'rgba(52, 211, 153, 0)' : 
+                           type === 'negative' ? 'rgba(251, 113, 133, 0)' : 
+                           'rgba(251, 191, 36, 0)'}`
+              ]
+            }}
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
         </div>
         
-        <h3 className="text-sm text-white/70 mb-2">{title}</h3>
+        {/* Заголовок */}
+        <div className="mb-4">
+          <h3 className="premium-subtitle text-sm uppercase tracking-wider font-medium">
+            {title}
+          </h3>
+        </div>
         
-        <div className={`text-2xl font-bold ${getValueColors()}`}>
-          <CountUp
-            end={Math.abs(value)}
-            duration={2}
-            formattingFn={formatValue}
-            prefix={value < 0 ? '-' : ''}
-            preserveValue
-          />
+        {/* Главное значение с emboss эффектом */}
+        <div className="mt-auto">
+          <motion.div 
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className={`premium-value text-4xl xl:text-5xl font-bold tracking-tight ${getValueColors()}`}
+            data-value={formatValue(Math.abs(value))}
+          >
+            <CountUp
+              end={Math.abs(value)}
+              duration={2.5}
+              formattingFn={formatValue}
+              prefix={value < 0 ? '-' : ''}
+              preserveValue
+            />
+          </motion.div>
         </div>
       </div>
 
-      {/* Анимированные частицы */}
-      <div className="absolute inset-0 overflow-hidden rounded-2xl">
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white/20 rounded-full"
-            animate={{
-              x: [0, 100, 0],
-              y: [0, 50, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 3 + i,
-              repeat: Infinity,
-              delay: i * 0.5,
-            }}
-            style={{
-              left: `${20 + i * 30}%`,
-              top: `${30 + i * 20}%`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Внутренний металлический блеск при hover */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileHover={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-4 left-4 w-24 h-24 bg-gradient-to-br from-amber-400/10 to-transparent rounded-full blur-xl" />
+        <div className="absolute bottom-4 right-4 w-32 h-32 bg-gradient-to-tl from-amber-400/5 to-transparent rounded-full blur-2xl" />
+      </motion.div>
+
     </motion.div>
   )
 }

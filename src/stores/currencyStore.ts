@@ -64,6 +64,10 @@ interface CurrencyState {
   // eslint-disable-next-line no-unused-vars
   formatAmount: (amount: number, showSymbol?: boolean) => string
   
+  // Функция форматирования суммы без копеек (целые числа)
+  // eslint-disable-next-line no-unused-vars
+  formatAmountWhole: (amount: number, showSymbol?: boolean) => string
+  
   // Получить курс выбранной валюты
   getCurrentRate: () => number
   
@@ -123,6 +127,30 @@ export const useCurrencyStore = create<CurrencyState>()(
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         }).format(convertedAmount)
+        
+        if (!showSymbol) return formatted
+        
+        // Для PLN и UAH символ идет после числа
+        if (state.selectedCurrency === 'PLN' || state.selectedCurrency === 'UAH') {
+          return `${formatted} ${currency.symbol}`
+        }
+        
+        // Для USD и EUR символ идет перед числом
+        return `${currency.symbol}${formatted}`
+      },
+
+      formatAmountWhole: (amount, showSymbol = true) => {
+        const state = get()
+        const currency = CURRENCIES[state.selectedCurrency]
+        const convertedAmount = state.convertFromPLN(amount)
+        
+        // Округляем до целого числа
+        const roundedAmount = Math.round(convertedAmount)
+        
+        const formatted = new Intl.NumberFormat('pl-PL', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(roundedAmount)
         
         if (!showSymbol) return formatted
         

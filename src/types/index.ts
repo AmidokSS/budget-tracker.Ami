@@ -63,6 +63,7 @@ export interface Operation {
   note?: string
   date: string
   category?: Category
+  user?: User
   createdAt: string
 }
 

@@ -108,60 +108,72 @@ export default function CategorySidebar({ isOpen, onClose, category, onSuccess }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-gradient-to-br from-black/60 via-slate-900/50 to-black/60 backdrop-blur-md premium-sidebar-overlay"
             onClick={handleClose}
           />
 
           {/* Sidebar */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50 overflow-hidden"
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ 
+              type: 'spring', 
+              damping: 20, 
+              stiffness: 300,
+              opacity: { duration: 0.2 }
+            }}
+            className="premium-sidebar overflow-hidden fixed right-0 top-0 h-full w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col h-full">
+            <div className="premium-sidebar-content flex flex-col h-full">
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
-                <h2 className="text-xl font-semibold text-white">
+              <div className="premium-sidebar-header p-6 flex items-center justify-between">
+                <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-100 to-orange-100 bg-clip-text text-transparent drop-shadow-sm">
                   {isEditing ? 'Редактировать категорию' : 'Создать категорию'}
                 </h2>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05, rotate: 90 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="p-2 hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50"
+                  className="p-2 hover:bg-gradient-to-r hover:from-yellow-500/10 hover:to-orange-500/10 rounded-xl transition-all duration-300 disabled:opacity-50 group"
                 >
-                  <X className="w-5 h-5 text-white" />
-                </button>
+                  <X className="w-5 h-5 text-yellow-100 group-hover:text-white drop-shadow-sm" />
+                </motion.button>
               </div>
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto">
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
                   {/* Name */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-white/90">
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
                       Название категории
                     </label>
-                    <input
+                    <motion.input
+                      whileFocus={{ scale: 1.02 }}
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Введите название..."
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-transparent transition-all"
+                      className="premium-form-input"
                       disabled={isSubmitting}
                       required
                     />
                   </div>
 
                   {/* Type */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-white/90">
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
                       Тип категории
                     </label>
                     <div className="grid grid-cols-2 gap-3">
-                      <label className="relative cursor-pointer">
+                      <motion.label 
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="relative cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="type"
@@ -171,16 +183,20 @@ export default function CategorySidebar({ isOpen, onClose, category, onSuccess }
                           className="sr-only"
                           disabled={isSubmitting}
                         />
-                        <div className={`p-4 rounded-xl border transition-all ${
+                        <div className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                           type === 'income'
-                            ? 'bg-green-500/20 border-green-400/50 text-green-300 shadow-lg'
-                            : 'bg-white/5 border-white/20 text-white/70 hover:bg-white/10'
+                            ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-green-400/60 text-green-200 shadow-glow-success backdrop-blur-sm'
+                            : 'bg-gradient-to-r from-white/5 to-yellow-500/5 border-yellow-500/20 text-yellow-100/70 hover:border-yellow-400/40 hover:bg-gradient-to-r hover:from-white/10 hover:to-yellow-500/10 backdrop-blur-sm'
                         }`}>
-                          <div className="text-center font-medium">💰 Доход</div>
+                          <div className="text-center font-semibold drop-shadow-sm">💰 Доход</div>
                         </div>
-                      </label>
+                      </motion.label>
                       
-                      <label className="relative cursor-pointer">
+                      <motion.label 
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="relative cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="type"
@@ -190,133 +206,158 @@ export default function CategorySidebar({ isOpen, onClose, category, onSuccess }
                           className="sr-only"
                           disabled={isSubmitting}
                         />
-                        <div className={`p-4 rounded-xl border transition-all ${
+                        <div className={`p-4 rounded-xl border-2 transition-all duration-300 ${
                           type === 'expense'
-                            ? 'bg-red-500/20 border-red-400/50 text-red-300 shadow-lg'
-                            : 'bg-white/5 border-white/20 text-white/70 hover:bg-white/10'
+                            ? 'bg-gradient-to-r from-red-500/20 to-rose-500/20 border-red-400/60 text-red-200 shadow-glow-danger backdrop-blur-sm'
+                            : 'bg-gradient-to-r from-white/5 to-yellow-500/5 border-yellow-500/20 text-yellow-100/70 hover:border-yellow-400/40 hover:bg-gradient-to-r hover:from-white/10 hover:to-yellow-500/10 backdrop-blur-sm'
                         }`}>
-                          <div className="text-center font-medium">💸 Расход</div>
+                          <div className="text-center font-semibold drop-shadow-sm">💸 Расход</div>
                         </div>
-                      </label>
+                      </motion.label>
                     </div>
                   </div>
 
                   {/* Emoji */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-white/90">
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
                       Выберите эмодзи
                     </label>
                     <div className="grid grid-cols-4 gap-3">
                       {emojiOptions.map((emojiOption) => (
-                        <button
+                        <motion.button
                           key={emojiOption}
+                          whileHover={{ scale: 1.1, y: -2 }}
+                          whileTap={{ scale: 0.95 }}
                           type="button"
                           onClick={() => setEmoji(emojiOption)}
                           disabled={isSubmitting}
-                          className={`p-4 rounded-xl border-2 transition-all hover:scale-105 text-2xl ${
+                          className={`p-4 rounded-xl border-2 transition-all duration-300 text-2xl backdrop-blur-sm ${
                             emoji === emojiOption
-                              ? 'border-blue-400 bg-blue-500/20 shadow-lg'
-                              : 'border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10'
+                              ? 'border-yellow-400/60 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 shadow-glow-primary'
+                              : 'border-yellow-500/20 hover:border-yellow-400/40 bg-gradient-to-r from-white/5 to-yellow-500/5 hover:from-white/10 hover:to-yellow-500/10'
                           }`}
                         >
                           {emojiOption}
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
                   </div>
 
                   {/* Preview */}
-                  <div className="space-y-3">
-                    <label className="text-sm font-medium text-white/90">
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
                       Предпросмотр
                     </label>
-                    <div className="p-4 bg-white/10 rounded-xl border border-white/20">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="p-4 glass-card border border-yellow-500/20 rounded-xl backdrop-blur-sm"
+                    >
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl">{emoji}</span>
+                        <motion.span 
+                          key={emoji}
+                          initial={{ scale: 0.8, rotate: -10 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          className="text-2xl drop-shadow-lg"
+                        >
+                          {emoji}
+                        </motion.span>
                         <div>
-                          <div className="text-white font-medium">
+                          <div className="text-white font-semibold drop-shadow-sm">
                             {name || 'Название категории'}
                           </div>
-                          <div className={`text-sm ${
-                            type === 'income' ? 'text-green-400' : 'text-red-400'
+                          <div className={`text-sm font-medium drop-shadow-sm ${
+                            type === 'income' ? 'text-green-300' : 'text-red-300'
                           }`}>
                             {type === 'income' ? 'Доход' : 'Расход'}
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 </form>
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-white/10 bg-white/5 space-y-4">
+              <div className="premium-sidebar-header p-6 space-y-4">
                 {!showDeleteConfirm ? (
-                  <div className="flex gap-3">
+                  <div className="premium-sidebar-buttons">
                     {isEditing && (
-                      <button
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => setShowDeleteConfirm(true)}
                         disabled={isSubmitting}
-                        className="px-4 py-3 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+                        className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <Trash2 className="w-4 h-4" />
-                        Удалить
-                      </button>
+                        <Trash2 className="w-4 h-4 drop-shadow-sm" />
+                        Удалить категорию
+                      </motion.button>
                     )}
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      disabled={isSubmitting}
-                      className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50"
-                    >
-                      Отмена
-                    </button>
-                    <button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting || !name.trim()}
-                      className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                    >
-                      {isSubmitting ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          {isEditing ? 'Сохранить' : 'Создать'}
-                        </>
-                      )}
-                    </button>
+                    <div className="premium-sidebar-button-row">
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="button"
+                        onClick={handleClose}
+                        disabled={isSubmitting}
+                        className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
+                      >
+                        Отмена
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleSubmit}
+                        disabled={isSubmitting || !name.trim()}
+                        className="premium-sidebar-button premium-sidebar-button-primary premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
+                      >
+                        {isSubmitting ? (
+                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Save className="w-3 h-3 drop-shadow-sm" />
+                            {isEditing ? 'Сохранить' : 'Создать'}
+                          </>
+                        )}
+                      </motion.button>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     <div className="text-center">
-                      <p className="text-white/90 mb-2">Удалить категорию навсегда?</p>
-                      <p className="text-sm text-white/60">
+                      <p className="text-yellow-100 font-semibold mb-2 drop-shadow-sm">Удалить категорию навсегда?</p>
+                      <p className="text-sm text-yellow-200/70 drop-shadow-sm">
                         Категория &ldquo;{category?.name}&rdquo; будет удалена без возможности восстановления
                       </p>
                     </div>
-                    <div className="flex gap-3">
-                      <button
+                    <div className="premium-sidebar-button-row">
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => setShowDeleteConfirm(false)}
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50"
+                        className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
                       >
                         Нет
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={handleDelete}
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
                       >
                         {isSubmitting ? (
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         ) : (
                           <>
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3 drop-shadow-sm" />
                             Да, удалить
                           </>
                         )}
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 )}

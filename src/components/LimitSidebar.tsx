@@ -82,149 +82,175 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-gradient-to-br from-black/60 via-slate-900/50 to-black/60 backdrop-blur-md premium-sidebar-overlay"
             onClick={handleClose}
           />
 
           {/* Sidebar */}
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-gradient-to-br from-slate-900/95 to-slate-800/95 backdrop-blur-xl border-l border-white/10 shadow-2xl z-50"
+            initial={{ x: '100%', opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ 
+              type: 'spring', 
+              damping: 20, 
+              stiffness: 300,
+              opacity: { duration: 0.2 }
+            }}
+            className="premium-sidebar fixed right-0 top-0 h-full w-full max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col h-full">
+            <div className="premium-sidebar-content flex flex-col h-full">
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <div className="premium-sidebar-header flex items-center justify-between p-6">
                 <div>
-                  <h2 className="text-xl font-bold text-white">Редактировать лимит</h2>
+                  <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-100 to-orange-100 bg-clip-text text-transparent drop-shadow-sm">Редактировать лимит</h2>
                   {limit?.category && (
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-yellow-200/70 mt-1 drop-shadow-sm">
                       {limit.category.emoji} {limit.category.name}
                     </p>
                   )}
                 </div>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05, rotate: 90 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleClose}
                   disabled={isSubmitting}
-                  className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+                  className="p-2 hover:bg-gradient-to-r hover:from-yellow-500/10 hover:to-orange-500/10 rounded-xl transition-all duration-300 disabled:opacity-50 group"
                 >
-                  <X className="h-5 w-5 text-gray-400" />
-                </button>
+                  <X className="h-5 w-5 text-yellow-100 group-hover:text-white drop-shadow-sm" />
+                </motion.button>
               </div>
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6">
                 <form onSubmit={handleSave} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
                       Сумма лимита
                     </label>
-                    <input
+                    <motion.input
+                      whileFocus={{ scale: 1.02 }}
                       type="number"
                       value={limitAmount}
                       onChange={(e) => setLimitAmount(e.target.value)}
                       step="0.01"
                       min="0"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 focus:outline-none"
+                      className="premium-form-input"
                       placeholder="Введите сумму лимита"
                       required
                     />
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-yellow-200/60 mt-1 drop-shadow-sm">
                       Ежемесячный лимит расходов по категории
                     </p>
                   </div>
 
                   {limit?.isAutoCreated && (
-                    <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
-                      <div className="flex items-center space-x-2 text-purple-300 text-sm">
-                        <span>🪄</span>
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="glass-card border border-purple-500/30 rounded-xl p-4 backdrop-blur-sm"
+                    >
+                      <div className="flex items-center space-x-2 text-purple-200 text-sm drop-shadow-sm">
+                        <span className="text-lg drop-shadow-lg">🪄</span>
                         <span>Этот лимит был создан автоматически при добавлении категории расходов.</span>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
 
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                    <h4 className="text-blue-300 font-medium mb-2">Как работают лимиты?</h4>
-                    <ul className="text-sm text-blue-200/80 space-y-1">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="glass-card border border-yellow-500/30 rounded-xl p-4 backdrop-blur-sm"
+                  >
+                    <h4 className="text-yellow-200 font-semibold mb-2 drop-shadow-sm">Как работают лимиты?</h4>
+                    <ul className="text-sm text-yellow-100/80 space-y-1 drop-shadow-sm">
                       <li>• Лимит устанавливается на месяц</li>
                       <li>• При превышении 80% появится предупреждение</li>
                       <li>• При превышении 100% лимит будет выделен красным</li>
                     </ul>
-                  </div>
+                  </motion.div>
                 </form>
               </div>
 
               {/* Footer */}
-              <div className="flex-shrink-0 border-t border-white/10 p-6 space-y-4">
+              <div className="premium-sidebar-header flex-shrink-0 p-6 space-y-4">
                 {!showDeleteConfirm ? (
-                  <div className="space-y-3">
+                  <div className="premium-sidebar-buttons">
                     {/* Кнопка удаления */}
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
                       type="button"
                       onClick={() => setShowDeleteConfirm(true)}
                       disabled={isSubmitting}
-                      className="w-full px-4 py-3 bg-red-600/80 hover:bg-red-600 text-white rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+                      className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4 drop-shadow-sm" />
                       Удалить лимит
-                    </button>
+                    </motion.button>
                     
                     {/* Основные кнопки */}
-                    <div className="flex gap-3">
-                      <button
+                    <div className="premium-sidebar-button-row">
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={handleClose}
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 font-medium"
+                        className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
                       >
                         Отмена
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         type="submit"
                         onClick={handleSave}
                         disabled={isSubmitting || !limitAmount}
-                        className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl transition-all disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+                        className="premium-sidebar-button premium-sidebar-button-primary premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
                       >
                         {isSubmitting ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                         ) : (
-                          <Save className="w-4 h-4" />
+                          <Save className="w-3 h-3 drop-shadow-sm" />
                         )}
                         Сохранить
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     <div className="text-center py-2">
-                      <p className="text-red-300 font-medium">Удалить лимит?</p>
-                      <p className="text-sm text-gray-400">Это действие нельзя отменить</p>
+                      <p className="text-red-200 font-semibold drop-shadow-sm">Удалить лимит?</p>
+                      <p className="text-sm text-yellow-200/60 drop-shadow-sm">Это действие нельзя отменить</p>
                     </div>
-                    <div className="flex gap-3">
-                      <button
+                    <div className="premium-sidebar-button-row">
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => setShowDeleteConfirm(false)}
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors disabled:opacity-50 font-medium"
+                        className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50"
                       >
                         Отмена
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={handleDelete}
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+                        className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1"
                       >
                         {isSubmitting ? (
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
                         ) : (
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3 h-3 drop-shadow-sm" />
                         )}
                         Удалить
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 )}

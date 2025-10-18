@@ -66,6 +66,7 @@ export function useCurrency() {
     // Утилиты
     convertFromPLN: store.convertFromPLN,
     formatAmount: store.formatAmount,
+    formatAmountWhole: store.formatAmountWhole,
     getCurrentRate: store.getCurrentRate,
     shouldUpdateRates: store.shouldUpdateRates,
     

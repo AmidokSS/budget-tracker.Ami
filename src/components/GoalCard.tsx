@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from 'react'
-import { Target, Edit, Trash2 } from 'lucide-react'
+import { Target, Edit, Trash2, Edit3, Clock, Wallet } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Goal } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
@@ -66,61 +66,162 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
     onDelete(goal.id)
   }, [goal.id, onDelete])
 
+  const handleFund = useCallback(() => {
+    if (_onFund) {
+      _onFund(goal)
+    }
+  }, [goal, _onFund])
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-shadow"
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ 
+        delay: index * 0.1,
+        type: "spring",
+        stiffness: 400,
+        damping: 30
+      }}
+      whileHover={{ 
+        scale: 0.999,
+        y: 1
+      }}
+      whileTap={{ 
+        scale: 0.998,
+        y: 2
+      }}
+      className="ultra-premium-card p-8 cursor-pointer group h-full min-h-[280px]"
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-            <Target className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-800">{goal.title}</h3>
-            <p className="text-sm text-gray-600">до {deadlineText}</p>
+      {/* Premium content glow */}
+      <div className="premium-content-glow h-full flex flex-col">
+        
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/15 to-orange-500/10 border border-amber-400/20 backdrop-blur-sm"
+          >
+            <span className="premium-icon text-4xl">{goal.emoji}</span>
+          </motion.div>
+          
+          {/* Action buttons */}
+          <div className="flex gap-2">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleFund}
+              className="p-2 rounded-xl ultra-premium-card border border-emerald-400/20"
+            >
+              <Wallet className="w-4 h-4 text-emerald-400" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleEdit}
+              className="p-2 rounded-xl ultra-premium-card border border-amber-400/20"
+            >
+              <Edit3 className="w-4 h-4 premium-icon" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleDelete}
+              className="p-2 rounded-xl ultra-premium-card border border-rose-400/20"
+            >
+              <Trash2 className="w-4 h-4 text-rose-400" />
+            </motion.button>
           </div>
         </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={handleEdit}
-            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={handleDelete}
-            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+
+        {/* Goal title and status */}
+        <div className="mb-6">
+          <h3 className="premium-title text-2xl font-bold mb-3 leading-tight">
+            {goal.title}
+          </h3>
+          
+          {deadlineText && (
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 premium-icon" />
+              <span className="premium-subtitle text-sm">
+                до {deadlineText}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Premium progress section */}
+        <div className="flex-1 flex flex-col justify-end">
+          
+          {/* Progress bar with luxury styling */}
+          <div className="mb-6">
+            <div className="flex justify-between items-end mb-3">
+              <span className="premium-subtitle text-sm">Прогресс</span>
+              <span className="premium-title text-lg font-bold">
+                {progress.toFixed(0)}%
+              </span>
+            </div>
+            
+            <div className="relative h-3 bg-black/30 rounded-full overflow-hidden border border-amber-400/20">
+              <motion.div
+                className={`absolute inset-y-0 left-0 bg-gradient-to-r ${progressColor} rounded-full shadow-lg`}
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progress, 100)}%` }}
+                transition={{ 
+                  duration: 1.5, 
+                  delay: index * 0.2,
+                  ease: "easeOut" 
+                }}
+              >
+                {/* Inner glow for progress bar */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              </motion.div>
+              
+              {/* Shimmer effect on progress bar */}
+              <motion.div
+                className="absolute inset-y-0 w-8 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                animate={{ x: [-32, 200] }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.3
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Amount display with emboss effect */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <span className="premium-subtitle text-sm block mb-1">Накоплено</span>
+              <div className="premium-value text-2xl font-bold text-emerald-300" data-value={formatAmount(goal.currentAmount)}>
+                {formatAmount(goal.currentAmount)}
+              </div>
+            </div>
+            <div>
+              <span className="premium-subtitle text-sm block mb-1">Цель</span>
+              <div className="premium-value text-2xl font-bold text-amber-300" data-value={formatAmount(goal.targetAmount)}>
+                {formatAmount(goal.targetAmount)}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Прогресс</span>
-          <span className="font-medium">{Math.round(progress)}%</span>
-        </div>
-        
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className={`h-2 rounded-full bg-gradient-to-r ${progressColor} transition-all duration-300`}
-            style={{ width: `${Math.min(progress, 100)}%` }}
-          />
-        </div>
-        
-        <div className="flex justify-between items-center">
-          <span className="text-lg font-bold text-gray-800">
-            {formattedCurrent}
-          </span>
-          <span className="text-sm text-gray-600">
-            из {formattedTarget}
-          </span>
-        </div>
-      </div>
+      {/* Luxury ambient lighting */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="absolute inset-0 pointer-events-none"
+      >
+        <div className="absolute top-6 right-6 w-32 h-32 bg-gradient-to-br from-amber-400/8 to-transparent rounded-full blur-2xl" />
+        <div className="absolute bottom-6 left-6 w-24 h-24 bg-gradient-to-tl from-emerald-400/6 to-transparent rounded-full blur-xl" />
+      </motion.div>
+
     </motion.div>
   )
 })

@@ -21,15 +21,16 @@ export function GradientPage({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
-      className={cn(
-        'min-h-screen w-full pt-20 md:pt-20', 
-        // Только применяем градиент если он передан явно (для обратной совместимости)
-        gradient && `bg-gradient-to-br ${gradient}`, 
-        className
-      )}
+      className={cn('min-h-screen w-full pt-20 md:pt-20', className)}
+      style={{
+        backgroundAttachment: 'fixed'
+      }}
     >
       {/* Content */}
       <div className="relative">{children}</div>
     </motion.div>
   )
 }
+
+
+

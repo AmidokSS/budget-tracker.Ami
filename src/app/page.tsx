@@ -23,7 +23,7 @@ export default function HomePage() {
   const [selectedUser, setSelectedUser] = useState<{ id: string; name: string } | null>(null)
   
   const { data: summaryData, isLoading } = useUsersStatistics()
-  const { formatAmount } = useCurrency()
+  const { formatAmount, formatAmountWhole } = useCurrency()
 
   if (isLoading) {
     return (
@@ -54,132 +54,303 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white via-purple-100 to-pink-200 bg-clip-text text-transparent mb-2"
+            className="text-4xl md:text-5xl font-bold heading-gold mb-2 drop-shadow-2xl font-serif"
           >
-            Семейный бюджет
+            <span className="emoji-color">💰</span> Семейный бюджет
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg text-gray-300 mt-2"
+            className="text-lg text-cyan-100/80 mt-2 drop-shadow-lg font-sans"
           >
-            Управляйте финансами всей семьи
+            Управляйте финансами всей семьи с премиальным комфортом
           </motion.p>
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex items-center justify-center space-x-2 text-sm text-gray-400 mt-4"
+            className="flex items-center justify-center space-x-2 text-sm text-cyan-200/70 mt-4"
           >
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span>Система активна</span>
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full shadow-glow-primary"
+            ></motion.div>
+            <span className="drop-shadow-sm">Премиальная система активна</span>
           </motion.div>
         </div>
 
-        {/* Общая статистика с улучшенными анимациями */}
-        <div className="max-w-4xl mx-auto">
-          <GlassMorphismCard
-            delay={0.8}
-            gradient="from-white/15 to-white/5"
-            className="p-8 bg-slate-900/40 shadow-lg backdrop-blur-md border border-slate-800/40 rounded-2xl"
+        {/* Премиальная общая статистика */}
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ 
+              delay: 0.8,
+              type: "spring",
+              stiffness: 400,
+              damping: 30
+            }}
+            className="ultra-premium-card p-10 relative overflow-hidden"
           >
-          <motion.h2 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.0 }}
-            className="text-2xl font-bold text-white mb-6 text-center"
-          >
-            Общая статистика
-          </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Общий баланс */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.2, type: "spring", stiffness: 150 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="flex items-center justify-center mb-3"
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
+            <div className="premium-content-glow">
+              <motion.h2 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.0 }}
+                className="premium-subtitle text-3xl font-bold mb-8 text-center flex items-center justify-center gap-3 font-serif"
               >
-                <div className="p-3 bg-blue-500/20 rounded-full border border-blue-500/30 group-hover:bg-blue-500/30 group-hover:border-blue-500/50 transition-all duration-300">
-                  <Wallet className="h-8 w-8 text-blue-400 group-hover:text-blue-300" />
-                </div>
-              </motion.div>
-              <p className="text-sm text-gray-400 mb-2 group-hover:text-gray-300 transition-colors">Общий баланс</p>
-              <motion.div
-                className={`text-3xl font-bold ${totalBalance >= 0 ? 'text-blue-400' : 'text-red-400'}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4 }}
-              >
-                <AnimatedCurrency
-                  amount={totalBalance}
-                  formatAmount={formatAmount}
-                  duration={1.5}
-                />
-              </motion.div>
-            </motion.div>
+                <span className="text-4xl">📊</span>
+                Семейная статистика
+                <span className="text-4xl">💎</span>
+              </motion.h2>
 
-            {/* Общие доходы */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.3, type: "spring", stiffness: 150 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="flex items-center justify-center mb-3"
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="p-3 bg-green-500/20 rounded-full border border-green-500/30 group-hover:bg-green-500/30 group-hover:border-green-500/50 transition-all duration-300">
-                  <TrendingUp className="h-8 w-8 text-green-400 group-hover:text-green-300" />
-                </div>
-              </motion.div>
-              <p className="text-sm text-gray-400 mb-2 group-hover:text-gray-300 transition-colors">Общие доходы</p>
-              <motion.p 
-                className="text-3xl font-bold text-green-400"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.5 }}
-              >
-                +{formatAmount(totalIncome)}
-              </motion.p>
-            </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Общий баланс - адаптивный дизайн */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ 
+                    delay: 1.2, 
+                    type: "spring", 
+                    stiffness: 400,
+                    damping: 25
+                  }}
+                  whileHover={{ 
+                    scale: 1.03,
+                    y: -5
+                  }}
+                  className="text-center group cursor-pointer relative"
+                >
+                  <motion.div 
+                    className="flex items-center justify-center mb-6"
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className={`p-6 rounded-3xl border backdrop-blur-sm relative ${
+                      totalBalance >= 0 
+                        ? 'bg-gradient-to-br from-blue-500/25 to-cyan-500/15 border-blue-400/30'
+                        : 'bg-gradient-to-br from-red-500/25 to-rose-500/15 border-red-400/30'
+                    }`}>
+                      <Wallet className={`h-10 w-10 ${
+                        totalBalance >= 0 ? 'text-blue-300' : 'text-red-300'
+                      }`} />
+                      
+                      {/* Адаптивные пульсирующие кольца */}
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.4, 1],
+                          opacity: [0.4, 0.1, 0.4]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeOut"
+                        }}
+                        className={`absolute inset-0 border-2 rounded-3xl ${
+                          totalBalance >= 0 ? 'border-blue-400/30' : 'border-red-400/30'
+                        }`}
+                      />
+                    </div>
+                  </motion.div>
+                  
+                  <p className="premium-subtitle text-lg mb-3">Общий баланс</p>
+                  <motion.div
+                    className={`premium-value text-4xl font-bold ${
+                      totalBalance >= 0 ? 'text-blue-300' : 'text-red-300'
+                    }`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.4 }}
+                  >
+                    <AnimatedCurrency
+                      amount={totalBalance}
+                      formatAmount={formatAmount}
+                      duration={2}
+                    />
+                  </motion.div>
 
-            {/* Общие расходы */}
+                  {/* Ambient освещение */}
+                  <motion.div 
+                    animate={{ 
+                      opacity: [0.1, 0.3, 0.1],
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{ 
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className={`absolute top-4 right-4 w-20 h-20 rounded-full blur-2xl pointer-events-none ${
+                      totalBalance >= 0 
+                        ? 'bg-gradient-to-br from-blue-400/15 to-transparent'
+                        : 'bg-gradient-to-br from-red-400/15 to-transparent'
+                    }`}
+                  />
+                </motion.div>
+
+                {/* Общие доходы - с зелёными волнами успеха */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ 
+                    delay: 1.3, 
+                    type: "spring", 
+                    stiffness: 400,
+                    damping: 25
+                  }}
+                  whileHover={{ 
+                    scale: 1.03,
+                    y: -5
+                  }}
+                  className="text-center group cursor-pointer relative"
+                >
+                  <motion.div 
+                    className="flex items-center justify-center mb-6"
+                    whileHover={{ scale: 1.15, rotate: 15 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="p-6 bg-gradient-to-br from-emerald-500/25 to-green-500/15 rounded-3xl border border-emerald-400/30 backdrop-blur-sm relative">
+                      <TrendingUp className="h-10 w-10 text-emerald-300" />
+                      
+                      {/* Расширяющиеся волны роста */}
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.6, 1.8],
+                          opacity: [0.5, 0.2, 0]
+                        }}
+                        transition={{ 
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeOut"
+                        }}
+                        className="absolute inset-0 border-2 border-emerald-400/25 rounded-3xl"
+                      />
+                      <motion.div 
+                        animate={{ 
+                          scale: [1.2, 1.8, 2],
+                          opacity: [0.3, 0.1, 0]
+                        }}
+                        transition={{ 
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeOut",
+                          delay: 0.5
+                        }}
+                        className="absolute inset-0 border border-emerald-400/20 rounded-3xl"
+                      />
+                    </div>
+                  </motion.div>
+                  
+                  <p className="premium-subtitle text-lg mb-3">Общие доходы</p>
+                  <motion.p 
+                    className="premium-value text-4xl font-bold text-emerald-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.5 }}
+                  >
+                    +{formatAmount(totalIncome)}
+                  </motion.p>
+
+                  {/* Плавающие частицы успеха */}
+                  <motion.div 
+                    animate={{ 
+                      y: [-10, 10, -10],
+                      opacity: [0.3, 0.7, 0.3]
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute top-6 right-6 w-6 h-6 bg-emerald-400/25 rounded-full blur-sm pointer-events-none"
+                  />
+                </motion.div>
+
+                {/* Общие расходы - с красными предупреждениями */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ 
+                    delay: 1.4, 
+                    type: "spring", 
+                    stiffness: 400,
+                    damping: 25
+                  }}
+                  whileHover={{ 
+                    scale: 1.03,
+                    y: -5
+                  }}
+                  className="text-center group cursor-pointer relative"
+                >
+                  <motion.div 
+                    className="flex items-center justify-center mb-6"
+                    whileHover={{ scale: 1.15, rotate: -10 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <div className="p-6 bg-gradient-to-br from-red-500/25 to-rose-500/15 rounded-3xl border border-red-400/30 backdrop-blur-sm relative">
+                      <TrendingDown className="h-10 w-10 text-red-300" />
+                      
+                      {/* Пульсирующие предупреждения */}
+                      <motion.div 
+                        animate={{ 
+                          scale: [1, 1.3, 1],
+                          opacity: [0.4, 0.1, 0.4]
+                        }}
+                        transition={{ 
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="absolute inset-0 bg-red-400/20 rounded-3xl blur-sm"
+                      />
+                    </div>
+                  </motion.div>
+                  
+                  <p className="premium-subtitle text-lg mb-3">Общие расходы</p>
+                  <motion.p 
+                    className="premium-value text-4xl font-bold text-red-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.6 }}
+                  >
+                    -{formatAmount(totalExpense)}
+                  </motion.p>
+
+                  {/* Мигающие индикаторы */}
+                  <motion.div 
+                    animate={{ 
+                      opacity: [0, 0.6, 0],
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{ 
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                    className="absolute bottom-6 left-6 w-4 h-4 bg-red-400/30 rounded-full blur-sm pointer-events-none"
+                  />
+                </motion.div>
+              </div>
+            </div>
+
+            {/* Глобальное ambient освещение для всего блока */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.4, type: "spring", stiffness: 150 }}
-              className="text-center group"
-            >
-              <motion.div 
-                className="flex items-center justify-center mb-3"
-                whileHover={{ scale: 1.1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="p-3 bg-red-500/20 rounded-full border border-red-500/30 group-hover:bg-red-500/30 group-hover:border-red-500/50 transition-all duration-300">
-                  <TrendingDown className="h-8 w-8 text-red-400 group-hover:text-red-300" />
-                </div>
-              </motion.div>
-              <p className="text-sm text-gray-400 mb-2 group-hover:text-gray-300 transition-colors">Общие расходы</p>
-              <motion.p 
-                className="text-3xl font-bold text-red-400"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.6 }}
-              >
-                -{formatAmount(totalExpense)}
-              </motion.p>
-            </motion.div>
-          </div>
-          </GlassMorphismCard>
+              animate={{ 
+                opacity: [0.05, 0.15, 0.05],
+                x: [0, 50, 0],
+                y: [0, -30, 0]
+              }}
+              transition={{ 
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-cyan-400/10 via-blue-400/5 to-transparent rounded-full blur-3xl pointer-events-none"
+            />
+          </motion.div>
         </div>
 
         {/* Карточки пользователей с улучшенными эффектами */}
@@ -193,70 +364,304 @@ export default function HomePage() {
               {users.filter((user: any) => user.name === 'Артур' || user.name === 'Валерия').map((user: any, index: number) => (
                 <motion.div
                   key={user.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 40, rotateX: 15 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
                   transition={{ 
                     delay: 2.2 + index * 0.2, 
-                    duration: 0.6,
+                    duration: 0.8,
                     ease: "easeOut"
                   }}
                   onClick={() => handleUserClick(user)}
                   whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 0 25px rgba(139, 92, 246, 0.4)"
+                    scale: 1.03,
+                    rotateY: 2,
+                    z: 50,
                   }}
-                  whileTap={{ scale: 0.98 }}
-                  className="bg-gradient-to-br from-[#1f123d]/80 to-[#2a1f4f]/60 backdrop-blur-xl rounded-3xl shadow-[0_0_25px_rgba(0,0,0,0.3)] p-6 md:p-8 cursor-pointer relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(139,92,246,0.4)] w-full md:w-[calc(50%-1rem)] min-h-[280px]"
+                  whileTap={{ scale: 0.97 }}
+                  className={`
+                    relative overflow-hidden cursor-pointer w-full md:w-[calc(50%-1rem)] min-h-[320px]
+                    ${user.name === 'Артур' 
+                      ? 'bg-gradient-to-br from-slate-900/95 via-indigo-900/90 to-purple-900/95' 
+                      : 'bg-gradient-to-br from-slate-900/95 via-rose-900/90 to-pink-900/95'
+                    }
+                    backdrop-blur-2xl rounded-[2rem] 
+                    border border-white/10
+                    shadow-[0_0_50px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)]
+                    before:absolute before:inset-0 before:rounded-[2rem]
+                    ${user.name === 'Артур'
+                      ? 'before:bg-gradient-to-br before:from-indigo-500/20 before:via-transparent before:to-purple-500/20'
+                      : 'before:bg-gradient-to-br before:from-rose-500/20 before:via-transparent before:to-pink-500/20'
+                    }
+                    after:absolute after:inset-0 after:rounded-[2rem] after:opacity-0 after:transition-opacity after:duration-500
+                    ${user.name === 'Артур'
+                      ? 'hover:after:bg-gradient-to-br hover:after:from-indigo-400/10 hover:after:to-purple-400/10'
+                      : 'hover:after:bg-gradient-to-br hover:after:from-rose-400/10 hover:after:to-pink-400/10'
+                    }
+                    hover:after:opacity-100
+                    hover:shadow-[0_0_80px_rgba(139,92,246,0.3),0_0_120px_rgba(139,92,246,0.1)]
+                    transition-all duration-500 ease-out
+                    group
+                  `}
+                  style={{
+                    perspective: '1000px',
+                    transformStyle: 'preserve-3d'
+                  }}
                 >
-                {/* Верхняя часть - имя пользователя */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className={`${
-                      user.name === 'Артур' 
-                        ? 'bg-gradient-to-br from-indigo-500 to-purple-600' 
-                        : 'bg-gradient-to-br from-pink-500 to-rose-600'
-                    } p-3 rounded-xl`}>
-                      <Wallet className="h-5 w-5 text-white" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-white">{user.name}</h3>
-                  </div>
-                  <User className="h-5 w-5 text-slate-400 opacity-60" />
+                
+                {/* Абсолютные декоративные элементы */}
+                <div className="absolute top-0 right-0 w-32 h-32 opacity-30">
+                  <div className={`
+                    absolute inset-0 rounded-full blur-2xl
+                    ${user.name === 'Артур' 
+                      ? 'bg-gradient-to-br from-indigo-400 to-purple-600' 
+                      : 'bg-gradient-to-br from-rose-400 to-pink-600'
+                    }
+                  `} />
+                </div>
+                
+                <div className="absolute bottom-0 left-0 w-24 h-24 opacity-20">
+                  <div className={`
+                    absolute inset-0 rounded-full blur-xl
+                    ${user.name === 'Артур' 
+                      ? 'bg-gradient-to-tl from-purple-400 to-indigo-600' 
+                      : 'bg-gradient-to-tl from-pink-400 to-rose-600'
+                    }
+                  `} />
                 </div>
 
-                {/* Средняя часть - основной баланс */}
-                <div className="text-center mb-6">
-                  <p className={`text-3xl font-bold tracking-wide mb-2 ${
-                    user.balance >= 0 ? 'text-white' : 'text-red-400'
-                  }`}>
-                    {formatAmount(user.balance)}
-                  </p>
-                  <p className="text-sm text-slate-400">Общий баланс</p>
+                {/* Основной контент */}
+                <div className="relative z-10 p-8 h-full flex flex-col">
+                
+                {/* Верхняя часть - имя пользователя с премиум эффектами */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                    <motion.div 
+                      className={`
+                        relative p-4 rounded-2xl
+                        ${user.name === 'Артур' 
+                          ? 'bg-gradient-to-br from-indigo-500/30 to-purple-600/30' 
+                          : 'bg-gradient-to-br from-rose-500/30 to-pink-600/30'
+                        }
+                        backdrop-blur-sm border border-white/20
+                        shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_0_20px_rgba(0,0,0,0.3)]
+                      `}
+                      whileHover={{ 
+                        scale: 1.1, 
+                        rotate: [0, -5, 5, 0],
+                        transition: { duration: 0.6 }
+                      }}
+                    >
+                      <Wallet className="h-6 w-6 text-white drop-shadow-lg" />
+                      
+                      {/* Внутреннее свечение иконки */}
+                      <div className={`
+                        absolute inset-0 rounded-2xl blur-md opacity-50
+                        ${user.name === 'Артур' 
+                          ? 'bg-gradient-to-br from-indigo-400 to-purple-500' 
+                          : 'bg-gradient-to-br from-rose-400 to-pink-500'
+                        }
+                      `} />
+                    </motion.div>
+                    
+                    <div>
+                      <motion.h3 
+                        className="text-2xl font-bold text-white drop-shadow-lg tracking-wide font-serif"
+                        whileHover={{ 
+                          scale: 1.05,
+                          textShadow: "0 0 20px rgba(255,255,255,0.5)"
+                        }}
+                      >
+                        {user.name}
+                      </motion.h3>
+                      <motion.p 
+                        className="text-sm text-white/60 mt-1 font-sans font-medium tracking-wide"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 2.5 + index * 0.2 }}
+                      >
+                        Личный кошелёк
+                      </motion.p>
+                    </div>
+                  </div>
+                  
+                  <motion.div
+                    whileHover={{ scale: 1.2, rotate: 180 }}
+                    transition={{ duration: 0.5 }}
+                    className="opacity-40 group-hover:opacity-70 transition-opacity duration-300"
+                  >
+                    <User className="h-6 w-6 text-white drop-shadow-lg" />
+                  </motion.div>
                 </div>
 
-                {/* Нижняя часть - доходы и расходы */}
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {/* Доходы */}
-                  <div className="bg-emerald-500/20 rounded-xl p-3 text-center">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <Heart className="h-4 w-4 text-emerald-300" />
-                      <p className="text-xs text-emerald-300 font-medium">Доходы</p>
-                    </div>
-                    <p className="text-lg font-bold text-emerald-300 tracking-wide">
-                      +{formatAmount(user.income)}
-                    </p>
-                  </div>
-
-                  {/* Расходы */}
-                  <div className="bg-rose-500/20 rounded-xl p-3 text-center">
-                    <div className="flex items-center justify-center gap-2 mb-1">
-                      <Heart className="h-4 w-4 text-rose-300" />
-                      <p className="text-xs text-rose-300 font-medium">Расходы</p>
-                    </div>
-                    <p className="text-lg font-bold text-rose-300 tracking-wide">
-                      -{formatAmount(user.expense)}
-                    </p>
-                  </div>
+                {/* Средняя часть - основной баланс с премиум эффектами */}
+                <div className="text-center mb-8 flex-1 flex flex-col justify-center">
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 2.8 + index * 0.2, duration: 0.8 }}
+                    whileHover={{ scale: 1.05 }}
+                    className="relative"
+                  >
+                    <motion.p 
+                      className={`
+                        premium-value text-4xl md:text-5xl font-black tracking-wider mb-3
+                        heading-gold
+                        drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]
+                        ${user.balance < 0 ? 'from-red-300 via-red-200 to-red-400' : ''}
+                      `}
+                      whileHover={{
+                        textShadow: "0 0 30px rgba(255,255,255,0.8)",
+                        transition: { duration: 0.3 }
+                      }}
+                    >
+                      {formatAmountWhole(user.balance)}
+                    </motion.p>
+                    
+                    {/* Подсветка для баланса */}
+                    <div className={`
+                      absolute inset-0 blur-2xl opacity-20 -z-10
+                      ${user.balance >= 0 
+                        ? 'bg-gradient-to-r from-emerald-400 to-blue-400' 
+                        : 'bg-gradient-to-r from-red-400 to-orange-400'
+                      }
+                    `} />
+                  </motion.div>
+                  
+                  <motion.p 
+                    className="text-white/50 text-sm tracking-wide font-medium font-sans"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 3.2 + index * 0.2 }}
+                  >
+                    Общий баланс
+                  </motion.p>
                 </div>
+
+                {/* Нижняя часть - доходы и расходы с премиум стилизацией */}
+                <motion.div 
+                  className="grid grid-cols-2 gap-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 3.5 + index * 0.2, duration: 0.6 }}
+                >
+                  {/* Доходы - супер премиум карточка */}
+                  <motion.div 
+                    className="
+                      relative overflow-hidden
+                      bg-gradient-to-br from-emerald-500/25 via-emerald-600/15 to-green-500/25
+                      backdrop-blur-sm rounded-2xl p-4 text-center
+                      border border-emerald-400/30
+                      shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_0_15px_rgba(16,185,129,0.2)]
+                    "
+                    whileHover={{ 
+                      scale: 1.05, 
+                      y: -2,
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3), 0 0 25px rgba(16,185,129,0.4)"
+                    }}
+                  >
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: 15 }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                      >
+                        <Heart className="h-5 w-5 text-emerald-300 drop-shadow-lg" />
+                      </motion.div>
+                      <p className="text-xs text-emerald-200 font-semibold tracking-wide uppercase font-sans">
+                        Доходы
+                      </p>
+                    </div>
+                    <motion.p 
+                      className="premium-value text-xl font-bold text-emerald-100 tracking-wide drop-shadow-lg"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      +{formatAmountWhole(user.income)}
+                    </motion.p>
+                    
+                    {/* Внутреннее свечение */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-transparent rounded-2xl" />
+                  </motion.div>
+
+                  {/* Расходы - супер премиум карточка */}
+                  <motion.div 
+                    className="
+                      relative overflow-hidden
+                      bg-gradient-to-br from-rose-500/25 via-red-600/15 to-pink-500/25
+                      backdrop-blur-sm rounded-2xl p-4 text-center
+                      border border-rose-400/30
+                      shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_0_15px_rgba(244,63,94,0.2)]
+                    "
+                    whileHover={{ 
+                      scale: 1.05, 
+                      y: -2,
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3), 0 0 25px rgba(244,63,94,0.4)"
+                    }}
+                  >
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <motion.div
+                        whileHover={{ scale: 1.2, rotate: -15 }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                      >
+                        <Heart className="h-5 w-5 text-rose-300 drop-shadow-lg" />
+                      </motion.div>
+                      <p className="text-xs text-rose-200 font-semibold tracking-wide uppercase font-sans">
+                        Расходы
+                      </p>
+                    </div>
+                    <motion.p 
+                      className="premium-value text-xl font-bold text-rose-100 tracking-wide drop-shadow-lg"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      -{formatAmountWhole(user.expense)}
+                    </motion.p>
+                    
+                    {/* Внутреннее свечение */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-400/10 to-transparent rounded-2xl" />
+                  </motion.div>
+                </motion.div>
+                
+                </div>
+
+                {/* Анимированные частицы для премиум эффекта */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[2rem]">
+                  {[...Array(6)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className={`
+                        absolute w-2 h-2 rounded-full
+                        ${user.name === 'Артур' ? 'bg-indigo-400/40' : 'bg-rose-400/40'}
+                      `}
+                      style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                      }}
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.3, 0.7, 0.3],
+                        x: [0, Math.random() * 20 - 10],
+                        y: [0, Math.random() * 20 - 10],
+                      }}
+                      transition={{
+                        duration: 3 + Math.random() * 2,
+                        repeat: Infinity,
+                        delay: Math.random() * 3,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Граничное свечение при ховере */}
+                <motion.div
+                  className={`
+                    absolute inset-0 rounded-[2rem] opacity-0 pointer-events-none
+                    ${user.name === 'Артур'
+                      ? 'bg-gradient-to-r from-indigo-500/20 via-transparent to-purple-500/20'
+                      : 'bg-gradient-to-r from-rose-500/20 via-transparent to-pink-500/20'
+                    }
+                  `}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                />
+                
                 </motion.div>
               ))}
             </div>
@@ -273,3 +678,6 @@ export default function HomePage() {
     </GradientPage>
   )
 }
+
+
+

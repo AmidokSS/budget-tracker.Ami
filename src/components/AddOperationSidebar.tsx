@@ -55,7 +55,7 @@ export default function AddOperationSidebar({ isOpen, onClose, selectedUser }: S
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm premium-sidebar-overlay"
           />
 
           {/* Sidebar */}
@@ -63,123 +63,129 @@ export default function AddOperationSidebar({ isOpen, onClose, selectedUser }: S
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full sm:w-96 bg-gray-900/95 backdrop-blur-md border-l border-white/10 z-50 overflow-y-auto"
+            transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+            className="premium-sidebar overflow-y-auto fixed right-0 top-0 h-full w-full sm:w-96"
           >
-            <div className="p-6 space-y-6">
+            <div className="premium-sidebar-content">
               {/* Header */}
-              <div className="flex items-center justify-between">
+              <div className="premium-sidebar-header p-6 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-white">Добавить операцию</h2>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-lg">Добавить операцию</h2>
                   {selectedUser && (
-                    <p className="text-sm text-gray-400">Пользователь: {selectedUser.name}</p>
+                    <p className="text-sm text-white/70 mt-1">Пользователь: {selectedUser.name}</p>
                   )}
                 </div>
-                <button
+                <motion.button
                   onClick={onClose}
-                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300 hover:shadow-glow-primary border border-white/20"
                 >
                   <X className="h-5 w-5 text-white" />
-                </button>
+                </motion.button>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Operation Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Тип операции
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setOperationType('income')}
-                      className={`p-4 rounded-lg border-2 transition-all ${
-                        operationType === 'income'
-                          ? 'border-green-500 bg-green-500/20 text-green-300'
-                          : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:border-gray-500'
-                      }`}
-                    >
-                      <Plus className="h-5 w-5 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Доход</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setOperationType('expense')}
-                      className={`p-4 rounded-lg border-2 transition-all ${
-                        operationType === 'expense'
-                          ? 'border-red-500 bg-red-500/20 text-red-300'
-                          : 'border-gray-600 bg-gray-800/50 text-gray-400 hover:border-gray-500'
-                      }`}
-                    >
-                      <DollarSign className="h-5 w-5 mx-auto mb-2" />
-                      <span className="text-sm font-medium">Расход</span>
-                    </button>
+              <div className="p-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Operation Type */}
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
+                      Тип операции
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <motion.button
+                        type="button"
+                        onClick={() => setOperationType('income')}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                          operationType === 'income'
+                            ? 'border-green-400/50 bg-gradient-to-br from-green-500/20 to-emerald-500/20 text-green-300 shadow-glow-success'
+                            : 'border-white/20 bg-white/5 text-white/70 hover:border-green-400/30 hover:bg-green-500/10'
+                        }`}
+                      >
+                        <Plus className="h-6 w-6 mx-auto mb-2" />
+                        <span className="text-sm font-medium">Доход</span>
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={() => setOperationType('expense')}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 ${
+                          operationType === 'expense'
+                            ? 'border-red-400/50 bg-gradient-to-br from-red-500/20 to-rose-500/20 text-red-300 shadow-glow-danger'
+                            : 'border-white/20 bg-white/5 text-white/70 hover:border-red-400/30 hover:bg-red-500/10'
+                        }`}
+                      >
+                        <DollarSign className="h-6 w-6 mx-auto mb-2" />
+                        <span className="text-sm font-medium">Расход</span>
+                      </motion.button>
+                    </div>
                   </div>
-                </div>
 
-                {/* Amount */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Сумма
-                  </label>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0"
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                    required
-                  />
-                </div>
+                  {/* Amount */}
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
+                      Сумма
+                    </label>
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0"
+                      className="premium-form-input"
+                      required
+                    />
+                  </div>
 
-                {/* Category */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Категория
-                  </label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors"
-                    required
+                  {/* Category */}
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
+                      Категория
+                    </label>
+                    <select
+                      value={categoryId}
+                      onChange={(e) => setCategoryId(e.target.value)}
+                      className="premium-form-input"
+                      required
+                    >
+                      <option value="">Выберите категорию</option>
+                      {filteredCategories.map((category) => (
+                        <option key={category.id} value={category.id} className="bg-secondary text-white">
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Note */}
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">
+                      Примечание (необязательно)
+                    </label>
+                    <textarea
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="Описание операции..."
+                      rows={3}
+                      className="premium-form-input resize-none"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <motion.button
+                    type="submit"
+                    disabled={createOperation.isPending || !amount || !categoryId}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="premium-sidebar-button premium-sidebar-button-primary flex-1 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    <option value="">Выберите категорию</option>
-                    {filteredCategories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Note */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Примечание (необязательно)
-                  </label>
-                  <textarea
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="Описание операции..."
-                    rows={3}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-colors resize-none"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={createOperation.isPending || !amount || !categoryId}
-                  className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
-                    operationType === 'income'
-                      ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                      : 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600'
-                  } text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95`}
-                >
-                  {createOperation.isPending ? 'Добавляю...' : 'Добавить операцию'}
-                </button>
-              </form>
+                    {createOperation.isPending ? 'Добавляю...' : 'Добавить операцию'}
+                  </motion.button>
+                </form>
+              </div>
             </div>
           </motion.div>
         </>

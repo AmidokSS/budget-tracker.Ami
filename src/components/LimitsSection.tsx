@@ -31,10 +31,20 @@ export const LimitsSection = ({ limits }: LimitsSectionProps) => {
 
   if (!limits || limits.length === 0) {
     return (
-      <div className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6">
-        <h3 className="text-xl font-semibold text-white mb-4">🧭 Лимиты расходов</h3>
-        <div className="flex items-center justify-center h-32">
-          <div className="text-white/70">Лимиты не установлены</div>
+      <div className="ultra-premium-card p-6 relative overflow-hidden">
+        <div className="premium-content-glow">
+          <div className="flex items-center gap-3 mb-4">
+            <motion.div 
+              whileHover={{ scale: 1.1, rotate: 6 }}
+              className="p-2 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/15 border border-orange-400/25 backdrop-blur-sm"
+            >
+              <span className="text-lg">🛡️</span>
+            </motion.div>
+            <h3 className="premium-title text-lg font-bold">Лимиты расходов</h3>
+          </div>
+          <div className="flex items-center justify-center h-32">
+            <div className="premium-subtitle">Лимиты не установлены</div>
+          </div>
         </div>
       </div>
     )
@@ -44,9 +54,18 @@ export const LimitsSection = ({ limits }: LimitsSectionProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6"
+      className="ultra-premium-card p-6 relative overflow-hidden"
     >
-      <h3 className="text-xl font-semibold text-white mb-4">🧭 Лимиты расходов</h3>
+      <div className="premium-content-glow">
+        <div className="flex items-center gap-3 mb-4">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 6 }}
+            className="p-2 rounded-xl bg-gradient-to-br from-orange-500/20 to-red-500/15 border border-orange-400/25 backdrop-blur-sm"
+          >
+            <span className="text-lg">🛡️</span>
+          </motion.div>
+          <h3 className="premium-title text-lg font-bold">Лимиты расходов</h3>
+        </div>
       
       <div className="space-y-4">
         {limits.map((limit, index) => (
@@ -163,26 +182,27 @@ export const LimitsSection = ({ limits }: LimitsSectionProps) => {
         ))}
       </div>
 
-      {/* Статистика по лимитам */}
-      <div className="mt-6 pt-4 border-t border-white/10">
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-lg font-semibold text-green-400">
-              {limits.filter(l => l.progress < 70).length}
+        {/* Статистика по лимитам */}
+        <div className="mt-6 pt-4 border-t border-white/10">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-lg font-semibold text-green-400">
+                {limits.filter(l => l.progress < 70).length}
+              </div>
+              <div className="text-xs text-white/60">Безопасно</div>
             </div>
-            <div className="text-xs text-white/60">Безопасно</div>
-          </div>
-          <div>
-            <div className="text-lg font-semibold text-yellow-400">
-              {limits.filter(l => l.progress >= 70 && l.progress < 90).length}
+            <div>
+              <div className="text-lg font-semibold text-yellow-400">
+                {limits.filter(l => l.progress >= 70 && l.progress < 90).length}
+              </div>
+              <div className="text-xs text-white/60">Внимание</div>
             </div>
-            <div className="text-xs text-white/60">Внимание</div>
-          </div>
-          <div>
-            <div className="text-lg font-semibold text-red-400">
-              {limits.filter(l => l.isOverLimit).length}
+            <div>
+              <div className="text-lg font-semibold text-red-400">
+                {limits.filter(l => l.isOverLimit).length}
+              </div>
+              <div className="text-xs text-white/60">Превышено</div>
             </div>
-            <div className="text-xs text-white/60">Превышено</div>
           </div>
         </div>
       </div>

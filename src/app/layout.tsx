@@ -1,12 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Providers } from '@/components/providers'
 import { DynamicGradientWrapper } from '@/components/DynamicGradientWrapper'
 import { PerformanceProvider } from '@/hooks/usePerformance'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Budget Tracker | Управление финансами',
@@ -73,7 +70,7 @@ export default function RootLayout({
         <meta name="background-color" content="#0f172a" />
       </head>
       <body
-        className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}
+        className="min-h-screen bg-background text-foreground antialiased"
       >
         <Providers>
           <PerformanceProvider>

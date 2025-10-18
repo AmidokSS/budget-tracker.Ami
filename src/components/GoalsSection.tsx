@@ -45,9 +45,18 @@ export const GoalsSection = ({ goals, insights }: GoalsSectionProps) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6"
+      className="ultra-premium-card p-6 relative overflow-hidden"
     >
-      <h3 className="text-xl font-semibold text-white mb-4">🎯 Цели и аналитика</h3>
+      <div className="premium-content-glow">
+        <div className="flex items-center gap-3 mb-4">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: -6 }}
+            className="p-2 rounded-xl bg-gradient-to-br from-violet-500/20 to-pink-500/15 border border-violet-400/25 backdrop-blur-sm"
+          >
+            <span className="text-lg">🎯</span>
+          </motion.div>
+          <h3 className="premium-title text-lg font-bold">Цели и аналитика</h3>
+        </div>
       
       <div className="space-y-6">
         {/* Статистика целей */}
@@ -177,6 +186,7 @@ export const GoalsSection = ({ goals, insights }: GoalsSectionProps) => {
             </div>
           </div>
         )}
+      </div>
       </div>
     </motion.div>
   )
