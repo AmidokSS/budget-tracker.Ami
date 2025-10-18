@@ -98,9 +98,10 @@ const withPWA = require('@ducanh2912/next-pwa').default({
   },
 })
 
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+// Условный импорт bundle analyzer только когда нужен
+const withBundleAnalyzer = process.env.ANALYZE === 'true' 
+  ? require('@next/bundle-analyzer')({ enabled: true })
+  : (config) => config
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
