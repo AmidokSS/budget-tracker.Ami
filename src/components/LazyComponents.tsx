@@ -13,6 +13,34 @@ export const ChartLoader = () => (
   </div>
 )
 
+export const StatsLoader = () => (
+  <div className="ultra-premium-card p-6 mb-8 animate-pulse">
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="w-12 h-12 bg-white/20 rounded-2xl"></div>
+        <div className="space-y-2">
+          <div className="h-6 bg-white/20 rounded w-32"></div>
+          <div className="h-4 bg-white/10 rounded w-48"></div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array.from({ length: 4 }, (_, i) => (
+          <div key={i} className="p-4 rounded-xl border border-slate-600/30 bg-white/5">
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <div className="w-8 h-8 bg-white/20 rounded-lg"></div>
+                <div className="h-3 bg-white/10 rounded w-16"></div>
+              </div>
+              <div className="h-8 bg-white/20 rounded w-20"></div>
+              <div className="h-3 bg-white/10 rounded w-24"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)
+
 export const CardLoader = () => (
   <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 animate-pulse">
     <div className="space-y-4">
@@ -86,6 +114,14 @@ export const LazyTimelineChart = dynamic(
   () => import('@/components/TimelineChart').then(mod => ({ default: mod.TimelineChart })),
   {
     loading: () => <ChartLoader />,
+    ssr: false
+  }
+)
+
+export const LazyLimitsStats = dynamic(
+  () => import('@/components/LimitsStats'),
+  {
+    loading: () => <StatsLoader />,
     ssr: false
   }
 )
