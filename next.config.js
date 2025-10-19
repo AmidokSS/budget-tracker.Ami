@@ -56,7 +56,7 @@ const withPWA = require('@ducanh2912/next-pwa').default({
       },
       {
         urlPattern: /^https?.*\/api\/categories/,
-        handler: 'CacheFirst',
+        handler: 'NetworkOnly',
         options: {
           cacheName: 'api-categories',
           expiration: {
@@ -85,7 +85,7 @@ const withPWA = require('@ducanh2912/next-pwa').default({
       // Статические ресурсы
       {
         urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/,
-        handler: 'CacheFirst',
+        handler: 'NetworkOnly',
         options: {
           cacheName: 'images',
           expiration: {
@@ -128,3 +128,4 @@ const nextConfig = {
 }
 
 module.exports = withBundleAnalyzer(withPWA(nextConfig))
+

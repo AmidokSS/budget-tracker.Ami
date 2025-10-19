@@ -1,9 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-
+\nexport const dynamic = 'force-dynamic'\nexport const revalidate = 0\n\n
 // Константы для автоматического создания лимитов
-const DEFAULT_LIMIT_AMOUNT = 10000
-
+\nconst noStoreHeaders = { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0' } }\n
 // Функция для автоматического создания лимита для категории expense
 async function createAutoLimitForCategory(categoryId: string, categoryName: string) {
   try {
@@ -59,13 +56,10 @@ export async function GET() {
       orderBy: [{ type: 'asc' }, { name: 'asc' }],
     })
 
-    return NextResponse.json(categories)
+    return NextResponse.json(, noStoreHeaders)
   } catch (error) {
     console.error('Error fetching categories:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch categories' },
-      { status: 500 }
-    )
+    return NextResponse.json(, noStoreHeaders)
   }
 }
 
@@ -75,10 +69,7 @@ export async function POST(request: NextRequest) {
     const { name, type, emoji } = body
 
     if (!name || !type || !emoji) {
-      return NextResponse.json(
-        { error: 'Name, type, and emoji are required' },
-        { status: 400 }
-      )
+      return NextResponse.json(, noStoreHeaders)
     }
 
     const category = await prisma.category.create({
@@ -94,13 +85,10 @@ export async function POST(request: NextRequest) {
       await createAutoLimitForCategory(category.id, category.name)
     }
 
-    return NextResponse.json(category, { status: 201 })
+    return NextResponse.json(, noStoreHeaders)
   } catch (error) {
     console.error('Error creating category:', error)
-    return NextResponse.json(
-      { error: 'Failed to create category' },
-      { status: 500 }
-    )
+    return NextResponse.json(, noStoreHeaders)
   }
 }
 
@@ -110,10 +98,7 @@ export async function PUT(request: NextRequest) {
     const { id, name, type, emoji } = body
 
     if (!id || !name || !type || !emoji) {
-      return NextResponse.json(
-        { error: 'ID, name, type, and emoji are required' },
-        { status: 400 }
-      )
+      return NextResponse.json(, noStoreHeaders)
     }
 
     // Получаем текущую категорию для сравнения типов
@@ -122,10 +107,7 @@ export async function PUT(request: NextRequest) {
     })
 
     if (!currentCategory) {
-      return NextResponse.json(
-        { error: 'Category not found' },
-        { status: 404 }
-      )
+      return NextResponse.json(, noStoreHeaders)
     }
 
     const category = await prisma.category.update({
@@ -151,13 +133,10 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(category)
+    return NextResponse.json(, noStoreHeaders)
   } catch (error) {
     console.error('Error updating category:', error)
-    return NextResponse.json(
-      { error: 'Failed to update category' },
-      { status: 500 }
-    )
+    return NextResponse.json(, noStoreHeaders)
   }
 }
 
@@ -167,10 +146,7 @@ export async function DELETE(request: NextRequest) {
     const id = url.searchParams.get('id')
 
     if (!id) {
-      return NextResponse.json(
-        { error: 'Category ID is required' },
-        { status: 400 }
-      )
+      return NextResponse.json(, noStoreHeaders)
     }
 
     // Проверяем, есть ли операции, связанные с этой категорией
@@ -179,22 +155,16 @@ export async function DELETE(request: NextRequest) {
     })
 
     if (operationsCount > 0) {
-      return NextResponse.json(
-        { error: 'Cannot delete category with existing operations' },
-        { status: 400 }
-      )
+      return NextResponse.json(, noStoreHeaders)
     }
 
     await prisma.category.delete({
       where: { id },
     })
 
-    return NextResponse.json({ message: 'Category deleted successfully' })
+    return NextResponse.json(, noStoreHeaders)
   } catch (error) {
     console.error('Error deleting category:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete category' },
-      { status: 500 }
-    )
+    return NextResponse.json(, noStoreHeaders)
   }
 }
