@@ -225,7 +225,7 @@ const api = {
     return response.json()
   },
 
-  createLimit: async (data: { categoryId: string; limitAmount: number }): Promise<Limit> => {
+  createLimit: async (data: { categoryId: string; limitAmount: number; period?: 'monthly' | 'weekly' }): Promise<Limit> => {
     const response = await fetch('/api/limits', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -235,7 +235,7 @@ const api = {
     return response.json()
   },
 
-  updateLimit: async (data: { id: string; limitAmount: number }): Promise<Limit> => {
+  updateLimit: async (data: { id: string; limitAmount: number; period?: 'monthly' | 'weekly' }): Promise<Limit> => {
     const response = await fetch('/api/limits', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

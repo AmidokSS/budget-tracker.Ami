@@ -85,6 +85,8 @@ export interface Limit {
   currentAmount: number
   active: boolean
   isAutoCreated?: boolean
+  period: 'monthly' | 'weekly'
+  lastResetAt: string
   category?: Category
   createdAt: string
 }

@@ -6,6 +6,7 @@ import { X, Save, Trash2 } from 'lucide-react'
 import { useUpdateLimit, useDeleteLimit } from '@/hooks/useApi'
 import { Limit } from '@/types'
 import { isPositiveAmount } from '@/lib/currencyUtils'
+import { getPeriodLabel, getDaysUntilReset, getNextResetDate } from '@/lib/limitUtils'
 
 interface LimitSidebarProps {
   isOpen: boolean
@@ -16,6 +17,7 @@ interface LimitSidebarProps {
 
 export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: LimitSidebarProps) {
   const [limitAmount, setLimitAmount] = useState('')
+  const [period, setPeriod] = useState<'monthly' | 'weekly'>('monthly')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
@@ -23,7 +25,13 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
   const deleteLimit = useDeleteLimit()
 
   useEffect(() => {
-    if (limit) setLimitAmount(String(limit.limitAmount)); else setLimitAmount('')
+    if (limit) {
+      setLimitAmount(String(limit.limitAmount))
+      setPeriod(limit.period || 'monthly')
+    } else {
+      setLimitAmount('')
+      setPeriod('monthly')
+    }
     setShowDeleteConfirm(false)
   }, [limit, isOpen])
 
@@ -66,7 +74,11 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
     
     setIsSubmitting(true)
     try {
-      await updateLimit.mutateAsync({ id: limit.id, limitAmount: parsedLimitAmount })
+      await updateLimit.mutateAsync({ 
+        id: limit.id, 
+        limitAmount: parsedLimitAmount,
+        period: period !== limit.period ? period : undefined
+      })
       onSuccess?.(); onClose()
     } catch (err) { 
       // Failed to update limit
@@ -105,8 +117,77 @@ export default function LimitSidebar({ isOpen, onClose, limit, onSuccess }: Limi
                   <div className="premium-form-group">
                     <label className="premium-form-label">Сумма лимита</label>
                     <motion.input whileFocus={{ scale: 1.02 }} type="number" value={limitAmount} onChange={(e)=>setLimitAmount(e.target.value)} step="0.01" min="0" className="premium-form-input" placeholder="Введите сумму лимита" required />
-                    <p className="text-xs text-yellow-200/60 mt-1 drop-shadow-sm">Ежемесячный лимит расходов по категории</p>
+                    <p className="text-xs text-yellow-200/60 mt-1 drop-shadow-sm">Лимит расходов по категории</p>
                   </div>
+
+                  <div className="premium-form-group">
+                    <label className="premium-form-label">Период лимита</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${period === 'monthly' ? 'border-yellow-400/60 bg-gradient-to-r from-yellow-500/20 to-orange-500/20' : 'border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                        <input 
+                          type="radio" 
+                          name="period" 
+                          className="sr-only" 
+                          checked={period === 'monthly'} 
+                          onChange={() => setPeriod('monthly')} 
+                        />
+                        <div className="text-center">
+                          <div className="text-lg mb-1">📅</div>
+                          <div className="font-semibold text-sm">Ежемесячно</div>
+                          <div className="text-xs text-yellow-200/60 mt-1">Сброс 1 числа</div>
+                        </div>
+                      </label>
+                      <label className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${period === 'weekly' ? 'border-yellow-400/60 bg-gradient-to-r from-yellow-500/20 to-orange-500/20' : 'border-white/20 bg-white/5 hover:bg-white/10'}`}>
+                        <input 
+                          type="radio" 
+                          name="period" 
+                          className="sr-only" 
+                          checked={period === 'weekly'} 
+                          onChange={() => setPeriod('weekly')} 
+                        />
+                        <div className="text-center">
+                          <div className="text-lg mb-1">📊</div>
+                          <div className="font-semibold text-sm">Еженедельно</div>
+                          <div className="text-xs text-yellow-200/60 mt-1">Сброс в понедельник</div>
+                        </div>
+                      </label>
+                    </div>
+                    {period !== limit?.period && (
+                      <div className="mt-3 p-3 bg-amber-500/10 border border-amber-400/30 rounded-lg">
+                        <p className="text-xs text-amber-200 flex items-center gap-2">
+                          <span>⚠️</span>
+                          При изменении периода текущая сумма расходов будет сброшена
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {limit && (
+                    <div className="premium-form-group">
+                      <label className="premium-form-label">Информация о сбросе</label>
+                      <div className="p-4 bg-slate-700/30 rounded-xl border border-slate-600/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-slate-300">Текущий период:</span>
+                          <span className="text-sm font-medium text-white">{getPeriodLabel(limit.period)}</span>
+                        </div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-slate-300">Следующий сброс:</span>
+                          <span className="text-sm font-medium text-white">
+                            {getNextResetDate(limit).toLocaleDateString('ru-RU', { 
+                              day: 'numeric', 
+                              month: 'short' 
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-slate-300">Дней до сброса:</span>
+                          <span className="text-sm font-medium text-emerald-400">
+                            {getDaysUntilReset(limit)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </form>
               </div>
               <div className="premium-sidebar-header flex-shrink-0 p-6 space-y-4">

@@ -33,6 +33,8 @@ async function createAutoLimitForCategory(categoryId: string, categoryName: stri
         currentAmount: 0,
         active: true,
         isAutoCreated: true,
+        period: 'monthly',
+        lastResetAt: new Date(),
       }
     })
 

@@ -42,6 +42,8 @@ model Limit {
   currentAmount Float    @default(0)
   active        Boolean  @default(true)
   isAutoCreated Boolean  @default(false)
+  period        String   @default("monthly") // "monthly" | "weekly"
+  lastResetAt   DateTime @default(now())
   createdAt     DateTime @default(now())
   category      Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }

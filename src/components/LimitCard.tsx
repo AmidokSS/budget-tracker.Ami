@@ -1,10 +1,11 @@
 import React, { memo, useMemo, useCallback } from 'react'
-import { Shield, Edit, Trash2, Edit3 } from 'lucide-react'
+import { Shield, Edit, Trash2, Edit3, Calendar, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Limit } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
 import { useAnimationConfig, useConditionalAnimation } from '@/hooks/usePerformance'
 import { subtractAmounts, calculatePercentage } from '@/lib/currencyUtils'
+import { getPeriodLabel, getDaysUntilReset, isLimitExceeded } from '@/lib/limitUtils'
 
 interface LimitCardProps {
   limit: Limit
@@ -27,6 +28,13 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
     formatAmountWhole(limit.currentAmount), 
     [limit.currentAmount, formatAmountWhole]
   )
+
+  // Мемоизируем информацию о периоде
+  const periodInfo = useMemo(() => ({
+    label: getPeriodLabel(limit.period),
+    daysUntilReset: getDaysUntilReset(limit),
+    isExceeded: isLimitExceeded(limit)
+  }), [limit])
   
   const formattedLimit = useMemo(() => 
     formatAmountWhole(limit.limitAmount), 
@@ -140,15 +148,28 @@ const LimitCard = memo(({ limit, index, onEdit, onDelete }: LimitCardProps) => {
             {limit.category?.emoji} {limit.category?.name || 'Общий лимит'}
           </h3>
           
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ultra-premium-card border ${
-            progress >= 100 ? 'border-rose-400/20' : progress >= 80 ? 'border-orange-400/20' : 'border-emerald-400/20'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${
-              progress >= 100 ? 'bg-rose-400' : progress >= 80 ? 'bg-orange-400' : 'bg-emerald-400'
-            }`} />
-            <span className={`premium-subtitle text-sm ${limitStatus.color}`}>
-              {limitStatus.text}
-            </span>
+          <div className="flex items-center gap-3 mb-3">
+            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ultra-premium-card border ${
+              progress >= 100 ? 'border-rose-400/20' : progress >= 80 ? 'border-orange-400/20' : 'border-emerald-400/20'
+            }`}>
+              <div className={`w-2 h-2 rounded-full ${
+                progress >= 100 ? 'bg-rose-400' : progress >= 80 ? 'bg-orange-400' : 'bg-emerald-400'
+              }`} />
+              <span className={`premium-subtitle text-sm ${limitStatus.color}`}>
+                {limitStatus.text}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2 text-slate-300">
+              <Calendar className="w-4 h-4" />
+              <span>{periodInfo.label}</span>
+            </div>
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Clock className="w-4 h-4" />
+              <span>{periodInfo.daysUntilReset} дн. до сброса</span>
+            </div>
           </div>
         </div>
 

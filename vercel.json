@@ -8,6 +8,12 @@
       "maxDuration": 30
     }
   },
+  "crons": [
+    {
+      "path": "/api/cron/reset-limits",
+      "schedule": "0 0 * * *"
+    }
+  ],
   "env": {
     "SKIP_ENV_VALIDATION": "1"
   }

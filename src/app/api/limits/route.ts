@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { shouldResetLimit } from '@/lib/limitUtils'
 
 export async function GET() {
   try {
@@ -10,6 +11,36 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' },
     })
+
+    // Проверяем и сбрасываем лимиты, если необходимо
+    const limitsToReset = limits.filter(limit => 
+      shouldResetLimit({ period: limit.period, lastResetAt: limit.lastResetAt })
+    )
+    
+    if (limitsToReset.length > 0) {
+      await Promise.all(
+        limitsToReset.map(limit =>
+          prisma.limit.update({
+            where: { id: limit.id },
+            data: {
+              currentAmount: 0,
+              lastResetAt: new Date(),
+            },
+          })
+        )
+      )
+      
+      // Получаем обновленные лимиты
+      const updatedLimits = await prisma.limit.findMany({
+        where: { active: true },
+        include: {
+          category: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      })
+      
+      return NextResponse.json(updatedLimits)
+    }
 
     return NextResponse.json(limits)
   } catch (error) {
@@ -24,11 +55,18 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { categoryId, limitAmount } = body
+    const { categoryId, limitAmount, period = 'monthly' } = body
 
     if (!categoryId || !limitAmount) {
       return NextResponse.json(
         { error: 'Category ID and limit amount are required' },
+        { status: 400 }
+      )
+    }
+
+    if (!['monthly', 'weekly'].includes(period)) {
+      return NextResponse.json(
+        { error: 'Period must be either "monthly" or "weekly"' },
         { status: 400 }
       )
     }
@@ -72,6 +110,8 @@ export async function POST(request: NextRequest) {
       data: {
         categoryId,
         limitAmount: parseFloat(limitAmount),
+        period,
+        lastResetAt: new Date(),
       },
       include: {
         category: true,
@@ -91,7 +131,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, limitAmount } = body
+    const { id, limitAmount, period } = body
 
     if (!id || !limitAmount) {
       return NextResponse.json(
@@ -100,11 +140,27 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    if (period && !['monthly', 'weekly'].includes(period)) {
+      return NextResponse.json(
+        { error: 'Period must be either "monthly" or "weekly"' },
+        { status: 400 }
+      )
+    }
+
+    const updateData: any = {
+      limitAmount: parseFloat(limitAmount),
+    }
+
+    // Если изменяется период, сбрасываем текущую сумму и дату последнего сброса
+    if (period) {
+      updateData.period = period
+      updateData.currentAmount = 0
+      updateData.lastResetAt = new Date()
+    }
+
     const limit = await prisma.limit.update({
       where: { id },
-      data: {
-        limitAmount: parseFloat(limitAmount),
-      },
+      data: updateData,
       include: {
         category: true,
       },
