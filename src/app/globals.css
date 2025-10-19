@@ -925,3 +925,102 @@ body.sidebar-open {
     inset 0 -1px 0 rgba(0, 0, 0, 0.3),
     0 8px 24px rgba(0, 0, 0, 0.3);
 }
+
+/* КАЛЕНДАРЬ СТИЛИ */
+.rbc-calendar {
+  background: transparent !important;
+  color: #1f2937 !important;
+}
+
+.rbc-header {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+  border-bottom: 1px solid #d1d5db !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  padding: 12px 8px !important;
+}
+
+.rbc-month-view {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.rbc-date-cell {
+  padding: 8px !important;
+}
+
+.rbc-date-cell > a {
+  color: #4b5563 !important;
+  font-weight: 500 !important;
+}
+
+.rbc-today {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+}
+
+.rbc-off-range-bg {
+  background: #f9fafb !important;
+}
+
+.rbc-event {
+  border-radius: 6px !important;
+  border: none !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  margin: 1px !important;
+  padding: 2px 6px !important;
+}
+
+.rbc-event:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+.rbc-toolbar {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border-radius: 8px 8px 0 0 !important;
+  padding: 16px !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.rbc-toolbar button {
+  background: white !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.rbc-toolbar button:hover {
+  background: #f3f4f6 !important;
+  border-color: #9ca3af !important;
+  transform: translateY(-1px) !important;
+}
+
+.rbc-toolbar button.rbc-active {
+  background: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.rbc-toolbar-label {
+  font-weight: 700 !important;
+  color: #1f2937 !important;
+  font-size: 18px !important;
+}
+
+.rbc-month-row {
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.rbc-day-bg {
+  border-right: 1px solid #f3f4f6 !important;
+}
+
+.rbc-day-bg:hover {
+  background: #f8fafc !important;
+}

@@ -12,6 +12,7 @@ import {
   CreditCard,
   BarChart3,
   Settings,
+  Calendar,
   Menu,
   X,
 } from 'lucide-react'
@@ -57,6 +58,14 @@ const navItems = [
     color: 'text-orange-400',
     activeColor: 'text-orange-300',
     hoverBg: 'hover:bg-orange-500/10',
+  },
+  {
+    title: 'Календарь',
+    href: '/calendar-test',
+    icon: Calendar,
+    color: 'text-cyan-400',
+    activeColor: 'text-cyan-300',
+    hoverBg: 'hover:bg-cyan-500/10',
   },
   {
     title: 'Аналитика',

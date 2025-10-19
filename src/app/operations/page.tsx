@@ -2,12 +2,13 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useOperations, useUsers, useCategories, useDeleteOperation } from '@/hooks/useApi'
+import { useOperations, useUsers, useCategories, useDeleteOperation, useGoals } from '@/hooks/useApi'
 import { useCurrency } from '@/hooks/useCurrency'
 import { useOperationSearch } from '@/hooks/useSearch'
 import { GradientPage } from '@/components/GradientPage'
 import { EmptyState } from '@/components/EmptyState'
 import { LazyVirtualizedOperationList } from '@/components/LazyComponents'
+import { FinancialCalendar } from '@/components/FinancialCalendar'
 import SearchInput from '@/components/SearchInput'
 import { 
   Filter, 
@@ -43,6 +44,7 @@ export default function OperationsPage() {
   })
   const { data: users } = useUsers()
   const { data: categories } = useCategories()
+  const { data: goals } = useGoals()
   const deleteOperation = useDeleteOperation()
   const { formatAmount } = useCurrency()
 
@@ -603,6 +605,21 @@ export default function OperationsPage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Финансовый календарь */}
+        {filteredOperations.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mb-8"
+          >
+            <FinancialCalendar 
+              operations={filteredOperations} 
+              goals={goals || []} 
+            />
+          </motion.div>
+        )}
 
         {/* Премиальный список операций */}
         <motion.div
