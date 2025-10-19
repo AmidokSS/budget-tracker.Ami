@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from 'react'
-import { Target, Edit, Trash2, Edit3, Clock, Wallet } from 'lucide-react'
+import { Target, Edit, Trash2, Edit3, Clock, Wallet, Minus } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Goal } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
@@ -13,9 +13,10 @@ interface GoalCardProps {
   onEdit: (_goal: Goal) => void
   onDelete: (_goalId: string) => void
   onFund?: (_goal: Goal) => void // Добавляем опциональную функцию финансирования
+  onWithdraw?: (_goal: Goal) => void // Добавляем функцию снятия средств
 }
 
-const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalCardProps) => {
+const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund, onWithdraw: _onWithdraw }: GoalCardProps) => {
   const { formatAmountWhole } = useCurrency()
   const { fadeIn, hover } = useAnimationConfig()
 
@@ -78,6 +79,12 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
     }
   }, [goal, _onFund])
 
+  const handleWithdraw = useCallback(() => {
+    if (_onWithdraw) {
+      _onWithdraw(goal)
+    }
+  }, [goal, _onWithdraw])
+
   return (
     <motion.div
       {...cardAnimation}
@@ -110,15 +117,29 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund }: GoalC
               whileTap={{ scale: 0.95 }}
               onClick={handleFund}
               className="p-2 rounded-xl ultra-premium-card border border-emerald-400/20"
+              title="Пополнить цель"
             >
               <Wallet className="w-4 h-4 text-emerald-400" />
             </motion.button>
+            
+            {goal.currentAmount > 0 && _onWithdraw && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleWithdraw}
+                className="p-2 rounded-xl ultra-premium-card border border-blue-400/20"
+                title="Снять средства"
+              >
+                <Minus className="w-4 h-4 text-blue-400" />
+              </motion.button>
+            )}
             
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleEdit}
               className="p-2 rounded-xl ultra-premium-card border border-amber-400/20"
+              title="Редактировать цель"
             >
               <Edit3 className="w-4 h-4 premium-icon" />
             </motion.button>

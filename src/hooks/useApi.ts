@@ -208,6 +208,19 @@ const api = {
     return response.json()
   },
 
+  withdrawFromGoal: async (data: { id: string; withdrawAmount: number }): Promise<Goal> => {
+    const response = await fetch('/api/goals', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Failed to withdraw from goal')
+    }
+    return response.json()
+  },
+
   deleteGoal: async (id: string): Promise<void> => {
     const response = await fetch(`/api/goals?id=${id}`, {
       method: 'DELETE',
@@ -406,6 +419,24 @@ export const useAddToGoal = () => {
     mutationFn: api.addToGoal,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['goals'] })
+      queryClient.invalidateQueries({ queryKey: ['operations'] })
+      queryClient.invalidateQueries({ queryKey: ['statistics'] })
+      queryClient.invalidateQueries({ queryKey: ['usersStatistics'] })
+      queryClient.invalidateQueries({ queryKey: ['summary'] })
+    },
+  })
+}
+
+export const useWithdrawFromGoal = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: api.withdrawFromGoal,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] })
+      queryClient.invalidateQueries({ queryKey: ['operations'] })
+      queryClient.invalidateQueries({ queryKey: ['statistics'] })
+      queryClient.invalidateQueries({ queryKey: ['usersStatistics'] })
+      queryClient.invalidateQueries({ queryKey: ['summary'] })
     },
   })
 }

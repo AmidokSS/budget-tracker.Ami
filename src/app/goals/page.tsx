@@ -28,7 +28,7 @@ export default function GoalsPage() {
   const deleteGoal = useDeleteGoal()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null)
-  const [sidebarMode, setSidebarMode] = useState<'create' | 'edit' | 'fund'>('create')
+  const [sidebarMode, setSidebarMode] = useState<'create' | 'edit' | 'fund' | 'withdraw'>('create')
 
   const openCreateGoal = () => {
     setSelectedGoal(null)
@@ -45,6 +45,12 @@ export default function GoalsPage() {
   const openFundGoal = (goal: Goal) => {
     setSelectedGoal(goal)
     setSidebarMode('fund')
+    setIsSidebarOpen(true)
+  }
+
+  const openWithdrawGoal = (goal: Goal) => {
+    setSelectedGoal(goal)
+    setSidebarMode('withdraw')
     setIsSidebarOpen(true)
   }
 
@@ -407,6 +413,7 @@ export default function GoalsPage() {
                       onEdit={openEditGoal}
                       onDelete={handleDeleteGoal}
                       onFund={openFundGoal}
+                      onWithdraw={openWithdrawGoal}
                     />
                   ))}
 

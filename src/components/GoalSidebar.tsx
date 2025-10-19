@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Save, Trash2 } from 'lucide-react'
-import { useCreateGoal, useUpdateGoal, useAddToGoal, useDeleteGoal } from '@/hooks/useApi'
+import { useCreateGoal, useUpdateGoal, useAddToGoal, useWithdrawFromGoal, useDeleteGoal } from '@/hooks/useApi'
 import { Goal } from '@/types'
 import { createCurrency, isPositiveAmount } from '@/lib/currencyUtils'
 
@@ -11,7 +11,7 @@ interface GoalSidebarProps {
   isOpen: boolean
   onClose: () => void
   goal?: Goal | null
-  mode?: 'create' | 'edit' | 'fund'
+  mode?: 'create' | 'edit' | 'fund' | 'withdraw'
   onSuccess?: () => void
 }
 
@@ -34,10 +34,12 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
   const createGoal = useCreateGoal()
   const updateGoal = useUpdateGoal()
   const addToGoal = useAddToGoal()
+  const withdrawFromGoal = useWithdrawFromGoal()
   const deleteGoal = useDeleteGoal()
 
-  const isEditing = !!goal && mode !== 'fund'
+  const isEditing = !!goal && mode !== 'fund' && mode !== 'withdraw'
   const isFunding = mode === 'fund'
+  const isWithdrawing = mode === 'withdraw'
 
   useEffect(() => {
     if (goal) {
@@ -106,6 +108,26 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
       return
     }
 
+    if (isWithdrawing) {
+      if (!fundAmount || !goal) return
+      
+      // Проверяем сумму с точной валютной арифметикой
+      const parsedAmount = parseFloat(fundAmount.replace(',', '.'))
+      if (isNaN(parsedAmount) || !isPositiveAmount(parsedAmount)) return
+      
+      // Проверяем, что сумма не превышает накопленную
+      if (parsedAmount > goal.currentAmount) return
+      
+      setIsSubmitting(true)
+      try {
+        await withdrawFromGoal.mutateAsync({ id: goal.id, withdrawAmount: parsedAmount })
+        onSuccess?.(); onClose()
+      } catch (err) {
+        // Failed to withdraw from goal
+      } finally { setIsSubmitting(false) }
+      return
+    }
+
     if (!title.trim() || !targetAmount) return
     
     // Проверяем целевую сумму с точной валютной арифметикой
@@ -163,7 +185,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
             <div className="premium-sidebar-content flex flex-col h-full">
               <div className="premium-sidebar-header p-6 flex items-center justify-between">
                 <h2 className="text-xl font-bold bg-gradient-to-r from-white via-yellow-100 to-orange-100 bg-clip-text text-transparent drop-shadow-sm">
-                  {isFunding ? 'Пополнить цель' : (isEditing ? 'Редактировать цель' : 'Создать цель')}
+                  {isFunding ? 'Пополнить цель' : isWithdrawing ? 'Снять средства' : (isEditing ? 'Редактировать цель' : 'Создать цель')}
                 </h2>
                 <motion.button
                   whileHover={{ scale: 1.05, rotate: 90 }}
@@ -178,7 +200,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
 
               <div className="flex-1 overflow-y-auto">
                 <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                  {!isFunding && (
+                  {!isFunding && !isWithdrawing && (
                     <>
                       <div>
                         <label className="premium-form-label">Название цели</label>
@@ -212,6 +234,26 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                     </div>
                   )}
 
+                  {isWithdrawing && goal && (
+                    <div>
+                      <label className="premium-form-label">Сумма для снятия</label>
+                      <input 
+                        type="number" 
+                        className="premium-form-input" 
+                        value={fundAmount} 
+                        onChange={(e)=>setFundAmount(e.target.value)} 
+                        min="0" 
+                        max={goal.currentAmount}
+                        step="0.01" 
+                        required 
+                        placeholder={`Доступно: ${goal.currentAmount} ₽`}
+                      />
+                      <div className="text-xs text-gray-400 mt-1">
+                        Доступно для снятия: {goal.currentAmount.toLocaleString('ru-RU')} ₽
+                      </div>
+                    </div>
+                  )}
+
                   <div className="premium-sidebar-buttons">
                     {isEditing && !isFunding && (
                       <motion.button type="button" whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }} onClick={()=>setShowDeleteConfirm(true)} disabled={isSubmitting} className="premium-sidebar-button premium-sidebar-button-danger premium-sidebar-button-compact premium-sidebar-button-full disabled:opacity-50 flex items-center justify-center gap-2">
@@ -221,7 +263,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                     <div className="premium-sidebar-button-row">
                       <motion.button type="button" whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }} onClick={handleClose} disabled={isSubmitting} className="premium-sidebar-button premium-sidebar-button-secondary premium-sidebar-button-compact disabled:opacity-50">Отмена</motion.button>
                       <motion.button type="submit" whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }} disabled={isSubmitting} className="premium-sidebar-button premium-sidebar-button-primary premium-sidebar-button-compact disabled:opacity-50 flex items-center justify-center gap-1">
-                        {isSubmitting ? <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Save className="w-3 h-3" />{isFunding? 'Пополнить' : (isEditing? 'Сохранить' : 'Создать')}</>}
+                        {isSubmitting ? <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Save className="w-3 h-3" />{isFunding? 'Пополнить' : isWithdrawing ? 'Снять' : (isEditing? 'Сохранить' : 'Создать')}</>}
                       </motion.button>
                     </div>
                   </div>

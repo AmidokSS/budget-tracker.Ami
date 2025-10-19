@@ -41,6 +41,45 @@ export const StatsLoader = () => (
   </div>
 )
 
+export const MonthlyDashboardLoader = () => (
+  <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl animate-pulse">
+    <div className="space-y-6">
+      {/* Заголовок */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 bg-blue-400/40 rounded"></div>
+          <div className="h-6 bg-white/20 rounded w-32"></div>
+        </div>
+        <div className="h-10 bg-purple-500/20 rounded-xl w-40"></div>
+      </div>
+      
+      {/* Главный баланс */}
+      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl p-4 border border-white/10">
+        <div className="text-center space-y-2">
+          <div className="h-4 bg-white/20 rounded w-24 mx-auto"></div>
+          <div className="h-8 bg-white/30 rounded w-32 mx-auto"></div>
+        </div>
+      </div>
+      
+      {/* Статистика */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-green-500/20 rounded-xl p-4">
+          <div className="space-y-2">
+            <div className="h-4 bg-green-300/40 rounded w-16"></div>
+            <div className="h-6 bg-green-400/60 rounded w-20"></div>
+          </div>
+        </div>
+        <div className="bg-red-500/20 rounded-xl p-4">
+          <div className="space-y-2">
+            <div className="h-4 bg-red-300/40 rounded w-16"></div>
+            <div className="h-6 bg-red-400/60 rounded w-20"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
 export const CardLoader = () => (
   <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 animate-pulse">
     <div className="space-y-4">
@@ -98,6 +137,11 @@ export const LazyVirtualizedGoalList = dynamic(() => import('@/components/Virtua
 
 export const LazyVirtualizedLimitList = dynamic(() => import('@/components/VirtualizedLimitList'), {
   loading: () => <GridLoader />,
+  ssr: false
+})
+
+export const LazyMonthlyDashboard = dynamic(() => import('@/components/MonthlyDashboard'), {
+  loading: () => <MonthlyDashboardLoader />,
   ssr: false
 })
 
