@@ -1144,24 +1144,53 @@ body {
 }
 
 /* Русификация и начало недели с понедельника */
-.financial-calendar .rbc-header:nth-child(1) {
-  order: 1;
+.financial-calendar .rbc-month-view .rbc-header,
+.financial-calendar .rbc-time-view .rbc-header {
+  display: flex !important;
+}
+
+/* Принудительная перестановка дней недели */
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(1) {
+  order: 1 !important;
 } /* Понедельник */
-.financial-calendar .rbc-header:nth-child(2) {
-  order: 2;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(2) {
+  order: 2 !important;
 } /* Вторник */
-.financial-calendar .rbc-header:nth-child(3) {
-  order: 3;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(3) {
+  order: 3 !important;
 } /* Среда */
-.financial-calendar .rbc-header:nth-child(4) {
-  order: 4;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(4) {
+  order: 4 !important;
 } /* Четверг */
-.financial-calendar .rbc-header:nth-child(5) {
-  order: 5;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(5) {
+  order: 5 !important;
 } /* Пятница */
-.financial-calendar .rbc-header:nth-child(6) {
-  order: 6;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(6) {
+  order: 6 !important;
 } /* Суббота */
-.financial-calendar .rbc-header:nth-child(7) {
-  order: 0;
+.financial-calendar .rbc-row:first-child .rbc-header:nth-child(7) {
+  order: 0 !important;
 } /* Воскресенье в конец */
+
+/* Также для содержимого календаря */
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(1) {
+  order: 1 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(2) {
+  order: 2 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(3) {
+  order: 3 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(4) {
+  order: 4 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(5) {
+  order: 5 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(6) {
+  order: 6 !important;
+}
+.financial-calendar .rbc-month-row .rbc-date-cell:nth-child(7) {
+  order: 0 !important;
+}

@@ -16,9 +16,10 @@ moment.locale('ru') // Устанавливаем русскую локаль
 moment.updateLocale('ru', {
   months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-  weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-  weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-  weekdaysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  // Переставляем дни недели так, чтобы понедельник был первым
+  weekdays: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+  weekdaysShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+  weekdaysMin: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
   week: {
     dow: 1, // Понедельник - первый день недели (ПРИНУДИТЕЛЬНО)
     doy: 4  // Первая неделя года содержит 4 января
@@ -27,6 +28,15 @@ moment.updateLocale('ru', {
 
 // Дополнительная настройка для react-big-calendar
 ;(moment.localeData('ru') as any)._config.week = { dow: 1, doy: 4 }
+
+// Принудительная установка первого дня недели
+moment.locale('ru')
+const ruLocaleData = moment.localeData('ru') as any
+moment.defineLocale('ru-custom', {
+  ...ruLocaleData._config,
+  week: { dow: 1, doy: 4 }
+})
+moment.locale('ru-custom')
 
 const localizer = momentLocalizer(moment)
 
@@ -213,12 +223,15 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
           onView={setView}
           date={date}
           onNavigate={setDate}
-          culture="ru"
+          culture="ru-custom"
           eventPropGetter={eventStyleGetter}
           components={{
             event: EventComponent
           }}
+          step={60}
+          showMultiDayTimes
           firstDayOfWeek={1}
+          getNow={() => new Date()}
           formats={{
             dayHeaderFormat: DayHeaderFormat,
             dayRangeHeaderFormat: ({ start, end }: any, culture?: any, localizer?: any) =>
