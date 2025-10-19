@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
-import { Calendar, momentLocalizer, View } from 'react-big-calendar'
+import { Calendar, momentLocalizer } from 'react-big-calendar'
+import type { View, Event } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Operation, Goal } from '@/types'
@@ -12,7 +13,7 @@ import { motion } from 'framer-motion'
 moment.locale('pl')
 const localizer = momentLocalizer(moment)
 
-interface FinancialEvent {
+interface FinancialEvent extends Event {
   id: string
   title: string
   start: Date
@@ -77,16 +78,17 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
   const allEvents = [...operationEvents, ...goalEvents]
 
   // Кастомные стили для событий
-  const eventStyleGetter = (event: FinancialEvent) => {
+  const eventStyleGetter = (event: Event) => {
+    const financialEvent = event as FinancialEvent
     let backgroundColor = '#3174ad'
     const color = 'white'
 
-    switch (event.resource.type) {
+    switch (financialEvent.resource.type) {
       case 'operation':
-        backgroundColor = event.resource.operationType === 'income' ? '#22c55e' : '#ef4444'
+        backgroundColor = financialEvent.resource.operationType === 'income' ? '#22c55e' : '#ef4444'
         break
       case 'goal':
-        switch (event.resource.priority) {
+        switch (financialEvent.resource.priority) {
           case 'high':
             backgroundColor = '#dc2626'
             break
@@ -113,11 +115,14 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
   }
 
   // Кастомный компонент для события
-  const EventComponent = ({ event }: { event: FinancialEvent }) => (
-    <div className="text-xs font-medium truncate">
-      {event.title}
-    </div>
-  )
+  const EventComponent = ({ event }: { event: Event }) => {
+    const financialEvent = event as FinancialEvent
+    return (
+      <div className="text-xs font-medium truncate">
+        {financialEvent.title}
+      </div>
+    )
+  }
 
   // Кастомный заголовок дня
   const DayHeaderFormat = (date: Date, culture?: string, localizer?: any) =>
