@@ -31,7 +31,6 @@ model Goal {
   currentAmount Float     @default(0)
   deadline      DateTime?
   emoji         String    @default("💰")
-  archived      Boolean   @default(false)
   createdAt     DateTime  @default(now())
 }
 
@@ -57,7 +56,6 @@ model Operation {
   note          String?
   date          DateTime
   createdAt     DateTime @default(now())
-  isArchived    Boolean  @default(false)
   monthlyPeriod String? // Format: "YYYY-MM", например "2025-10"
   category      Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -66,22 +64,18 @@ model Operation {
   @@index([categoryId])
   @@index([date])
   @@index([type])
-  @@index([isArchived])
   @@index([monthlyPeriod])
 }
 
 model MonthlyBalance {
-  id               String    @id @default(cuid())
-  period           String    @unique // Format: "YYYY-MM"
-  totalIncome      Float     @default(0)
-  totalExpense     Float     @default(0)
-  netBalance       Float     @default(0) // totalIncome - totalExpense
-  carryOverBalance Float     @default(0) // Баланс с предыдущего месяца
-  finalBalance     Float     @default(0) // carryOverBalance + netBalance
-  isArchived       Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-  archivedAt       DateTime?
+  id               String   @id @default(cuid())
+  period           String   @unique // Format: "YYYY-MM"
+  totalIncome      Float    @default(0)
+  totalExpense     Float    @default(0)
+  netBalance       Float    @default(0) // totalIncome - totalExpense
+  carryOverBalance Float    @default(0) // Баланс с предыдущего месяца
+  finalBalance     Float    @default(0) // carryOverBalance + netBalance
+  createdAt        DateTime @default(now())
 
   @@index([period])
-  @@index([isArchived])
 }

@@ -6,6 +6,7 @@ import { X, Save, Trash2 } from 'lucide-react'
 import { useCreateGoal, useUpdateGoal, useAddToGoal, useWithdrawFromGoal, useDeleteGoal } from '@/hooks/useApi'
 import { Goal } from '@/types'
 import { createCurrency, isPositiveAmount } from '@/lib/currencyUtils'
+import { useCurrency } from '@/hooks/useCurrency'
 
 interface GoalSidebarProps {
   isOpen: boolean
@@ -36,6 +37,8 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
   const addToGoal = useAddToGoal()
   const withdrawFromGoal = useWithdrawFromGoal()
   const deleteGoal = useDeleteGoal()
+  
+  const { formatAmount } = useCurrency()
 
   const isEditing = !!goal && mode !== 'fund' && mode !== 'withdraw'
   const isFunding = mode === 'fund'
@@ -246,10 +249,10 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                         max={goal.currentAmount}
                         step="0.01" 
                         required 
-                        placeholder={`Доступно: ${goal.currentAmount} ₽`}
+                        placeholder={`Доступно: ${formatAmount(goal.currentAmount)}`}
                       />
                       <div className="text-xs text-gray-400 mt-1">
-                        Доступно для снятия: {goal.currentAmount.toLocaleString('ru-RU')} ₽
+                        Доступно для снятия: {formatAmount(goal.currentAmount)}
                       </div>
                     </div>
                   )}

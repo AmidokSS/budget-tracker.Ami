@@ -18,7 +18,7 @@ export interface MonthlyBalanceData {
 }
 
 export interface MonthlyResetResult {
-  archivedOperations: number;
+  resetOperations: number;
   newBalance: MonthlyBalanceData;
   carryOverBalance: number;
 }

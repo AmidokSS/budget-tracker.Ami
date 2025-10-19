@@ -8,7 +8,6 @@ interface Goals {
   total: number
   completed: number
   completionRate: number
-  archived: number
 }
 
 interface Insights {
@@ -177,15 +176,7 @@ export const GoalsSection = ({ goals, insights }: GoalsSectionProps) => {
           </div>
         </div>
 
-        {/* Архивированные цели */}
-        {goals.archived > 0 && (
-          <div className="pt-4 border-t border-white/10">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-white/60">Архивированные цели</span>
-              <span className="text-white/80">{goals.archived}</span>
-            </div>
-          </div>
-        )}
+
       </div>
       </div>
     </motion.div>

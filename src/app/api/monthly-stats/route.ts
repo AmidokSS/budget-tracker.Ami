@@ -198,9 +198,9 @@ export async function POST(request: NextRequest) {
         finalBalance
       },
       resetPreview: {
-        operationsToArchive: currentMonthOperations.length,
+        operationsToReset: currentMonthOperations.length,
         newStartingBalance: finalBalance,
-        message: `После сброса баланс составит ${finalBalance.toLocaleString('ru-RU')} ₽`
+        message: `После сброса баланс составит ${finalBalance.toLocaleString('pl-PL')} zł`
       }
     });
 

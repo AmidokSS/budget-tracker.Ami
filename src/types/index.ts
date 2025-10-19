@@ -74,7 +74,6 @@ export interface Goal {
   currentAmount: number
   deadline?: string
   emoji: string
-  archived: boolean
   createdAt: string
 }
 

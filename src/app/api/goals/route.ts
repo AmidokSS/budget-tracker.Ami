@@ -4,9 +4,6 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const goals = await prisma.goal.findMany({
-      where: {
-        archived: false  // Показываем только неархивированные цели
-      },
       orderBy: { createdAt: 'desc' },
     })
 
@@ -54,7 +51,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, title, targetAmount, deadline, emoji, currentAmount, archived, addAmount, withdrawAmount, userId = '1' } = body
+    const { id, title, targetAmount, deadline, emoji, currentAmount, addAmount, withdrawAmount, userId = '1' } = body
 
     if (!id) {
       return NextResponse.json(
@@ -69,7 +66,6 @@ export async function PUT(request: NextRequest) {
       deadline?: Date | null
       emoji?: string
       currentAmount?: number
-      archived?: boolean
     } = {}
 
     // Обновление основных полей
@@ -78,7 +74,6 @@ export async function PUT(request: NextRequest) {
     if (deadline !== undefined) updateData.deadline = deadline ? new Date(deadline) : null
     if (emoji !== undefined) updateData.emoji = emoji
     if (currentAmount !== undefined) updateData.currentAmount = parseFloat(currentAmount)
-    if (archived !== undefined) updateData.archived = archived
 
     let goal;
 

@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     });
 
     let processedUsers = 0;
-    let totalArchivedOperations = 0;
+    let totalResetOperations = 0;
     const results = [];
 
     for (const user of users) {
@@ -107,14 +107,14 @@ export async function GET(request: NextRequest) {
 
         results.push({
           userId: user.id,
-          archivedOperations: monthOperations.length,
+          resetOperations: monthOperations.length,
           netBalance,
           totalIncome,
           totalExpense
         });
 
         processedUsers++;
-        totalArchivedOperations += monthOperations.length;
+        totalResetOperations += monthOperations.length;
 
         console.log(`✅ Пользователь ${user.id}: обработано ${monthOperations.length} операций, баланс ${netBalance}`);
 
@@ -127,13 +127,13 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    console.log(`🎉 Месячный сброс завершен: обработано ${processedUsers} пользователей, помечено ${totalArchivedOperations} операций`);
+    console.log(`🎉 Месячный сброс завершен: обработано ${processedUsers} пользователей, помечено ${totalResetOperations} операций`);
 
     return NextResponse.json({
       success: true,
       message: 'Месячный сброс выполнен (временная версия)',
       processedUsers,
-      totalArchivedOperations,
+      totalResetOperations,
       results,
       note: 'Операции помечены как архивированные в заметках'
     });
@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
       if (monthOperations.length === 0) {
         return NextResponse.json({
           message: 'Нет операций для архивирования',
-          archivedOperations: 0
+          resetOperations: 0
         });
       }
 

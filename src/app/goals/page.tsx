@@ -15,9 +15,7 @@ import {
   Clock, 
   CheckCircle, 
   TrendingUp,
-  Edit3,
-  Archive,
-  ArchiveRestore
+  Edit3
 } from 'lucide-react'
 import { Goal } from '@/types'
 
@@ -62,16 +60,7 @@ export default function GoalsPage() {
     }
   }, [deleteGoal])
 
-  const handleUnarchiveGoal = async (goal: Goal) => {
-    try {
-      await updateGoal.mutateAsync({
-        id: goal.id,
-        archived: false,
-      })
-    } catch (error) {
-      console.error('Error unarchiving goal:', error)
-    }
-  }
+
 
   if (isLoading) {
     return (
@@ -93,9 +82,8 @@ export default function GoalsPage() {
     )
   }
 
-  const activeGoals = goals?.filter(goal => !goal.archived && goal.currentAmount < goal.targetAmount) || []
-  const completedGoals = goals?.filter(goal => !goal.archived && goal.currentAmount >= goal.targetAmount) || []
-  const archivedGoals = goals?.filter(goal => goal.archived) || []
+  const activeGoals = goals?.filter(goal => goal.currentAmount < goal.targetAmount) || []
+  const completedGoals = goals?.filter(goal => goal.currentAmount >= goal.targetAmount) || []
 
   const totalTargetAmount = activeGoals.reduce((sum, goal) => sum + goal.targetAmount, 0)
   const totalCurrentAmount = activeGoals.reduce((sum, goal) => sum + goal.currentAmount, 0)
@@ -546,82 +534,7 @@ export default function GoalsPage() {
             </motion.div>
           )}
 
-          {/* Архивированные цели */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
-              <Archive className="h-6 w-6 text-gray-400" />
-              <span>Архивированные цели ({archivedGoals.length})</span>
-            </h2>
-            
-            {archivedGoals.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {archivedGoals.map((goal, index) => {
-                  const progress = (goal.currentAmount / goal.targetAmount) * 100
-                  
-                  return (
-                    <motion.div
-                      key={goal.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.1 + index * 0.05 }}
-                      className="bg-gray-500/10 backdrop-blur-md rounded-2xl p-6 border border-gray-500/30 relative overflow-hidden opacity-60 group"
-                    >
-                      <div className="absolute top-4 right-4 flex space-x-2">
-                        <Archive className="h-6 w-6 text-gray-400" />
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1">
-                          <button
-                            onClick={() => handleUnarchiveGoal(goal)}
-                            className="p-1 bg-green-500/20 hover:bg-green-500/30 rounded border border-green-500/30 transition-colors"
-                            title="Разархивировать"
-                          >
-                            <ArchiveRestore className="h-3 w-3 text-green-400" />
-                          </button>
-                          <button
-                            onClick={() => openEditGoal(goal)}
-                            className="p-1 bg-blue-500/20 hover:bg-blue-500/30 rounded border border-blue-500/30 transition-colors"
-                            title="Редактировать"
-                          >
-                            <Edit3 className="h-3 w-3 text-blue-400" />
-                          </button>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <div className="text-2xl grayscale">{goal.emoji}</div>
-                          <h3 className="text-gray-300 font-semibold text-lg">{goal.title}</h3>
-                        </div>
-                      </div>
 
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Прогресс:</span>
-                          <span className="text-gray-400 font-medium">{Math.round(progress)}%</span>
-                        </div>
-                        <div className="w-full bg-gray-700/30 rounded-full h-2">
-                          <div
-                            className="bg-gray-500 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${Math.min(progress, 100)}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-center text-sm text-gray-500 font-medium">
-                          📦 Архивировано
-                        </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-400">Архивированных целей пока нет</p>
-              </div>
-            )}
-          </motion.div>
 
           {/* Пустое состояние - показываем только если вообще нет целей */}
           {(!goals || goals.length === 0) && (

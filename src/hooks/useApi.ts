@@ -59,7 +59,6 @@ export interface Analytics {
     total: number
     completed: number
     completionRate: number
-    archived: number
   }
   insights: {
     mostExpensiveCategory: {
@@ -188,7 +187,7 @@ const api = {
     return response.json()
   },
 
-  updateGoal: async (data: { id: string; title?: string; targetAmount?: number; deadline?: string; emoji?: string; archived?: boolean }): Promise<Goal> => {
+  updateGoal: async (data: { id: string; title?: string; targetAmount?: number; deadline?: string; emoji?: string }): Promise<Goal> => {
     const response = await fetch('/api/goals', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

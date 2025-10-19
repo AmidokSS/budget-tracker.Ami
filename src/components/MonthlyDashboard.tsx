@@ -9,11 +9,11 @@ import {
   BarChart3,
   DollarSign,
   Clock,
-  Archive,
   AlertCircle
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface MonthlyStats {
   period: string;
@@ -47,7 +47,7 @@ interface ResetSimulation {
     finalBalance: number;
   };
   resetPreview: {
-    operationsToArchive: number;
+    operationsToReset: number;
     newStartingBalance: number;
     message: string;
   };
@@ -59,6 +59,8 @@ const MonthlyDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showResetPreview, setShowResetPreview] = useState(false);
+  
+  const { formatAmount } = useCurrency();
 
   // Загружаем данные
   const fetchData = async () => {
@@ -214,7 +216,7 @@ const MonthlyDashboard: React.FC = () => {
             <div className={`text-3xl font-bold ${
               totalBalance >= 0 ? 'text-green-400' : 'text-red-400'
             }`}>
-              {totalBalance.toLocaleString('ru-RU')} ₽
+              {formatAmount(totalBalance)}
             </div>
           </div>
         </motion.div>
@@ -230,7 +232,7 @@ const MonthlyDashboard: React.FC = () => {
               <span className="text-sm text-green-300">Доходы</span>
             </div>
             <div className="text-xl font-bold text-green-400">
-              +{currentMonth.totalIncome.toLocaleString('ru-RU')} ₽
+              +{formatAmount(currentMonth.totalIncome)}
             </div>
           </motion.div>
 
@@ -243,7 +245,7 @@ const MonthlyDashboard: React.FC = () => {
               <span className="text-sm text-red-300">Расходы</span>
             </div>
             <div className="text-xl font-bold text-red-400">
-              -{currentMonth.totalExpense.toLocaleString('ru-RU')} ₽
+              -{formatAmount(currentMonth.totalExpense)}
             </div>
           </motion.div>
         </div>
@@ -256,7 +258,7 @@ const MonthlyDashboard: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 text-gray-300">
             <DollarSign className="w-4 h-4" />
-            <span>Чистый: {currentMonth.netBalance >= 0 ? '+' : ''}{currentMonth.netBalance.toLocaleString('ru-RU')} ₽</span>
+            <span>Чистый: {currentMonth.netBalance >= 0 ? '+' : ''}{formatAmount(Math.abs(currentMonth.netBalance))}</span>
           </div>
         </div>
       </div>
@@ -265,7 +267,7 @@ const MonthlyDashboard: React.FC = () => {
       {data.monthlyStats.length > 1 && (
         <div>
           <h4 className="text-md font-semibold text-white mb-3 flex items-center gap-2">
-            <Archive className="w-4 h-4" />
+            <Clock className="w-4 h-4" />
             История периодов
           </h4>
           <div className="space-y-2">
@@ -289,10 +291,10 @@ const MonthlyDashboard: React.FC = () => {
                   <div className={`text-sm font-semibold ${
                     stat.netBalance >= 0 ? 'text-green-400' : 'text-red-400'
                   }`}>
-                    {stat.netBalance >= 0 ? '+' : ''}{stat.netBalance.toLocaleString('ru-RU')} ₽
+                    {stat.netBalance >= 0 ? '+' : ''}{formatAmount(Math.abs(stat.netBalance))}
                   </div>
                   <div className="text-xs text-gray-400">
-                    Итого: {stat.finalBalance.toLocaleString('ru-RU')} ₽
+                    Итого: {formatAmount(stat.finalBalance)}
                   </div>
                 </div>
               </motion.div>
@@ -329,11 +331,11 @@ const MonthlyDashboard: React.FC = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <div className="text-green-400">Доходы</div>
-                      <div className="font-semibold">+{resetSimulation.currentMonth.totalIncome.toLocaleString('ru-RU')} ₽</div>
+                      <div className="font-semibold">+{formatAmount(resetSimulation.currentMonth.totalIncome)}</div>
                     </div>
                     <div>
                       <div className="text-red-400">Расходы</div>
-                      <div className="font-semibold">-{resetSimulation.currentMonth.totalExpense.toLocaleString('ru-RU')} ₽</div>
+                      <div className="font-semibold">-{formatAmount(resetSimulation.currentMonth.totalExpense)}</div>
                     </div>
                   </div>
                 </div>
@@ -341,10 +343,10 @@ const MonthlyDashboard: React.FC = () => {
                 <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-4 border border-purple-500/20">
                   <div className="text-sm text-gray-300 mb-2">После сброса</div>
                   <div className="text-lg font-bold text-white">
-                    Баланс: {resetSimulation.balances.finalBalance.toLocaleString('ru-RU')} ₽
+                    Баланс: {formatAmount(resetSimulation.balances.finalBalance)}
                   </div>
                   <div className="text-sm text-gray-400 mt-1">
-                    Операций к архивированию: {resetSimulation.resetPreview.operationsToArchive}
+                    Операций для сброса: {resetSimulation.resetPreview.operationsToReset}
                   </div>
                 </div>
               </div>

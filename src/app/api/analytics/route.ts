@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
       where: userId && userId !== 'all' ? {} : {} // Можно добавить фильтрацию
     })
 
-    const activeGoals = goals.filter(goal => !goal.archived)
+    const activeGoals = goals
     const completedGoals = activeGoals.filter(goal => goal.currentAmount >= goal.targetAmount)
     const goalsCompletionRate = activeGoals.length > 0 ? 
       (completedGoals.length / activeGoals.length * 100) : 0
@@ -161,8 +161,7 @@ export async function GET(request: NextRequest) {
       goals: {
         total: activeGoals.length,
         completed: completedGoals.length,
-        completionRate: goalsCompletionRate,
-        archived: goals.filter(g => g.archived).length
+        completionRate: goalsCompletionRate
       },
 
       // Дополнительная аналитика
