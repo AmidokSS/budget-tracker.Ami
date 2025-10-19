@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import type { View, Event } from 'react-big-calendar'
 import moment from 'moment'
@@ -9,8 +9,27 @@ import { Operation, Goal } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
 import { motion } from 'framer-motion'
 
-// Настройка локализации
-moment.locale('pl')
+// Настройка русской локализации
+moment.updateLocale('en', {
+  months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+  monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+  weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+  weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  weekdaysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  week: {
+    dow: 1, // Понедельник - первый день недели
+    doy: 4
+  }
+})
+
+// Устанавливаем начало недели с понедельника глобально
+moment.locale('en', {
+  week: {
+    dow: 1, // Понедельник = 1
+    doy: 4
+  }
+})
+
 const localizer = momentLocalizer(moment)
 
 interface FinancialEvent extends Event {
@@ -37,6 +56,20 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
   const { formatCurrency } = useCurrency()
   const [view, setView] = useState<View>('month')
   const [date, setDate] = useState(new Date())
+  const [calendarHeight, setCalendarHeight] = useState(500)
+
+  // Устанавливаем высоту календаря в зависимости от размера экрана
+  useEffect(() => {
+    const updateHeight = () => {
+      if (typeof window !== 'undefined') {
+        setCalendarHeight(window.innerWidth < 768 ? 400 : 500)
+      }
+    }
+    
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+    return () => window.removeEventListener('resize', updateHeight)
+  }, [])
 
   // Конвертируем операции в события календаря
   const operationEvents: FinancialEvent[] = useMemo(() => {
@@ -125,8 +158,13 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
   }
 
   // Кастомный заголовок дня
-  const DayHeaderFormat = (date: Date, culture?: string, localizer?: any) =>
-    localizer.format(date, 'dddd', culture)
+  const DayHeaderFormat = (date: Date, culture?: string, localizer?: any) => {
+    const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+    const dayIndex = date.getDay()
+    // Корректируем индекс: воскресенье (0) -> 6, понедельник (1) -> 0
+    const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1
+    return dayNames[adjustedIndex]
+  }
 
   return (
     <motion.div
@@ -143,20 +181,20 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
       </div>
 
       {/* Статистика */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-500/20 rounded-lg p-3 text-center">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-green-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-green-500/30">
           <div className="text-green-400 text-sm font-medium">Доходы</div>
           <div className="text-white text-lg font-bold">
             {operationEvents.filter(e => e.resource.operationType === 'income').length}
           </div>
         </div>
-        <div className="bg-red-500/20 rounded-lg p-3 text-center">
+        <div className="bg-red-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-red-500/30">
           <div className="text-red-400 text-sm font-medium">Расходы</div>
           <div className="text-white text-lg font-bold">
             {operationEvents.filter(e => e.resource.operationType === 'expense').length}
           </div>
         </div>
-        <div className="bg-blue-500/20 rounded-lg p-3 text-center">
+        <div className="bg-blue-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-blue-500/30">
           <div className="text-blue-400 text-sm font-medium">Цели</div>
           <div className="text-white text-lg font-bold">
             {goalEvents.length}
@@ -165,7 +203,7 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
       </div>
 
       {/* Календарь */}
-      <div className="bg-white rounded-lg p-4 min-h-[600px]">
+      <div className="bg-black/20 backdrop-blur-xl rounded-xl p-2 md:p-4 border border-white/20 shadow-2xl">
         <Calendar
           localizer={localizer}
           events={allEvents}
@@ -175,6 +213,7 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
           onView={setView}
           date={date}
           onNavigate={setDate}
+          culture="ru"
           eventPropGetter={eventStyleGetter}
           components={{
             event: EventComponent
@@ -187,8 +226,8 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
               localizer ? localizer.format(date, 'MMMM YYYY', culture) : ''
           }}
           messages={{
-            next: 'Следующий',
-            previous: 'Предыдущий',
+            next: 'Далее',
+            previous: 'Назад',
             today: 'Сегодня',
             month: 'Месяц',
             week: 'Неделя',
@@ -200,32 +239,32 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
             noEventsInRange: 'В этом диапазоне нет событий',
             showMore: (total: any) => `+ ещё ${total}`
           }}
-          style={{ height: 500 }}
-          className="text-gray-800"
+          style={{ height: calendarHeight }}
+          className="financial-calendar"
         />
       </div>
 
       {/* Легенда */}
-      <div className="mt-4 flex flex-wrap gap-4 text-sm">
+      <div className="mt-4 grid grid-cols-2 md:flex md:flex-wrap gap-3 md:gap-4 text-xs md:text-sm">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-green-500 rounded"></div>
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-green-500 rounded"></div>
           <span className="text-white/70">Доходы</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-500 rounded"></div>
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded"></div>
           <span className="text-white/70">Расходы</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-600 rounded"></div>
-          <span className="text-white/70">Цели (высокий приоритет)</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-red-600 rounded"></div>
+          <span className="text-white/70">Цели (высокий)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-          <span className="text-white/70">Цели (средний приоритет)</span>
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-yellow-500 rounded"></div>
+          <span className="text-white/70">Цели (средний)</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-gray-500 rounded"></div>
-          <span className="text-white/70">Цели (низкий приоритет)</span>
+        <div className="flex items-center gap-2 col-span-2 md:col-span-1">
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-gray-500 rounded"></div>
+          <span className="text-white/70">Цели (низкий)</span>
         </div>
       </div>
     </motion.div>

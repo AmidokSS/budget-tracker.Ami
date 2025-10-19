@@ -929,98 +929,229 @@ body.sidebar-open {
 /* КАЛЕНДАРЬ СТИЛИ */
 .rbc-calendar {
   background: transparent !important;
-  color: #1f2937 !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
 }
 
 .rbc-header {
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
-  border-bottom: 1px solid #d1d5db !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  ) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
   font-weight: 600 !important;
-  color: #374151 !important;
+  color: #ffffff !important;
   padding: 12px 8px !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 .rbc-month-view {
-  border: 1px solid #e5e7eb !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
   overflow: hidden !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(20px) !important;
 }
 
 .rbc-date-cell {
   padding: 8px !important;
+  background: transparent !important;
 }
 
 .rbc-date-cell > a {
-  color: #4b5563 !important;
+  color: #e5e7eb !important;
   font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.rbc-date-cell:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 
 .rbc-today {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.3) 0%,
+    rgba(37, 99, 235, 0.2) 100%
+  ) !important;
 }
 
 .rbc-off-range-bg {
-  background: #f9fafb !important;
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+.rbc-off-range .rbc-date-cell > a {
+  color: #6b7280 !important;
 }
 
 .rbc-event {
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   border: none !important;
   font-size: 11px !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   margin: 1px !important;
-  padding: 2px 6px !important;
+  padding: 3px 8px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
 .rbc-event:focus {
-  outline: 2px solid #3b82f6 !important;
+  outline: 2px solid #60a5fa !important;
   outline-offset: 2px !important;
 }
 
 .rbc-toolbar {
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-  border-radius: 8px 8px 0 0 !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  ) !important;
+  border-radius: 12px 12px 0 0 !important;
   padding: 16px !important;
   margin-bottom: 0 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 .rbc-toolbar button {
-  background: white !important;
-  border: 1px solid #d1d5db !important;
-  color: #374151 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
   font-weight: 500 !important;
   padding: 8px 16px !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(10px) !important;
+  font-size: 14px !important;
 }
 
 .rbc-toolbar button:hover {
-  background: #f3f4f6 !important;
-  border-color: #9ca3af !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .rbc-toolbar button.rbc-active {
-  background: #3b82f6 !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
   border-color: #3b82f6 !important;
   color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
 }
 
 .rbc-toolbar-label {
   font-weight: 700 !important;
-  color: #1f2937 !important;
+  color: #ffffff !important;
   font-size: 18px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 .rbc-month-row {
-  border-bottom: 1px solid #f3f4f6 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .rbc-day-bg {
-  border-right: 1px solid #f3f4f6 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: background 0.2s ease !important;
 }
 
 .rbc-day-bg:hover {
-  background: #f8fafc !important;
+  background: rgba(255, 255, 255, 0.05) !important;
 }
+
+.rbc-date-cell.rbc-current {
+  background: rgba(59, 130, 246, 0.2) !important;
+}
+
+.rbc-date-cell.rbc-current > a {
+  color: #60a5fa !important;
+  font-weight: 700 !important;
+}
+
+/* Мобильная адаптация календаря */
+@media (max-width: 768px) {
+  .rbc-toolbar {
+    padding: 12px 8px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .rbc-toolbar button {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    min-width: auto !important;
+    flex: 1 !important;
+  }
+
+  .rbc-toolbar-label {
+    font-size: 16px !important;
+    width: 100% !important;
+    text-align: center !important;
+    order: -1 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .rbc-btn-group {
+    display: flex !important;
+    flex: 1 !important;
+    gap: 4px !important;
+  }
+
+  .rbc-btn-group button {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .rbc-header {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+  }
+
+  .rbc-date-cell {
+    padding: 4px !important;
+  }
+
+  .rbc-date-cell > a {
+    font-size: 12px !important;
+  }
+
+  .rbc-event {
+    font-size: 10px !important;
+    padding: 2px 4px !important;
+  }
+}
+
+/* Настройка календаря для начала недели с понедельника */
+.rbc-header-gutter {
+  flex-basis: 0 !important;
+}
+
+/* Переопределяем порядок колонок для начала недели с понедельника */
+.rbc-month-view .rbc-row .rbc-row-content {
+  display: flex;
+  width: 100%;
+}
+
+/* Русификация и начало недели с понедельника */
+.financial-calendar .rbc-header:nth-child(1) {
+  order: 1;
+} /* Понедельник */
+.financial-calendar .rbc-header:nth-child(2) {
+  order: 2;
+} /* Вторник */
+.financial-calendar .rbc-header:nth-child(3) {
+  order: 3;
+} /* Среда */
+.financial-calendar .rbc-header:nth-child(4) {
+  order: 4;
+} /* Четверг */
+.financial-calendar .rbc-header:nth-child(5) {
+  order: 5;
+} /* Пятница */
+.financial-calendar .rbc-header:nth-child(6) {
+  order: 6;
+} /* Суббота */
+.financial-calendar .rbc-header:nth-child(7) {
+  order: 0;
+} /* Воскресенье в конец */

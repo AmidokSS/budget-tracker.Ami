@@ -1,19 +1,40 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Lenis from '@studio-freight/lenis'
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  const lenisRef = useRef<Lenis | null>(null)
+
   useEffect(() => {
-    // Инициализируем Lenis
+    // Проверяем только клиентскую сторону
+    if (typeof window === 'undefined') return
+
+    // Детектим мобильные устройства более точно
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+      || window.innerWidth < 1024 
+      || 'ontouchstart' in window
+
+    if (isMobile) return // Не используем на мобильных устройствах
+
+    // Инициализируем Lenis только на десктопе
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: 1,
+      touchMultiplier: 0, // Отключаем на touch устройствах
     })
+
+    lenisRef.current = lenis
+
+    // Сохраняем в глобальный объект для хука
+    ;(window as any).lenis = lenis
 
     // Функция анимации
     function raf(time: number) {
-      lenis.raf(time)
+      if (lenisRef.current) {
+        lenisRef.current.raf(time)
+      }
       requestAnimationFrame(raf)
     }
 
@@ -21,7 +42,11 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
 
     // Очистка при размонтировании
     return () => {
-      lenis.destroy()
+      if (lenisRef.current) {
+        lenisRef.current.destroy()
+        lenisRef.current = null
+      }
+      ;(window as any).lenis = null
     }
   }, [])
 
