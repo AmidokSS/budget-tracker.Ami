@@ -3,7 +3,6 @@ import './globals.css'
 import { Navbar } from '@/components/Navbar'
 import { Providers } from '@/components/providers'
 import { DynamicGradientWrapper } from '@/components/DynamicGradientWrapper'
-import { SmoothScrollProvider } from '@/components/SmoothScrollProvider'
 import StarryBackground from '@/components/StarryBackground'
 import { PerformanceProvider } from '@/hooks/usePerformance'
 
@@ -74,19 +73,17 @@ export default function RootLayout({
       <body
         className="min-h-screen bg-background text-foreground antialiased"
       >
-        <SmoothScrollProvider>
-          <Providers>
-            <PerformanceProvider>
-              <DynamicGradientWrapper>
-                <StarryBackground />
-                <div className="relative flex min-h-screen flex-col">
-                  <Navbar />
-                  <main className="flex-1 pb-20 md:pb-0">{children}</main>
-                </div>
-              </DynamicGradientWrapper>
-            </PerformanceProvider>
-          </Providers>
-        </SmoothScrollProvider>
+        <Providers>
+          <PerformanceProvider>
+            <DynamicGradientWrapper>
+              <StarryBackground />
+              <div className="relative flex min-h-screen flex-col">
+                <Navbar />
+                <main className="flex-1 pb-20 md:pb-0">{children}</main>
+              </div>
+            </DynamicGradientWrapper>
+          </PerformanceProvider>
+        </Providers>
       </body>
     </html>
   )

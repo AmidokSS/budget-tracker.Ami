@@ -11,6 +11,8 @@ import { motion } from 'framer-motion'
 
 // Настройка русской локализации
 moment.locale('ru') // Устанавливаем русскую локаль
+
+// Принудительная настройка недели с понедельника
 moment.updateLocale('ru', {
   months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
@@ -18,12 +20,17 @@ moment.updateLocale('ru', {
   weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   weekdaysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   week: {
-    dow: 1, // Понедельник - первый день недели (0 = воскресенье, 1 = понедельник)
-    doy: 4
+    dow: 1, // Понедельник - первый день недели (ПРИНУДИТЕЛЬНО)
+    doy: 4  // Первая неделя года содержит 4 января
   }
 })
 
+// Дополнительная настройка для react-big-calendar
+;(moment.localeData('ru') as any)._config.week = { dow: 1, doy: 4 }
+
 const localizer = momentLocalizer(moment)
+
+console.log('📅 Calendar: Первый день недели установлен:', (moment.localeData('ru') as any)._config.week.dow)
 
 interface FinancialEvent extends Event {
   id: string
@@ -211,6 +218,7 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
           components={{
             event: EventComponent
           }}
+          firstDayOfWeek={1}
           formats={{
             dayHeaderFormat: DayHeaderFormat,
             dayRangeHeaderFormat: ({ start, end }: any, culture?: any, localizer?: any) =>

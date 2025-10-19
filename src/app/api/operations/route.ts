@@ -103,6 +103,29 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    // Обновляем лимиты для expense операций
+    if (type === 'expense') {
+      // Находим лимит для этой категории и увеличиваем потраченную сумму
+      const limit = await prisma.limit.findFirst({
+        where: { 
+          categoryId: categoryId,
+          active: true 
+        },
+      })
+
+      if (limit) {
+        const { addAmounts } = await import('@/lib/currencyUtils')
+        const newAmount = addAmounts(limit.currentAmount, parseFloat(amount))
+        
+        await prisma.limit.update({
+          where: { id: limit.id },
+          data: {
+            currentAmount: newAmount.value,
+          },
+        })
+      }
+    }
+
     return NextResponse.json(operation, { status: 201 })
   } catch (error) {
     console.error('Error creating operation:', error)
