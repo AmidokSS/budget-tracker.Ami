@@ -17,12 +17,14 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
 
     if (isMobile) return // Не используем на мобильных устройствах
 
-    // Инициализируем Lenis только на десктопе
+    // Инициализируем Lenis с более консервативными настройками
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: 1,
-      touchMultiplier: 0, // Отключаем на touch устройствах
+      wheelMultiplier: 0.7, // Уменьшим чувствительность
+      touchMultiplier: 0, // Полностью отключаем touch
+      infinite: false,
+      autoResize: true,
     })
 
     lenisRef.current = lenis
@@ -30,18 +32,23 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     // Сохраняем в глобальный объект для хука
     ;(window as any).lenis = lenis
 
-    // Функция анимации
+    let animationId: number
+
+    // Функция анимации с проверкой
     function raf(time: number) {
       if (lenisRef.current) {
         lenisRef.current.raf(time)
       }
-      requestAnimationFrame(raf)
+      animationId = requestAnimationFrame(raf)
     }
 
-    requestAnimationFrame(raf)
+    animationId = requestAnimationFrame(raf)
 
     // Очистка при размонтировании
     return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId)
+      }
       if (lenisRef.current) {
         lenisRef.current.destroy()
         lenisRef.current = null
@@ -62,20 +69,38 @@ export function useSmoothScroll() {
   }) => {
     // Получаем экземпляр Lenis из глобального объекта (если он там есть)
     const lenis = (window as any).lenis
-    if (lenis) {
-      lenis.scrollTo(target, options)
-    } else {
-      // Fallback к обычному скроллу
-      if (typeof target === 'string') {
-        const element = document.querySelector(target)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      } else if (typeof target === 'number') {
+    
+    if (!lenis) {
+      // Fallback на стандартный скролл если Lenis недоступен
+      if (typeof target === 'number') {
         window.scrollTo({ top: target, behavior: 'smooth' })
+      } else if (typeof target === 'string') {
+        const element = document.querySelector(target)
+        element?.scrollIntoView({ behavior: 'smooth' })
       } else if (target instanceof HTMLElement) {
         target.scrollIntoView({ behavior: 'smooth' })
       }
+      return
+    }
+
+    // Используем Lenis для плавного скролла
+    if (typeof target === 'number') {
+      lenis.scrollTo(target + (options?.offset || 0), {
+        duration: options?.duration,
+        easing: options?.easing
+      })
+    } else if (typeof target === 'string') {
+      lenis.scrollTo(target, {
+        offset: options?.offset,
+        duration: options?.duration,
+        easing: options?.easing
+      })
+    } else if (target instanceof HTMLElement) {
+      lenis.scrollTo(target, {
+        offset: options?.offset,
+        duration: options?.duration,
+        easing: options?.easing
+      })
     }
   }
 

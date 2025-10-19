@@ -10,22 +10,15 @@ import { useCurrency } from '@/hooks/useCurrency'
 import { motion } from 'framer-motion'
 
 // Настройка русской локализации
-moment.updateLocale('en', {
+moment.locale('ru') // Устанавливаем русскую локаль
+moment.updateLocale('ru', {
   months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
   weekdays: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
   weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   weekdaysMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   week: {
-    dow: 1, // Понедельник - первый день недели
-    doy: 4
-  }
-})
-
-// Устанавливаем начало недели с понедельника глобально
-moment.locale('en', {
-  week: {
-    dow: 1, // Понедельник = 1
+    dow: 1, // Понедельник - первый день недели (0 = воскресенье, 1 = понедельник)
     doy: 4
   }
 })
@@ -239,6 +232,8 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
             noEventsInRange: 'В этом диапазоне нет событий',
             showMore: (total: any) => `+ ещё ${total}`
           }}
+          dayLayoutAlgorithm={'overlap'}
+          popup={true}
           style={{ height: calendarHeight }}
           className="financial-calendar"
         />
