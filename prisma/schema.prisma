@@ -31,7 +31,10 @@ model Goal {
   currentAmount Float     @default(0)
   deadline      DateTime?
   emoji         String    @default("💰")
+  priority      String    @default("medium") // "high", "medium", "low"
   createdAt     DateTime  @default(now())
+
+  @@index([priority])
 }
 
 model Limit {

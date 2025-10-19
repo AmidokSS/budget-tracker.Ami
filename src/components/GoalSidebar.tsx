@@ -28,6 +28,7 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
   const [targetAmount, setTargetAmount] = useState('')
   const [deadline, setDeadline] = useState<string>('')
   const [emoji, setEmoji] = useState('💰')
+  const [priority, setPriority] = useState<'high' | 'medium' | 'low'>('medium')
   const [fundAmount, setFundAmount] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
@@ -50,11 +51,13 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
       setTargetAmount(String(goal.targetAmount))
       setDeadline(goal.deadline ? new Date(goal.deadline).toISOString().slice(0, 10) : '')
       setEmoji(goal.emoji)
+      setPriority(goal.priority || 'medium')
     } else {
       setTitle('')
       setTargetAmount('')
       setDeadline('')
       setEmoji('💰')
+      setPriority('medium')
     }
     setShowDeleteConfirm(false)
     setIsSubmitting(false)
@@ -140,9 +143,9 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
     setIsSubmitting(true)
     try {
       if (isEditing && goal) {
-        await updateGoal.mutateAsync({ id: goal.id, title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji })
+        await updateGoal.mutateAsync({ id: goal.id, title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji, priority })
       } else {
-        await createGoal.mutateAsync({ title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji })
+        await createGoal.mutateAsync({ title: title.trim(), targetAmount: parsedTargetAmount, deadline: deadline || undefined, emoji, priority })
       }
       onSuccess?.(); onClose()
     } catch (err) {
@@ -226,6 +229,14 @@ export default function GoalSidebar({ isOpen, onClose, goal, mode = 'create', on
                             </button>
                           ))}
                         </div>
+                      </div>
+                      <div>
+                        <label className="premium-form-label">Приоритет</label>
+                        <select className="premium-form-input" value={priority} onChange={(e) => setPriority(e.target.value as 'high' | 'medium' | 'low')}>
+                          <option value="high">🔥 Высокий</option>
+                          <option value="medium">⚖️ Средний</option>
+                          <option value="low">🕐 Низкий</option>
+                        </select>
                       </div>
                     </>
                   )}

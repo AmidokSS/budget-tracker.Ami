@@ -7,7 +7,15 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json(goals)
+    // Сортируем по приоритету в JavaScript
+    const sortedGoals = goals.sort((a, b) => {
+      const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 }
+      const aPriority = priorityOrder[a.priority as keyof typeof priorityOrder] || 2
+      const bPriority = priorityOrder[b.priority as keyof typeof priorityOrder] || 2
+      return bPriority - aPriority // Высокий приоритет первым
+    })
+
+    return NextResponse.json(sortedGoals)
   } catch (error) {
     console.error('Error fetching goals:', error)
     return NextResponse.json(
@@ -20,7 +28,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { title, targetAmount, deadline, emoji } = body
+    const { title, targetAmount, deadline, emoji, priority = 'medium' } = body
 
     if (!title || !targetAmount) {
       return NextResponse.json(
@@ -35,6 +43,7 @@ export async function POST(request: NextRequest) {
         targetAmount: parseFloat(targetAmount),
         deadline: deadline ? new Date(deadline) : null,
         emoji: emoji || '💰',
+        priority: priority,
       },
     })
 
@@ -51,7 +60,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, title, targetAmount, deadline, emoji, currentAmount, addAmount, withdrawAmount, userId = '1' } = body
+    const { id, title, targetAmount, deadline, emoji, priority, currentAmount, addAmount, withdrawAmount, userId = '1' } = body
 
     if (!id) {
       return NextResponse.json(
@@ -65,6 +74,7 @@ export async function PUT(request: NextRequest) {
       targetAmount?: number
       deadline?: Date | null
       emoji?: string
+      priority?: string
       currentAmount?: number
     } = {}
 
@@ -73,6 +83,7 @@ export async function PUT(request: NextRequest) {
     if (targetAmount !== undefined) updateData.targetAmount = parseFloat(targetAmount)
     if (deadline !== undefined) updateData.deadline = deadline ? new Date(deadline) : null
     if (emoji !== undefined) updateData.emoji = emoji
+    if (priority !== undefined) updateData.priority = priority
     if (currentAmount !== undefined) updateData.currentAmount = parseFloat(currentAmount)
 
     let goal;

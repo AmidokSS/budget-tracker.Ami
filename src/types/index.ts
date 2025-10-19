@@ -74,6 +74,7 @@ export interface Goal {
   currentAmount: number
   deadline?: string
   emoji: string
+  priority: 'high' | 'medium' | 'low'
   createdAt: string
 }
 

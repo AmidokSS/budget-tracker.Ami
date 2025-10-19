@@ -177,7 +177,7 @@ const api = {
     return response.json()
   },
 
-  createGoal: async (data: { title: string; targetAmount: number; deadline?: string; emoji?: string }): Promise<Goal> => {
+  createGoal: async (data: { title: string; targetAmount: number; deadline?: string; emoji?: string; priority?: 'high' | 'medium' | 'low' }): Promise<Goal> => {
     const response = await fetch('/api/goals', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -187,7 +187,7 @@ const api = {
     return response.json()
   },
 
-  updateGoal: async (data: { id: string; title?: string; targetAmount?: number; deadline?: string; emoji?: string }): Promise<Goal> => {
+  updateGoal: async (data: { id: string; title?: string; targetAmount?: number; deadline?: string; emoji?: string; priority?: 'high' | 'medium' | 'low' }): Promise<Goal> => {
     const response = await fetch('/api/goals', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

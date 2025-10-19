@@ -50,6 +50,36 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund, onWithd
     return 'from-red-400 to-red-500'
   }, [progress])
 
+  // Мемоизируем информацию о приоритете
+  const priorityInfo = useMemo(() => {
+    switch (goal.priority) {
+      case 'high':
+        return {
+          icon: '🔥',
+          text: 'Высокий',
+          bgColor: 'bg-red-500/20',
+          borderColor: 'border-red-400/40',
+          textColor: 'text-red-300'
+        }
+      case 'low':
+        return {
+          icon: '🕐',
+          text: 'Низкий',
+          bgColor: 'bg-gray-500/20',
+          borderColor: 'border-gray-400/40',
+          textColor: 'text-gray-300'
+        }
+      default:
+        return {
+          icon: '⚖️',
+          text: 'Средний',
+          bgColor: 'bg-yellow-500/20',
+          borderColor: 'border-yellow-400/40',
+          textColor: 'text-yellow-300'
+        }
+    }
+  }, [goal.priority])
+
   // Мемоизируем адаптивные анимации
   const cardAnimation = useConditionalAnimation({
     initial: { opacity: 0, y: 20, scale: 0.95 },
@@ -157,9 +187,15 @@ const GoalCard = memo(({ goal, index, onEdit, onDelete, onFund: _onFund, onWithd
 
         {/* Goal title and status */}
         <div className="mb-6">
-          <h3 className="premium-title text-2xl font-bold mb-3 leading-tight">
-            {goal.title}
-          </h3>
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <h3 className="premium-title text-2xl font-bold leading-tight flex-1">
+              {goal.title}
+            </h3>
+            <div className={`px-2 py-1 rounded-lg text-xs font-medium border ${priorityInfo.bgColor} ${priorityInfo.borderColor} ${priorityInfo.textColor} flex items-center gap-1 flex-shrink-0`}>
+              <span>{priorityInfo.icon}</span>
+              <span>{priorityInfo.text}</span>
+            </div>
+          </div>
           
           {deadlineText && (
             <div className="flex items-center gap-2">
