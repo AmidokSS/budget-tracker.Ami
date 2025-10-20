@@ -147,6 +147,9 @@ const api = {
     if (params?.userId) searchParams.set('userId', params.userId)
     if (params?.period) searchParams.set('period', params.period)
     if (params?.limit) searchParams.set('limit', params.limit.toString())
+    
+    // ВСЕГДА включаем детали для отображения пользователя и категории
+    searchParams.set('includeDetails', 'true')
 
     const response = await fetch(`/api/operations?${searchParams}`)
     if (!response.ok) throw new Error('Failed to fetch operations')

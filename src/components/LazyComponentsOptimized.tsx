@@ -162,16 +162,3 @@ export const PerformanceAwareComponent = ({
   
   return <>{children}</>
 }
-
-// 📊 Простые реэкспорты для совместимости с существующими страницами
-export { CategoryChart as LazyCategoryChart } from './CategoryChart'
-export { TimelineChart as LazyTimelineChart } from './TimelineChart'
-export { LimitsSection as LazyLimitsSection } from './LimitsSection'
-export { GoalsSection as LazyGoalsSection } from './GoalsSection'
-
-// Default экспорты
-export { default as LazyLimitsStats } from './LimitsStats'
-export { default as LazyVirtualizedGoalList } from './VirtualizedGoalList'
-export { default as LazyVirtualizedLimitList } from './VirtualizedLimitList'
-export { default as LazyVirtualizedOperationList } from './VirtualizedOperationList'
-export { default as LazyMonthlyDashboard } from './MonthlyDashboard'

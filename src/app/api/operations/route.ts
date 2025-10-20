@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId')
     const period = searchParams.get('period')
     const limit = parseInt(searchParams.get('limit') || '100')
+    const includeDetails = searchParams.get('includeDetails') === 'true'
 
     const where: {
       categoryId?: string
@@ -38,12 +39,25 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Оптимизированная загрузка: загружаем детали только при необходимости
     const operations = await prisma.operation.findMany({
       where,
-      include: {
-        category: true,
-        user: true,
-      },
+      include: includeDetails ? {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            emoji: true,
+            type: true
+          }
+        },
+        user: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      } : undefined,
       orderBy: { date: 'desc' },
       take: limit,
     })

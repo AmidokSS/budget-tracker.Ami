@@ -82,15 +82,18 @@ const withPWA = require('@ducanh2912/next-pwa').default({
           },
         },
       },
-      // Статические ресурсы
+      // Статические ресурсы - правильная стратегия
       {
         urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/,
-        handler: 'NetworkOnly',
+        handler: 'CacheFirst',
         options: {
           cacheName: 'images',
           expiration: {
             maxEntries: 100,
             maxAgeSeconds: 30 * 24 * 60 * 60, // 30 дней
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
           },
         },
       },

@@ -18,21 +18,23 @@ export function FloatingParticles() {
   useEffect(() => {
     const generateParticles = () => {
       const newParticles: Particle[] = []
-      for (let i = 0; i < 20; i++) {
+      const count = 15 // Фиксированное количество частиц
+      
+      for (let i = 0; i < count; i++) {
         newParticles.push({
           id: i,
           x: Math.random() * 100,
           y: Math.random() * 100,
-          size: Math.random() * 4 + 1,
-          opacity: Math.random() * 0.3 + 0.1,
-          duration: Math.random() * 20 + 10,
+          size: Math.random() * 3 + 1,
+          opacity: Math.random() * 0.2 + 0.05,
+          duration: Math.random() * 15 + 8,
         })
       }
       setParticles(newParticles)
     }
 
     generateParticles()
-  }, [])
+  }, []) // Выполняется только один раз
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -48,9 +50,9 @@ export function FloatingParticles() {
             opacity: particle.opacity,
           }}
           animate={{
-            y: [0, -100, 0],
-            x: [0, Math.random() * 100 - 50, 0],
-            opacity: [particle.opacity, particle.opacity * 0.3, particle.opacity],
+            y: [0, -80, 0], // Уменьшили амплитуду
+            x: [0, Math.random() * 60 - 30, 0], // Уменьшили амплитуду
+            opacity: [particle.opacity, particle.opacity * 0.5, particle.opacity],
           }}
           transition={{
             duration: particle.duration,

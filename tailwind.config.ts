@@ -145,7 +145,7 @@ const config: Config = {
       fontFamily: {
         'sans': ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
         'serif': ['Georgia', 'Times New Roman', 'serif'],
-        'mono': ['Tilla', 'Tahoma', 'Arial', 'sans-serif'],
+        'mono': ['Consolas', 'Monaco', 'Courier New', 'monospace'],
       },
     },
   },

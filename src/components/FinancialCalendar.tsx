@@ -8,35 +8,23 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Operation, Goal } from '@/types'
 import { useCurrency } from '@/hooks/useCurrency'
 import { motion } from 'framer-motion'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
-// Настройка русской локализации
-moment.locale('ru') // Устанавливаем русскую локаль
-
-// Принудительная настройка недели с понедельника
+// Настройка русской локализации с понедельником как первым днем недели
 moment.updateLocale('ru', {
   months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-  // Переставляем дни недели так, чтобы понедельник был первым
+  // Дни недели с понедельника
   weekdays: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
   weekdaysShort: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
   weekdaysMin: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
   week: {
-    dow: 1, // Понедельник - первый день недели (ПРИНУДИТЕЛЬНО)
+    dow: 1, // Понедельник - первый день недели
     doy: 4  // Первая неделя года содержит 4 января
   }
 })
 
-// Дополнительная настройка для react-big-calendar
-;(moment.localeData('ru') as any)._config.week = { dow: 1, doy: 4 }
-
-// Принудительная установка первого дня недели
 moment.locale('ru')
-const ruLocaleData = moment.localeData('ru') as any
-moment.defineLocale('ru-custom', {
-  ...ruLocaleData._config,
-  week: { dow: 1, doy: 4 }
-})
-moment.locale('ru-custom')
 
 const localizer = momentLocalizer(moment)
 
@@ -64,42 +52,66 @@ interface FinancialCalendarProps {
 
 export function FinancialCalendar({ operations, goals, className }: FinancialCalendarProps) {
   const { formatCurrency } = useCurrency()
+  // Считаем мобильными экраны < 768px
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const [view, setView] = useState<View>('month')
   const [date, setDate] = useState(new Date())
   const [calendarHeight, setCalendarHeight] = useState(500)
+
+  // Отладочная информация
+  console.log('📊 Calendar Debug:', {
+    operationsCount: operations.length,
+    goalsCount: goals.length,
+    operations: operations.slice(0, 3), // Показываем первые 3
+    goals: goals.slice(0, 3)
+  })
 
   // Устанавливаем высоту календаря в зависимости от размера экрана
   useEffect(() => {
     const updateHeight = () => {
       if (typeof window !== 'undefined') {
-        setCalendarHeight(window.innerWidth < 768 ? 400 : 500)
+        const w = window.innerWidth
+        const h = window.innerHeight
+        const desktopHeight = Math.min(800, Math.max(560, Math.floor(h * 0.6)))
+        const mobileHeight = 420
+        setCalendarHeight(w < 768 ? mobileHeight : desktopHeight)
       }
     }
-    
+
     updateHeight()
     window.addEventListener('resize', updateHeight)
     return () => window.removeEventListener('resize', updateHeight)
   }, [])
 
+  // Стилизация выходных через dayPropGetter (без DOM-манипуляций)
+  const dayPropGetter = (d: Date) => {
+    const day = d.getDay()
+    const isWeekend = day === 0 || day === 6
+    return { className: isWeekend ? 'weekend-day' : '' }
+  }
+
   // Конвертируем операции в события календаря
   const operationEvents: FinancialEvent[] = useMemo(() => {
-    return operations.map(operation => ({
+    const events = operations.map(operation => ({
       id: `operation-${operation.id}`,
       title: `${operation.type === 'income' ? '💰' : '💸'} ${formatCurrency(operation.amount)} - ${operation.note || 'Без описания'}`,
       start: new Date(operation.date),
       end: new Date(operation.date),
       resource: {
-        type: 'operation',
+        type: 'operation' as const,
         amount: operation.amount,
         category: operation.category?.name,
         operationType: operation.type
       }
     }))
+    
+    console.log('💰 Operation Events:', events.length, events.slice(0, 2))
+    return events
   }, [operations, formatCurrency])
 
   // Конвертируем цели в события (deadline)
   const goalEvents: FinancialEvent[] = useMemo(() => {
-    return goals
+    const events = goals
       .filter(goal => goal.deadline)
       .map(goal => {
         const priorityEmoji = goal.priority === 'high' ? '🔥' : goal.priority === 'medium' ? '⚖️' : '🕐'
@@ -109,16 +121,21 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
           start: new Date(goal.deadline!),
           end: new Date(goal.deadline!),
           resource: {
-            type: 'goal',
+            type: 'goal' as const,
             amount: goal.targetAmount,
             priority: goal.priority
           }
         }
       })
+      
+    console.log('🎯 Goal Events:', events.length, events.slice(0, 2))
+    return events
   }, [goals, formatCurrency])
 
   // Объединяем все события
   const allEvents = [...operationEvents, ...goalEvents]
+  
+  console.log('📅 All Events Total:', allEvents.length)
 
   // Кастомные стили для событий
   const eventStyleGetter = (event: Event) => {
@@ -167,21 +184,23 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
     )
   }
 
-  // Кастомный заголовок дня
-  const DayHeaderFormat = (date: Date, culture?: string, localizer?: any) => {
-    const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
-    const dayIndex = date.getDay()
-    // Корректируем индекс: воскресенье (0) -> 6, понедельник (1) -> 0
-    const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1
-    return dayNames[adjustedIndex]
+  // Кастомные форматы заголовков (гарантируем ISO-порядок: Пн...Вс)
+  const WeekdayFormat = (d: Date) => {
+    const names = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+    const idx = moment(d).isoWeekday() - 1 // 1..7 -> 0..6
+    return names[idx]
   }
+  const DayHeaderFormat = WeekdayFormat
+
+  // На телефонах скрываем весь блок календаря
+  if (isMobile) return null
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 ${className}`}
+      className={`ultra-premium-card p-4 md:p-6 ${className || ''}`}
     >
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white mb-2">📅 Финансовый календарь</h2>
@@ -191,20 +210,20 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
       </div>
 
       {/* Статистика */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-green-500/30">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 px-4">
+        <div className="premium-card text-center">
           <div className="text-green-400 text-sm font-medium">Доходы</div>
           <div className="text-white text-lg font-bold">
             {operationEvents.filter(e => e.resource.operationType === 'income').length}
           </div>
         </div>
-        <div className="bg-red-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-red-500/30">
+        <div className="premium-card text-center">
           <div className="text-red-400 text-sm font-medium">Расходы</div>
           <div className="text-white text-lg font-bold">
             {operationEvents.filter(e => e.resource.operationType === 'expense').length}
           </div>
         </div>
-        <div className="bg-blue-500/20 rounded-lg p-3 text-center backdrop-blur-sm border border-blue-500/30">
+        <div className="premium-card text-center">
           <div className="text-blue-400 text-sm font-medium">Цели</div>
           <div className="text-white text-lg font-bold">
             {goalEvents.length}
@@ -213,51 +232,53 @@ export function FinancialCalendar({ operations, goals, className }: FinancialCal
       </div>
 
       {/* Календарь */}
-      <div className="bg-black/20 backdrop-blur-xl rounded-xl p-2 md:p-4 border border-white/20 shadow-2xl">
-        <Calendar
-          localizer={localizer}
-          events={allEvents}
-          startAccessor="start"
-          endAccessor="end"
-          view={view}
-          onView={setView}
-          date={date}
-          onNavigate={setDate}
-          culture="ru-custom"
-          eventPropGetter={eventStyleGetter}
-          components={{
-            event: EventComponent
-          }}
-          step={60}
-          showMultiDayTimes
-          firstDayOfWeek={1}
-          getNow={() => new Date()}
-          formats={{
-            dayHeaderFormat: DayHeaderFormat,
-            dayRangeHeaderFormat: ({ start, end }: any, culture?: any, localizer?: any) =>
-              localizer ? `${localizer.format(start, 'MMMM', culture)} ${localizer.format(start, 'YYYY', culture)}` : '',
-            monthHeaderFormat: (date: any, culture?: any, localizer?: any) =>
-              localizer ? localizer.format(date, 'MMMM YYYY', culture) : ''
-          }}
-          messages={{
-            next: 'Далее',
-            previous: 'Назад',
-            today: 'Сегодня',
-            month: 'Месяц',
-            week: 'Неделя',
-            day: 'День',
-            agenda: 'Повестка',
-            date: 'Дата',
-            time: 'Время',
-            event: 'Событие',
-            noEventsInRange: 'В этом диапазоне нет событий',
-            showMore: (total: any) => `+ ещё ${total}`
-          }}
-          dayLayoutAlgorithm={'overlap'}
-          popup={true}
-          style={{ height: calendarHeight }}
-          className="financial-calendar"
-        />
+      <div className="nav-glass rounded-lg p-4 mb-4">
+          <Calendar
+            localizer={localizer}
+            events={allEvents}
+            startAccessor="start"
+            endAccessor="end"
+            view={view}
+            onView={setView}
+            date={date}
+            onNavigate={setDate}
+            culture="ru"
+            eventPropGetter={eventStyleGetter}
+            components={{
+              event: EventComponent
+            }}
+            step={60}
+            showMultiDayTimes
+            firstDayOfWeek={1}
+            getNow={() => new Date()}
+            formats={{
+              weekdayFormat: WeekdayFormat,
+              dayHeaderFormat: DayHeaderFormat,
+              dayRangeHeaderFormat: ({ start, end }: any, culture?: any, localizer?: any) =>
+                localizer ? `${localizer.format(start, 'MMMM', culture)} ${localizer.format(start, 'YYYY', culture)}` : '',
+              monthHeaderFormat: (date: any, culture?: any, localizer?: any) =>
+                localizer ? localizer.format(date, 'MMMM YYYY', culture) : ''
+            }}
+            dayPropGetter={dayPropGetter}
+            messages={{
+              next: 'Далее',
+              previous: 'Назад',
+              today: 'Сегодня',
+              month: 'Месяц',
+              week: 'Неделя',
+              day: 'День',
+              agenda: 'Повестка',
+              date: 'Дата',
+              time: 'Время',
+              event: 'Событие',
+              noEventsInRange: 'В этом диапазоне нет событий',
+              showMore: (total: any) => `+ ещё ${total}`
+            }}
+            dayLayoutAlgorithm={'overlap'}
+            popup={true}
+            style={{ height: calendarHeight }}
+            className=""
+          />
       </div>
 
       {/* Легенда */}

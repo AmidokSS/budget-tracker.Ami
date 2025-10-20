@@ -10,6 +10,7 @@ import AddOperationSidebar from '@/components/AddOperationSidebar'
 import { FloatingParticles } from '@/components/FloatingParticles'
 import { GlassMorphismCard } from '@/components/GlassMorphismCard'
 import { PremiumLoader } from '@/components/PremiumLoader'
+import { LazyMonthlyDashboard } from '@/components/LazyComponents'
 import {
   TrendingUp,
   TrendingDown,
@@ -350,6 +351,17 @@ export default function HomePage() {
               }}
               className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-cyan-400/10 via-blue-400/5 to-transparent rounded-full blur-3xl pointer-events-none"
             />
+          </motion.div>
+        </div>
+
+        {/* Месячная статистика */}
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6 }}
+          >
+            <LazyMonthlyDashboard />
           </motion.div>
         </div>
 
